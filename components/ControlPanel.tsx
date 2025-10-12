@@ -50,6 +50,33 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   keepCropperVertical,
   setKeepCropperVertical,
 }) => {
+
+  const handleCropChange = (field: keyof CropParams, value: string) => {
+    const numericValue = parseFloat(value) || 0;
+    const newCrop = { ...crop };
+
+    switch (field) {
+      case 'x':
+        // Clamp x between 0 and (100 - width)
+        newCrop.x = Math.max(0, Math.min(numericValue, 100 - newCrop.width));
+        break;
+      case 'y':
+        // Clamp y between 0 and (100 - height)
+        newCrop.y = Math.max(0, Math.min(numericValue, 100 - newCrop.height));
+        break;
+      case 'width':
+        // Clamp width between 1 and (100 - x)
+        newCrop.width = Math.max(1, Math.min(numericValue, 100 - newCrop.x));
+        break;
+      case 'height':
+        // Clamp height between 1 and (100 - y)
+        newCrop.height = Math.max(1, Math.min(numericValue, 100 - newCrop.y));
+        break;
+    }
+    setCrop(newCrop);
+  };
+
+
   return (
     <div className="w-full h-full bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg shadow-lg flex flex-col space-y-6 overflow-y-auto">
       <h2 className="text-xl font-bold text-white">Editor Controls</h2>
@@ -86,7 +113,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 <div>
                     <NumberInput 
                         value={Number(crop.x.toFixed(2))} 
-                        onChange={e => setCrop({...crop, x: parseFloat(e.target.value) || 0})}
+                        onChange={e => handleCropChange('x', e.target.value)}
                         min={0} max={100}
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">X</p>
@@ -94,7 +121,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 <div>
                     <NumberInput 
                         value={Number(crop.y.toFixed(2))} 
-                        onChange={e => setCrop({...crop, y: parseFloat(e.target.value) || 0})}
+                        onChange={e => handleCropChange('y', e.target.value)}
                         min={0} max={100}
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">Y</p>
@@ -102,16 +129,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 <div>
                     <NumberInput 
                         value={Number(crop.width.toFixed(2))} 
-                        onChange={e => setCrop({...crop, width: parseFloat(e.target.value) || 0})}
-                        min={0} max={100}
+                        onChange={e => handleCropChange('width', e.target.value)}
+                        min={1} max={100}
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">Width (%)</p>
                 </div>
                 <div>
                     <NumberInput 
                         value={Number(crop.height.toFixed(2))} 
-                        onChange={e => setCrop({...crop, height: parseFloat(e.target.value) || 0})}
-                        min={0} max={100}
+                        onChange={e => handleCropChange('height', e.target.value)}
+                        min={1} max={100}
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">Height (%)</p>
                 </div>
