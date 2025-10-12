@@ -69,48 +69,57 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     const dxPercent = (dx / rect.width) * 100;
     const dyPercent = (dy / rect.height) * 100;
 
-    let newCrop = { ...startCrop };
-
     if (type === 'move') {
+      let newCrop = { ...startCrop };
       newCrop.x = startCrop.x + dxPercent;
       newCrop.y = startCrop.y + dyPercent;
+
+      // Clamp position so the crop box stays within the 100x100 bounds
+      newCrop.x = Math.max(0, Math.min(newCrop.x, 100 - newCrop.width));
+      newCrop.y = Math.max(0, Math.min(newCrop.y, 100 - newCrop.height));
+      setCrop(newCrop);
+
     } else if (type === 'resize' && handle) {
-      if (handle.includes('n')) {
-        const heightChange = startCrop.height - dyPercent;
-        if (heightChange > 1) { // Min height 1%
-          newCrop.y = startCrop.y + dyPercent;
-          newCrop.height = heightChange;
-        }
-      }
-      if (handle.includes('s')) {
-        const heightChange = startCrop.height + dyPercent;
-        if (heightChange > 1) newCrop.height = heightChange;
-      }
-      if (handle.includes('w')) {
-        const widthChange = startCrop.width - dxPercent;
-        if (widthChange > 1) { // Min width 1%
-          newCrop.x = startCrop.x + dxPercent;
-          newCrop.width = widthChange;
-        }
-      }
-      if (handle.includes('e')) {
-        const widthChange = startCrop.width + dxPercent;
-        if (widthChange > 1) newCrop.width = widthChange;
-      }
-    }
+        const newCrop = { ...startCrop };
+        const startRight = startCrop.x + startCrop.width;
+        const startBottom = startCrop.y + startCrop.height;
 
-    // Clamp values to stay within image bounds [0, 100]
-    newCrop.x = Math.max(0, newCrop.x);
-    newCrop.y = Math.max(0, newCrop.y);
-    
-    if (newCrop.x + newCrop.width > 100) {
-        newCrop.width = 100 - newCrop.x;
-    }
-     if (newCrop.y + newCrop.height > 100) {
-        newCrop.height = 100 - newCrop.y;
-    }
+        if (handle.includes('n')) {
+            let newY = startCrop.y + dyPercent;
+            // Clamp so we don't go past the top, or make the crop area less than 1% high
+            newY = Math.max(0, Math.min(newY, startBottom - 1));
+            // Recalculate height based on the new Y, keeping the bottom edge fixed
+            newCrop.height = startBottom - newY;
+            newCrop.y = newY;
+        }
 
-    setCrop(newCrop);
+        if (handle.includes('s')) {
+            let newBottom = startBottom + dyPercent;
+            // Clamp so we don't go past the bottom, or make the crop area less than 1% high
+            newBottom = Math.min(100, Math.max(newBottom, newCrop.y + 1));
+            // Recalculate height based on new bottom
+            newCrop.height = newBottom - newCrop.y;
+        }
+
+        if (handle.includes('w')) {
+            let newX = startCrop.x + dxPercent;
+            // Clamp so we don't go past the left, or make the crop area less than 1% wide
+            newX = Math.max(0, Math.min(newX, startRight - 1));
+            // Recalculate width based on the new X, keeping the right edge fixed
+            newCrop.width = startRight - newX;
+            newCrop.x = newX;
+        }
+
+        if (handle.includes('e')) {
+            let newRight = startRight + dxPercent;
+            // Clamp so we don't go past the right, or make the crop area less than 1% wide
+            newRight = Math.min(100, Math.max(newRight, newCrop.x + 1));
+            // Recalculate width based on new right
+            newCrop.width = newRight - newCrop.x;
+        }
+        
+        setCrop(newCrop);
+    }
   }, [setCrop, getTransformedCoordinates]);
 
   const handleMouseUp = useCallback(() => {
