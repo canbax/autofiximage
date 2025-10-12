@@ -32,6 +32,54 @@ const App: React.FC = () => {
     };
     reader.readAsDataURL(originalFile);
   }, [originalFile]);
+
+  // Keyboard controls for cropper
+  useEffect(() => {
+    if (!image) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+
+        setCrop(currentCrop => {
+          const step = e.shiftKey ? 10 : 1; // Larger step with Shift key
+          let newX = currentCrop.x;
+          let newY = currentCrop.y;
+    
+          switch (e.key) {
+            case 'ArrowUp':
+              newY -= step;
+              break;
+            case 'ArrowDown':
+              newY += step;
+              break;
+            case 'ArrowLeft':
+              newX -= step;
+              break;
+            case 'ArrowRight':
+              newX += step;
+              break;
+          }
+    
+          // Clamp position to stay within boundaries
+          const clampedX = Math.max(0, Math.min(newX, 100 - currentCrop.width));
+          const clampedY = Math.max(0, Math.min(newY, 100 - currentCrop.height));
+          
+          return {
+            ...currentCrop,
+            x: clampedX,
+            y: clampedY,
+          };
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [image, setCrop]);
   
   const handleImageUpload = (file: File) => {
     setOriginalFile(file);
