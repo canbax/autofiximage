@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const UploadIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
@@ -8,17 +7,15 @@ export const UploadIcon: React.FC<{ className?: string }> = ({ className = "w-6 
 );
 
 export const RotateIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l16 16" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 4h5v5" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21.65 8.35A9 9 0 0012 3a9 9 0 00-9 9 9 9 0 009 9 9 9 0 007.65-4.35" />
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M16.56,5.44L15.11,6.89C16.84,8.62 18,10.75 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13C6,11.54 6.58,10.23 7.5,9.2L6.08,7.78C4.71,9.15 4,10.96 4,13A8,8 0 0,0 12,21A8,8 0 0,0 20,13C20,10.04 18.67,7.44 16.56,5.44M18.5,4L22.5,8L18.5,12L17.5,11L20,8.5L14,8.5L14,7.5L20,7.5L17.5,5L18.5,4Z" />
     </svg>
 );
 
 
 export const CropIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M7,17V1H5V5H1V7H5V19H19V21H21V19H23V17H7M17,15H19V7C19,5.89 18.1,5 17,5H9V7H17V15Z" />
     </svg>
 );
 
