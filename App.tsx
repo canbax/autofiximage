@@ -96,22 +96,23 @@ const App: React.FC = () => {
 
       const w = image.naturalWidth;
       const h = image.naturalHeight;
-      const rad = Math.abs(rotation * Math.PI / 180);
+      const rad = rotation * Math.PI / 180;
       const sin = Math.sin(rad);
       const cos = Math.cos(rad);
       
-      const boundingWidth = Math.ceil(w * cos + h * sin);
-      const boundingHeight = Math.ceil(w * sin + h * cos);
+      // Calculate the bounding box of the rotated image
+      const boundingWidth = Math.ceil(Math.abs(w * cos) + Math.abs(h * sin));
+      const boundingHeight = Math.ceil(Math.abs(w * sin) + Math.abs(h * cos));
 
       tempCanvas.width = boundingWidth;
       tempCanvas.height = boundingHeight;
 
       // Draw the rotated image onto the center of the temporary canvas
       tempCtx.translate(boundingWidth / 2, boundingHeight / 2);
-      tempCtx.rotate(rotation * Math.PI / 180);
+      tempCtx.rotate(rad);
       tempCtx.drawImage(image, -w / 2, -h / 2);
 
-      // The top-left of the original image corresponds to this point on the temp canvas
+      // The top-left of the original UNROTATED image space corresponds to this point on the temp canvas
       const originalImageTopLeftX = (boundingWidth - w) / 2;
       const originalImageTopLeftY = (boundingHeight - h) / 2;
       

@@ -26,7 +26,8 @@ const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: Rea
     </div>
 );
 
-const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; step?: number; min?: number; max?: number }> = ({ value, onChange, ...props }) => (
+// Fix: Allow step, min, and max to be strings or numbers to match usage with both number and string values.
+const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; step?: number | string; min?: number | string; max?: number | string }> = ({ value, onChange, ...props }) => (
     <input
         type="number"
         value={value}
@@ -63,8 +64,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <div className="flex items-center gap-2">
                 <input
                     type="range"
-                    min="-45"
-                    max="45"
+                    min="-180"
+                    max="180"
                     step="0.1"
                     value={rotation}
                     onChange={(e) => setRotation(parseFloat(e.target.value))}
@@ -74,8 +75,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     value={Number(rotation.toFixed(1))}
                     onChange={(e) => setRotation(parseFloat(e.target.value))}
                     step="0.1"
-                    min="-45"
-                    max="45"
+                    min="-180"
+                    max="180"
                 />
             </div>
         </InputGroup>
