@@ -81,34 +81,40 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
         </InputGroup>
 
-        <InputGroup label="Crop (%)" icon={<CropIcon />}>
+        <InputGroup label="Crop" icon={<CropIcon />}>
             <div className="grid grid-cols-2 gap-4">
-                <NumberInput 
-                    value={Number(crop.x.toFixed(2))} 
-                    onChange={e => setCrop({...crop, x: parseFloat(e.target.value) || 0})}
-                    min={0} max={100}
-                />
-                <NumberInput 
-                    value={Number(crop.y.toFixed(2))} 
-                    onChange={e => setCrop({...crop, y: parseFloat(e.target.value) || 0})}
-                    min={0} max={100}
-                />
-                <NumberInput 
-                    value={Number(crop.width.toFixed(2))} 
-                    onChange={e => setCrop({...crop, width: parseFloat(e.target.value) || 0})}
-                    min={0} max={100}
-                />
-                <NumberInput 
-                    value={Number(crop.height.toFixed(2))} 
-                    onChange={e => setCrop({...crop, height: parseFloat(e.target.value) || 0})}
-                    min={0} max={100}
-                />
-            </div>
-            <div className="grid grid-cols-4 gap-4 text-xs text-center text-gray-500 mt-1">
-                <span>X</span>
-                <span>Y</span>
-                <span>W</span>
-                <span>H</span>
+                <div>
+                    <NumberInput 
+                        value={Number(crop.x.toFixed(2))} 
+                        onChange={e => setCrop({...crop, x: parseFloat(e.target.value) || 0})}
+                        min={0} max={100}
+                    />
+                    <p className="text-xs text-center text-gray-500 mt-1">X</p>
+                </div>
+                <div>
+                    <NumberInput 
+                        value={Number(crop.y.toFixed(2))} 
+                        onChange={e => setCrop({...crop, y: parseFloat(e.target.value) || 0})}
+                        min={0} max={100}
+                    />
+                    <p className="text-xs text-center text-gray-500 mt-1">Y</p>
+                </div>
+                <div>
+                    <NumberInput 
+                        value={Number(crop.width.toFixed(2))} 
+                        onChange={e => setCrop({...crop, width: parseFloat(e.target.value) || 0})}
+                        min={0} max={100}
+                    />
+                    <p className="text-xs text-center text-gray-500 mt-1">Width (%)</p>
+                </div>
+                <div>
+                    <NumberInput 
+                        value={Number(crop.height.toFixed(2))} 
+                        onChange={e => setCrop({...crop, height: parseFloat(e.target.value) || 0})}
+                        min={0} max={100}
+                    />
+                    <p className="text-xs text-center text-gray-500 mt-1">Height (%)</p>
+                </div>
             </div>
         </InputGroup>
 
