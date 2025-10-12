@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CropParams } from '../types';
 import { Button } from './Button';
@@ -13,6 +12,8 @@ interface ControlPanelProps {
   onReset: () => void;
   onDownload: () => void;
   isLoading: boolean;
+  keepCropperVertical: boolean;
+  setKeepCropperVertical: (value: boolean) => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -45,6 +46,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onReset,
   onDownload,
   isLoading,
+  keepCropperVertical,
+  setKeepCropperVertical,
 }) => {
   return (
     <div className="w-full h-full bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg shadow-lg flex flex-col space-y-6 overflow-y-auto">
@@ -107,6 +110,19 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 <span>H</span>
             </div>
         </InputGroup>
+
+        <div>
+          <label className="flex items-center space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={keepCropperVertical}
+              onChange={(e) => setKeepCropperVertical(e.target.checked)}
+              className="appearance-none w-5 h-5 bg-gray-700 border-2 border-gray-600 rounded-md checked:bg-indigo-600 checked:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition"
+            />
+            <span className="text-sm font-medium text-gray-300 select-none">Keep cropper area vertical</span>
+          </label>
+        </div>
+
       </div>
 
       <div className="mt-auto pt-6 border-t border-gray-700 flex flex-col gap-3">

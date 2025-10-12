@@ -15,6 +15,8 @@ const App: React.FC = () => {
   const [crop, setCrop] = useState<CropParams>(DEFAULT_CROP);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
+
 
   useEffect(() => {
     if (!originalFile) return;
@@ -86,34 +88,67 @@ const App: React.FC = () => {
     const cropWidth = (crop.width / 100) * image.naturalWidth;
     const cropHeight = (crop.height / 100) * image.naturalHeight;
 
-    // Set canvas size to match the cropped image
-    canvas.width = cropWidth;
-    canvas.height = cropHeight;
+    if (keepCropperVertical) {
+      // Create a temporary canvas large enough to hold the rotated image
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      if (!tempCtx) return;
 
-    // Save the untransformed context state
-    ctx.save();
-    
-    // Translate and rotate around the center of the canvas
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    ctx.translate(centerX, centerY);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-centerX, -centerY);
-    
-    // Draw the cropped portion of the source image onto the canvas
-    ctx.drawImage(
-      image,
-      cropX,
-      cropY,
-      cropWidth,
-      cropHeight,
-      0, 0,
-      canvas.width,
-      canvas.height
-    );
+      const w = image.naturalWidth;
+      const h = image.naturalHeight;
+      const rad = Math.abs(rotation * Math.PI / 180);
+      const sin = Math.sin(rad);
+      const cos = Math.cos(rad);
+      
+      const boundingWidth = Math.ceil(w * cos + h * sin);
+      const boundingHeight = Math.ceil(w * sin + h * cos);
 
-    // Restore the context to its original state
-    ctx.restore();
+      tempCanvas.width = boundingWidth;
+      tempCanvas.height = boundingHeight;
+
+      // Draw the rotated image onto the center of the temporary canvas
+      tempCtx.translate(boundingWidth / 2, boundingHeight / 2);
+      tempCtx.rotate(rotation * Math.PI / 180);
+      tempCtx.drawImage(image, -w / 2, -h / 2);
+
+      // The top-left of the original image corresponds to this point on the temp canvas
+      const originalImageTopLeftX = (boundingWidth - w) / 2;
+      const originalImageTopLeftY = (boundingHeight - h) / 2;
+      
+      // Calculate where the crop selection starts on the temp canvas
+      const cropSourceX = originalImageTopLeftX + cropX;
+      const cropSourceY = originalImageTopLeftY + cropY;
+
+      // Set final canvas size and copy the cropped area from the temp canvas
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+      ctx.drawImage(tempCanvas, cropSourceX, cropSourceY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+    } else {
+      // Original logic for when cropper rotates with image
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+
+      ctx.save();
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      ctx.translate(centerX, centerY);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.translate(-centerX, -centerY);
+      
+      ctx.drawImage(
+        image,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0, 0,
+        canvas.width,
+        canvas.height
+      );
+      ctx.restore();
+    }
+
 
     const link = document.createElement('a');
     link.download = `edited-${originalFile.name || 'image.png'}`;
@@ -141,7 +176,13 @@ const App: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh]">
             <div className="lg:col-span-2 h-full">
-              <ImageEditor image={image} rotation={rotation} crop={crop} setCrop={setCrop} />
+              <ImageEditor 
+                image={image} 
+                rotation={rotation} 
+                crop={crop} 
+                setCrop={setCrop} 
+                keepCropperVertical={keepCropperVertical}
+              />
             </div>
             <div className="lg:col-span-1 h-full">
               <ControlPanel
@@ -153,6 +194,8 @@ const App: React.FC = () => {
                 onReset={handleReset}
                 onDownload={handleDownload}
                 isLoading={isLoading}
+                keepCropperVertical={keepCropperVertical}
+                setKeepCropperVertical={setKeepCropperVertical}
               />
             </div>
           </div>
