@@ -84,23 +84,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         <InputGroup label="Crop (%)" icon={<CropIcon />}>
             <div className="grid grid-cols-2 gap-4">
                 <NumberInput 
-                    value={crop.x} 
-                    onChange={e => setCrop({...crop, x: parseFloat(e.target.value)})}
+                    value={Number(crop.x.toFixed(2))} 
+                    onChange={e => setCrop({...crop, x: parseFloat(e.target.value) || 0})}
                     min={0} max={100}
                 />
                 <NumberInput 
-                    value={crop.y} 
-                    onChange={e => setCrop({...crop, y: parseFloat(e.target.value)})}
+                    value={Number(crop.y.toFixed(2))} 
+                    onChange={e => setCrop({...crop, y: parseFloat(e.target.value) || 0})}
                     min={0} max={100}
                 />
                 <NumberInput 
-                    value={crop.width} 
-                    onChange={e => setCrop({...crop, width: parseFloat(e.target.value)})}
+                    value={Number(crop.width.toFixed(2))} 
+                    onChange={e => setCrop({...crop, width: parseFloat(e.target.value) || 0})}
                     min={0} max={100}
                 />
                 <NumberInput 
-                    value={crop.height} 
-                    onChange={e => setCrop({...crop, height: parseFloat(e.target.value)})}
+                    value={Number(crop.height.toFixed(2))} 
+                    onChange={e => setCrop({...crop, height: parseFloat(e.target.value) || 0})}
                     min={0} max={100}
                 />
             </div>
