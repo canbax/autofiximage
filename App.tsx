@@ -86,6 +86,14 @@ const App: React.FC = () => {
     setImage(null);
     setError(null);
   };
+  
+  const handleClearImage = () => {
+    setOriginalFile(null);
+    setImage(null);
+    setError(null);
+    setRotation(DEFAULT_ROTATION);
+    setCrop(DEFAULT_CROP);
+  };
 
   const handleReset = useCallback(() => {
     setRotation(DEFAULT_ROTATION);
@@ -239,6 +247,7 @@ const App: React.FC = () => {
                 onAutoCorrect={handleAutoCorrect}
                 onReset={handleReset}
                 onDownload={handleDownload}
+                onClearImage={handleClearImage}
                 isLoading={isLoading}
                 keepCropperVertical={keepCropperVertical}
                 setKeepCropperVertical={setKeepCropperVertical}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { CropParams } from '../types';
 import { Button } from './Button';
-import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon } from './icons';
+import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon } from './icons';
 
 interface ControlPanelProps {
   rotation: number;
@@ -11,6 +11,7 @@ interface ControlPanelProps {
   onAutoCorrect: () => void;
   onReset: () => void;
   onDownload: () => void;
+  onClearImage: () => void;
   isLoading: boolean;
   keepCropperVertical: boolean;
   setKeepCropperVertical: (value: boolean) => void;
@@ -46,6 +47,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onAutoCorrect,
   onReset,
   onDownload,
+  onClearImage,
   isLoading,
   keepCropperVertical,
   setKeepCropperVertical,
@@ -167,6 +169,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <Button onClick={onReset} variant="danger">
               <ResetIcon />
               Reset Changes
+          </Button>
+          <Button onClick={onClearImage} variant="secondary">
+              <TrashIcon />
+              Clear Image
           </Button>
       </div>
     </div>
