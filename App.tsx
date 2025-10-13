@@ -4,6 +4,7 @@ import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams } from './types';
 import { getAutoCorrection } from './services/geminiService';
+import Navbar from './components/Navbar';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
@@ -215,53 +216,56 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4">
-      <header className="w-full max-w-7xl mx-auto text-center mb-6">
-        <p className="text-2xl text-gray-300">
-          Upload an image to manually edit or let AI perfect its rotation and crop.
-        </p>
-      </header>
-      
-      <main className="w-full max-w-7xl flex-grow">
-        {!image ? (
-          <div className="flex items-center justify-center h-full">
-            <ImageUploader onImageUpload={handleImageUpload} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh]">
-            <div className="lg:col-span-2 h-full">
-              <ImageEditor 
-                image={image} 
-                rotation={rotation} 
-                crop={crop} 
-                setCrop={setCrop} 
-                keepCropperVertical={keepCropperVertical}
-              />
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 pt-24">
+        <header className="w-full max-w-7xl mx-auto text-center mb-6">
+          <p className="text-2xl text-gray-300">
+            Upload an image to manually edit or let AI perfect its rotation and crop.
+          </p>
+        </header>
+        
+        <main className="w-full max-w-7xl flex-grow">
+          {!image ? (
+            <div className="flex items-center justify-center h-full">
+              <ImageUploader onImageUpload={handleImageUpload} />
             </div>
-            <div className="lg:col-span-1 h-full">
-              <ControlPanel
-                rotation={rotation}
-                setRotation={setRotation}
-                crop={crop}
-                setCrop={setCrop}
-                onAutoCorrect={handleAutoCorrect}
-                onReset={handleReset}
-                onDownload={handleDownload}
-                onClearImage={handleClearImage}
-                isLoading={isLoading}
-                keepCropperVertical={keepCropperVertical}
-                setKeepCropperVertical={setKeepCropperVertical}
-              />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh]">
+              <div className="lg:col-span-2 h-full">
+                <ImageEditor 
+                  image={image} 
+                  rotation={rotation} 
+                  crop={crop} 
+                  setCrop={setCrop} 
+                  keepCropperVertical={keepCropperVertical}
+                />
+              </div>
+              <div className="lg:col-span-1 h-full">
+                <ControlPanel
+                  rotation={rotation}
+                  setRotation={setRotation}
+                  crop={crop}
+                  setCrop={setCrop}
+                  onAutoCorrect={handleAutoCorrect}
+                  onReset={handleReset}
+                  onDownload={handleDownload}
+                  onClearImage={handleClearImage}
+                  isLoading={isLoading}
+                  keepCropperVertical={keepCropperVertical}
+                  setKeepCropperVertical={setKeepCropperVertical}
+                />
+              </div>
             </div>
-          </div>
-        )}
-        {error && (
-            <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
-                <strong>Error:</strong> {error}
-            </div>
-        )}
-      </main>
-    </div>
+          )}
+          {error && (
+              <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
+                  <strong>Error:</strong> {error}
+              </div>
+          )}
+        </main>
+      </div>
+    </>
   );
 };
 
