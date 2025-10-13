@@ -209,10 +209,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4">
       <header className="w-full max-w-7xl mx-auto text-center mb-6">
-        <h1 className="text-4xl font-extrabold text-white tracking-tight">
-          AI Image Auto-Corrector
-        </h1>
-        <p className="mt-2 text-lg text-gray-400">
+        <p className="text-2xl text-gray-300">
           Upload an image to manually edit or let AI perfect its rotation and crop.
         </p>
       </header>

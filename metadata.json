@@ -1,5 +1,5 @@
 {
-  "name": "AI Image Auto-Corrector",
+  "name": "PixelPerfect AI",
   "description": "An intelligent image editor that allows manual rotation and cropping, plus an AI-powered feature to automatically straighten and center the main subject in your photos for a perfect composition.",
   "requestFramePermissions": []
 }
