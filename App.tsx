@@ -6,9 +6,16 @@ import { getAutoCorrection } from './services/geminiService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
 import LandingPage from './components/LandingPage';
+import AdBanner from './components/AdBanner';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
+
+// TODO: Replace with your own AdSense Client and Slot IDs
+const AD_CLIENT = 'ca-pub-XXXXXXXXXXXXXXXX';
+const AD_SLOT_SIDE = '1234567890';
+const AD_SLOT_BOTTOM = '1234567891';
+
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -220,50 +227,87 @@ const App: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div
-        className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 pt-24"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
-          backgroundSize: '2rem 2rem',
-        }}
-      >
-        <main className="w-full max-w-7xl flex-grow flex flex-col justify-center">
-          {!image ? (
-            <LandingPage onImageUpload={handleImageUpload} />
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh] w-full">
-              <div className="lg:col-span-2 h-full">
-                <ImageEditor 
-                  image={image} 
-                  rotation={rotation} 
-                  crop={crop} 
-                  setCrop={setCrop} 
-                  keepCropperVertical={keepCropperVertical}
-                />
-              </div>
-              <div className="lg:col-span-1 h-full">
-                <ControlPanel
-                  rotation={rotation}
-                  setRotation={setRotation}
-                  crop={crop}
-                  setCrop={setCrop}
-                  onAutoCorrect={handleAutoCorrect}
-                  onReset={handleReset}
-                  onDownload={handleDownload}
-                  onClearImage={handleClearImage}
-                  isLoading={isLoading}
-                  keepCropperVertical={keepCropperVertical}
-                  setKeepCropperVertical={setKeepCropperVertical}
-                />
-              </div>
-            </div>
-          )}
-          {error && image && (
-              <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
-                  <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
-              </div>
-          )}
-        </main>
+      <div className="min-h-screen bg-gray-900 text-gray-100 pt-16">
+        <div className="flex justify-center w-full px-4">
+          
+          <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 mr-6 items-center justify-center">
+            <AdBanner
+              className="w-full h-full"
+              data-ad-client={AD_CLIENT}
+              data-ad-slot={AD_SLOT_SIDE}
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            />
+          </aside>
+
+          <div
+            className="flex-grow w-full max-w-7xl"
+            style={{
+              backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
+              backgroundSize: '2rem 2rem',
+            }}
+          >
+            <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">
+              {!image ? (
+                <LandingPage onImageUpload={handleImageUpload} />
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
+                  <div className="lg:col-span-2 h-full">
+                    <ImageEditor 
+                      image={image} 
+                      rotation={rotation} 
+                      crop={crop} 
+                      setCrop={setCrop} 
+                      keepCropperVertical={keepCropperVertical}
+                    />
+                  </div>
+                  <div className="lg:col-span-1 h-full">
+                    <ControlPanel
+                      rotation={rotation}
+                      setRotation={setRotation}
+                      crop={crop}
+                      setCrop={setCrop}
+                      onAutoCorrect={handleAutoCorrect}
+                      onReset={handleReset}
+                      onDownload={handleDownload}
+                      onClearImage={handleClearImage}
+                      isLoading={isLoading}
+                      keepCropperVertical={keepCropperVertical}
+                      setKeepCropperVertical={setKeepCropperVertical}
+                    />
+                  </div>
+                </div>
+              )}
+              {error && image && (
+                  <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
+                      <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
+                  </div>
+              )}
+            </main>
+          </div>
+          
+          <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 ml-6 items-center justify-center">
+            <AdBanner
+              className="w-full h-full"
+              data-ad-client={AD_CLIENT}
+              data-ad-slot={AD_SLOT_SIDE}
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            />
+          </aside>
+        </div>
+        
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-gray-800/80 backdrop-blur-sm z-20 flex items-center justify-center border-t border-gray-700">
+           <AdBanner
+              className="w-full"
+              data-ad-client={AD_CLIENT}
+              data-ad-slot={AD_SLOT_BOTTOM}
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            />
+        </div>
+
+        <div className="lg:hidden h-16"></div> 
       </div>
     </>
   );
