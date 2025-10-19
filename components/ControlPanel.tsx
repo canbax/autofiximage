@@ -2,6 +2,7 @@ import React from 'react';
 import { CropParams } from '../types';
 import { Button } from './Button';
 import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon } from './icons';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface ControlPanelProps {
   rotation: number;
@@ -52,6 +53,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   keepCropperVertical,
   setKeepCropperVertical,
 }) => {
+  const { t } = useTranslation();
 
   const handleCropChange = (field: keyof CropParams, value: string) => {
     const numericValue = parseFloat(value) || 0;
@@ -81,15 +83,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className="w-full h-full bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg shadow-lg flex flex-col space-y-6 overflow-y-auto">
-      <h2 className="text-xl font-bold text-white">Editor Controls</h2>
+      <h2 className="text-xl font-bold text-white">{t('controls.title')}</h2>
       
       <div className="flex flex-col gap-6">
         <Button onClick={onAutoCorrect} isLoading={isLoading} variant="primary">
             <WandIcon />
-            Auto-Correct with AI
+            {t('controls.autoCorrect')}
         </Button>
 
-        <InputGroup label="Rotation (°)" icon={<RotateIcon />}>
+        <InputGroup label={t('controls.rotation')} icon={<RotateIcon />}>
             <div className="flex items-center gap-2">
                 <input
                     type="range"
@@ -110,7 +112,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
         </InputGroup>
 
-        <InputGroup label="Crop" icon={<CropIcon />}>
+        <InputGroup label={t('controls.crop')} icon={<CropIcon />}>
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <NumberInput 
@@ -118,7 +120,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         onChange={e => handleCropChange('x', e.target.value)}
                         min={0} max={100}
                     />
-                    <p className="text-xs text-center text-gray-500 mt-1">X</p>
+                    <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropX')}</p>
                 </div>
                 <div>
                     <NumberInput 
@@ -126,7 +128,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         onChange={e => handleCropChange('y', e.target.value)}
                         min={0} max={100}
                     />
-                    <p className="text-xs text-center text-gray-500 mt-1">Y</p>
+                    <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropY')}</p>
                 </div>
                 <div>
                     <NumberInput 
@@ -134,7 +136,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         onChange={e => handleCropChange('width', e.target.value)}
                         min={1} max={100}
                     />
-                    <p className="text-xs text-center text-gray-500 mt-1">Width (%)</p>
+                    <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropWidth')}</p>
                 </div>
                 <div>
                     <NumberInput 
@@ -142,7 +144,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         onChange={e => handleCropChange('height', e.target.value)}
                         min={1} max={100}
                     />
-                    <p className="text-xs text-center text-gray-500 mt-1">Height (%)</p>
+                    <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropHeight')}</p>
                 </div>
             </div>
         </InputGroup>
@@ -155,7 +157,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               onChange={(e) => setKeepCropperVertical(e.target.checked)}
               className="appearance-none w-5 h-5 bg-gray-700 border-2 border-gray-600 rounded-md checked:bg-indigo-600 checked:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition"
             />
-            <span className="text-sm font-medium text-gray-300 select-none">Keep cropper area vertical</span>
+            <span className="text-sm font-medium text-gray-300 select-none">{t('controls.keepVertical')}</span>
           </label>
         </div>
 
@@ -164,15 +166,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className="mt-auto pt-6 border-t border-gray-700 flex flex-col gap-3">
           <Button onClick={onDownload} variant="secondary">
               <DownloadIcon />
-              Download Image
+              {t('controls.download')}
           </Button>
           <Button onClick={onReset} variant="danger">
               <ResetIcon />
-              Reset Changes
+              {t('controls.reset')}
           </Button>
           <Button onClick={onClearImage} variant="secondary">
               <TrashIcon />
-              Clear Image
+              {t('controls.clear')}
           </Button>
       </div>
     </div>

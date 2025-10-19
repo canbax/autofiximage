@@ -5,11 +5,13 @@ import { ControlPanel } from './components/ControlPanel';
 import { CropParams } from './types';
 import { getAutoCorrection } from './services/geminiService';
 import Navbar from './components/Navbar';
+import { useTranslation } from './hooks/useTranslation';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
 
 const App: React.FC = () => {
+  const { t } = useTranslation();
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [rotation, setRotation] = useState<number>(DEFAULT_ROTATION);
@@ -128,14 +130,14 @@ const App: React.FC = () => {
   
   const handleDownload = () => {
     if (!image || !originalFile) {
-      alert("No image to download.");
+      alert(t('alert.noImage'));
       return;
     }
     
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      alert("Could not create canvas context for download.");
+      alert(t('alert.noContext'));
       return;
     }
 
@@ -221,7 +223,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 pt-24">
         <header className="w-full max-w-7xl mx-auto text-center mb-6">
           <p className="text-2xl text-gray-300">
-            Upload an image to manually edit or let AI perfect its rotation and crop.
+            {t('app.header')}
           </p>
         </header>
         
@@ -260,7 +262,7 @@ const App: React.FC = () => {
           )}
           {error && (
               <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
-                  <strong>Error:</strong> {error}
+                  <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
               </div>
           )}
         </main>

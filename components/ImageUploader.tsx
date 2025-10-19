@@ -1,6 +1,6 @@
-
 import React, { useCallback, useState } from 'react';
 import { UploadIcon } from './icons';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface ImageUploaderProps {
   onImageUpload: (file: File) => void;
@@ -8,6 +8,7 @@ interface ImageUploaderProps {
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const { t } = useTranslation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -52,16 +53,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) =
         <div className="text-center">
           <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
           <p className="mt-5 text-lg font-semibold text-gray-300">
-            Drag & drop your image here
+            {t('uploader.dragDrop')}
           </p>
-          <p className="mt-1 text-sm text-gray-500">or</p>
+          <p className="mt-1 text-sm text-gray-500">{t('uploader.or')}</p>
           <label htmlFor="file-upload" className="relative cursor-pointer mt-4 inline-block">
             <span className="px-4 py-2 rounded-md font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-500 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 focus-within:ring-indigo-500 transition-colors">
-              Browse for a file
+              {t('uploader.browse')}
             </span>
             <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*"/>
           </label>
-           <p className="mt-4 text-xs text-gray-500">PNG, JPG, GIF, WEBP</p>
+           <p className="mt-4 text-xs text-gray-500">{t('uploader.formats')}</p>
         </div>
       </div>
     </div>
