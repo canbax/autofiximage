@@ -9,6 +9,9 @@ import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
+import { ApiDocsDialog } from './components/ApiDocsDialog';
+import { fileToBase64 } from './lib/utils';
+import { applyCorrection } from './lib/imageUtils';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
@@ -113,21 +116,12 @@ const App: React.FC = () => {
   }, []);
 
   const handleAutoCorrect = async () => {
-    if (!image) return;
+    if (!image || !originalFile) return;
     setIsLoading(true);
     setError(null);
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = image.naturalWidth;
-      canvas.height = image.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error("Could not get canvas context");
-      ctx.drawImage(image, 0, 0);
-
-      const dataUrl = canvas.toDataURL(originalFile?.type || 'image/jpeg');
-      const base64Data = dataUrl.split(',')[1];
-      
-      const result = await getAutoCorrection(base64Data, originalFile?.type || 'image/jpeg');
+      const base64Data = await fileToBase64(originalFile);
+      const result = await getAutoCorrection(base64Data, originalFile.type);
       setRotation(result.rotation);
       setCrop(result.crop);
     } catch (e) {
@@ -137,92 +131,60 @@ const App: React.FC = () => {
     }
   };
   
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!image || !originalFile) {
       alert(t('alert.noImage'));
       return;
     }
-    
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      alert(t('alert.noContext'));
-      return;
+
+    try {
+        let correctedImageBlob: Blob;
+
+        if (keepCropperVertical) {
+             correctedImageBlob = await applyCorrection(image, rotation, crop, originalFile.type);
+        } else {
+             // Fallback to simpler logic if the user chose the other mode.
+             // Note: applyCorrection contains the more accurate logic.
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error(t('alert.noContext'));
+
+            const cropWidth = (crop.width / 100) * image.naturalWidth;
+            const cropHeight = (crop.height / 100) * image.naturalHeight;
+            canvas.width = cropWidth;
+            canvas.height = cropHeight;
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((rotation * Math.PI) / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+            
+            ctx.drawImage(
+                image,
+                (crop.x / 100) * image.naturalWidth,
+                (crop.y / 100) * image.naturalHeight,
+                cropWidth,
+                cropHeight,
+                0, 0,
+                canvas.width,
+                canvas.height
+            );
+            ctx.restore();
+            
+            correctedImageBlob = await new Promise((resolve, reject) => {
+                canvas.toBlob(blob => blob ? resolve(blob) : reject(), originalFile.type);
+            });
+        }
+        
+        const link = document.createElement('a');
+        link.download = `edited-${originalFile.name || 'image.png'}`;
+        link.href = URL.createObjectURL(correctedImageBlob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+
+    } catch (error) {
+        alert(error instanceof Error ? error.message : t('alert.noContext'));
     }
-
-    // Calculate crop dimensions in pixels
-    const cropX = (crop.x / 100) * image.naturalWidth;
-    const cropY = (crop.y / 100) * image.naturalHeight;
-    const cropWidth = (crop.width / 100) * image.naturalWidth;
-    const cropHeight = (crop.height / 100) * image.naturalHeight;
-
-    if (keepCropperVertical) {
-      // Create a temporary canvas large enough to hold the rotated image
-      const tempCanvas = document.createElement('canvas');
-      const tempCtx = tempCanvas.getContext('2d');
-      if (!tempCtx) return;
-
-      const w = image.naturalWidth;
-      const h = image.naturalHeight;
-      const rad = rotation * Math.PI / 180;
-      const sin = Math.sin(rad);
-      const cos = Math.cos(rad);
-      
-      // Calculate the bounding box of the rotated image
-      const boundingWidth = Math.ceil(Math.abs(w * cos) + Math.abs(h * sin));
-      const boundingHeight = Math.ceil(Math.abs(w * sin) + Math.abs(h * cos));
-
-      tempCanvas.width = boundingWidth;
-      tempCanvas.height = boundingHeight;
-
-      // Draw the rotated image onto the center of the temporary canvas
-      tempCtx.translate(boundingWidth / 2, boundingHeight / 2);
-      tempCtx.rotate(rad);
-      tempCtx.drawImage(image, -w / 2, -h / 2);
-
-      // The top-left of the original UNROTATED image space corresponds to this point on the temp canvas
-      const originalImageTopLeftX = (boundingWidth - w) / 2;
-      const originalImageTopLeftY = (boundingHeight - h) / 2;
-      
-      // Calculate where the crop selection starts on the temp canvas
-      const cropSourceX = originalImageTopLeftX + cropX;
-      const cropSourceY = originalImageTopLeftY + cropY;
-
-      // Set final canvas size and copy the cropped area from the temp canvas
-      canvas.width = cropWidth;
-      canvas.height = cropHeight;
-      ctx.drawImage(tempCanvas, cropSourceX, cropSourceY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-    } else {
-      // Original logic for when cropper rotates with image
-      canvas.width = cropWidth;
-      canvas.height = cropHeight;
-
-      ctx.save();
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      ctx.translate(centerX, centerY);
-      ctx.rotate((rotation * Math.PI) / 180);
-      ctx.translate(-centerX, -centerY);
-      
-      ctx.drawImage(
-        image,
-        cropX,
-        cropY,
-        cropWidth,
-        cropHeight,
-        0, 0,
-        canvas.width,
-        canvas.height
-      );
-      ctx.restore();
-    }
-
-
-    const link = document.createElement('a');
-    link.download = `edited-${originalFile.name || 'image.png'}`;
-    link.href = canvas.toDataURL(originalFile.type || 'image/png');
-    link.click();
   };
 
 
@@ -231,6 +193,7 @@ const App: React.FC = () => {
       <Navbar />
       <LoginDialog />
       <PricingDialog />
+      <ApiDocsDialog />
       <div className="min-h-screen bg-gray-900 text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
           

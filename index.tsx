@@ -4,6 +4,7 @@ import App from './App';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { PricingProvider } from './context/PricingContext';
+import { ApiDocsProvider } from './context/ApiDocsContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,7 +17,9 @@ root.render(
     <AuthProvider>
       <LanguageProvider>
         <PricingProvider>
-          <App />
+          <ApiDocsProvider>
+            <App />
+          </ApiDocsProvider>
         </PricingProvider>
       </LanguageProvider>
     </AuthProvider>
