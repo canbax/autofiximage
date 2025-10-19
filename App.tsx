@@ -8,6 +8,7 @@ import { useTranslation } from './hooks/useTranslation';
 import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
+import { PricingDialog } from './components/PricingDialog';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
@@ -229,6 +230,7 @@ const App: React.FC = () => {
     <>
       <Navbar />
       <LoginDialog />
+      <PricingDialog />
       <div className="min-h-screen bg-gray-900 text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
           

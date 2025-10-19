@@ -5,6 +5,7 @@ const LOGIN_LINK_DURATION = 3 * 60; // 3 minutes in seconds
 
 interface User {
   email: string;
+  plan: 'free' | 'pro';
 }
 
 interface AuthContextType {
@@ -18,6 +19,7 @@ interface AuthContextType {
   sendLoginLink: (email: string) => void;
   confirmLogin: (token: string) => void;
   logout: () => void;
+  updateUserPlan: (plan: 'free' | 'pro') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,11 +38,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [countdown, setCountdown] = useState(LOGIN_LINK_DURATION);
   const [loginEmail, setLoginEmail] = useState('');
 
-  // FIX: Use `number` for timer IDs in the browser environment, not `NodeJS.Timeout`.
   const timers = useRef<{ expiry?: number, poll?: number, countdown?: number }>({});
 
   const cleanupTimers = useCallback(() => {
-    // FIX: Use `clearTimeout` for timeouts and `clearInterval` for intervals for correctness and clarity.
     if (timers.current.expiry) clearTimeout(timers.current.expiry);
     if (timers.current.poll) clearTimeout(timers.current.poll);
     if (timers.current.countdown) clearInterval(timers.current.countdown);
@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (sessionData) {
         const session = JSON.parse(sessionData);
         if (session.expiry > Date.now()) {
-          setUser({ email: session.email });
+          setUser({ email: session.email, plan: session.plan || 'free' });
         } else {
           localStorage.removeItem('session');
         }
@@ -70,12 +70,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       localStorage.removeItem('session');
     }
   }, []);
+
+  const persistSession = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('session', JSON.stringify({ ...userData, expiry: Date.now() + SESSION_DURATION }));
+  };
+
+  const updateUserPlan = (plan: 'free' | 'pro') => {
+    if (user) {
+      const updatedUser = { ...user, plan };
+      persistSession(updatedUser);
+    }
+  };
   
   const pollForConfirmation = useCallback(() => {
       if (loginAttempt.isConfirmed) {
           const email = loginAttempt.email;
-          setUser({ email });
-          localStorage.setItem('session', JSON.stringify({ email, expiry: Date.now() + SESSION_DURATION }));
+          // New users default to the 'free' plan
+          persistSession({ email, plan: 'free' });
           
           // Reset
           cleanupTimers();
@@ -84,7 +96,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           loginAttempt.token = '';
           loginAttempt.email = '';
       } else {
-         timers.current.poll = setTimeout(pollForConfirmation, 2000);
+         timers.current.poll = window.setTimeout(pollForConfirmation, 2000);
       }
   }, [cleanupTimers]);
 
@@ -103,17 +115,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoginState('waiting');
       
       // Start countdown timer
-      const countdownInterval = setInterval(() => {
+      timers.current.countdown = window.setInterval(() => {
         setCountdown(prev => prev > 0 ? prev - 1 : 0);
       }, 1000);
-      // FIX: Remove incorrect type assertion to NodeJS.Timeout.
-      timers.current.countdown = countdownInterval;
       
       // Start polling for confirmation
-      timers.current.poll = setTimeout(pollForConfirmation, 2000);
+      timers.current.poll = window.setTimeout(pollForConfirmation, 2000);
       
       // Set link expiry timer
-      timers.current.expiry = setTimeout(() => {
+      timers.current.expiry = window.setTimeout(() => {
         setLoginState('error');
         setLoginError('loginDialog.error.expired');
         cleanupTimers();
@@ -136,7 +146,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoginError(null);
   };
 
-  const value = { user, loginState, loginError, countdown, loginEmail, openLoginDialog, closeLoginDialog, sendLoginLink, confirmLogin, logout };
+  const value = { user, loginState, loginError, countdown, loginEmail, openLoginDialog, closeLoginDialog, sendLoginLink, confirmLogin, logout, updateUserPlan };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -149,4 +159,4 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-export const getLoginToken = () => loginAttempt.token;}
+export const getLoginToken = () => loginAttempt.token;

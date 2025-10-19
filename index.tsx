@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import { PricingProvider } from './context/PricingContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,7 +15,9 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <LanguageProvider>
-        <App />
+        <PricingProvider>
+          <App />
+        </PricingProvider>
       </LanguageProvider>
     </AuthProvider>
   </React.StrictMode>
