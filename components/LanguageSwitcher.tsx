@@ -11,6 +11,17 @@ export const LanguageSwitcher: React.FC = () => {
   const languageNames: { [key: string]: string } = {
     en: 'English',
     es: 'Español',
+    fr: 'Français',
+    de: 'Deutsch',
+    it: 'Italiano',
+    pt: 'Português',
+    ru: 'Русский',
+    ja: '日本語',
+    zh: '中文 (简体)',
+    hi: 'हिन्दी',
+    bn: 'বাংলা',
+    id: 'Bahasa Indonesia',
+    tr: 'Türkçe',
   };
 
   useEffect(() => {
@@ -38,8 +49,8 @@ export const LanguageSwitcher: React.FC = () => {
 
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
-          <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            {LANGUAGES.map((lang) => (
+          <div className="py-1 max-h-60 overflow-y-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+            {LANGUAGES.sort((a, b) => languageNames[a].localeCompare(languageNames[b])).map((lang) => (
               <a
                 key={lang}
                 href="#"
