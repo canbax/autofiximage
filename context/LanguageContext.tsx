@@ -7,6 +7,8 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
+const RTL_LANGUAGES: Language[] = ['ar'];
+
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -21,6 +23,15 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   useEffect(() => {
     localStorage.setItem('language', language);
+
+    // Set document direction and language for RTL support
+    if (RTL_LANGUAGES.includes(language)) {
+      document.documentElement.dir = 'rtl';
+    } else {
+      document.documentElement.dir = 'ltr';
+    }
+    document.documentElement.lang = language;
+
   }, [language]);
 
   const setLanguage = (lang: Language) => {
@@ -30,7 +41,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || translations[DEFAULT_LANGUAGE][key] || key;
+    return translations[language]?.[key] || translations[DEFAULT_LANGUAGE][key] || key;
   };
 
   return (

@@ -22,6 +22,7 @@ export const LanguageSwitcher: React.FC = () => {
     bn: 'বাংলা',
     id: 'Bahasa Indonesia',
     tr: 'Türkçe',
+    ar: 'العربية',
   };
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export const LanguageSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
+        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-20 rtl:origin-top-left rtl:left-0 rtl:right-auto">
           <div className="py-1 max-h-60 overflow-y-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             {LANGUAGES.sort((a, b) => languageNames[a].localeCompare(languageNames[b])).map((lang) => (
               <a

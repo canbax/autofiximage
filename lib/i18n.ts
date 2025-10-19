@@ -83,7 +83,7 @@ export const translations = {
     'controls.cropX': 'X',
     'controls.cropY': 'Y',
     'controls.cropWidth': 'Genişlik (%)',
-    'controls.cropHeight': 'Yükseklik (%)',
+    'controls.cropHeight': 'Yüksekli (%)',
     'controls.keepVertical': 'Kırpma alanını dikey tut',
     'controls.download': 'Resmi İndir',
     'controls.reset': 'Değişiklikleri Sıfırla',
@@ -343,8 +343,33 @@ export const translations = {
     'alert.noImage': 'ডাউনলোড করার জন্য কোন ছবি নেই।',
     'alert.noContext': 'ডাউনলোডের জন্য ক্যানভাস কনটেক্সট তৈরি করা যায়নি।',
   },
+  ar: {
+    'navbar.pricing': 'أسعار',
+    'navbar.login': 'تسجيل الدخول',
+    'app.header': 'قم بتحميل صورة لتعديلها يدويًا أو دع الذكاء الاصطناعي يضبط دورانها واقتصاصها.',
+    'uploader.dragDrop': 'اسحب وأفلت صورتك هنا',
+    'uploader.or': 'أو',
+    'uploader.browse': 'تصفح ملف',
+    'uploader.formats': 'PNG, JPG, GIF, WEBP',
+    'controls.title': 'عناصر تحكم المحرر',
+    'controls.autoCorrect': 'تصحيح تلقائي بالذكاء الاصطناعي',
+    'controls.rotation': 'الدوران (°)',
+    'controls.crop': 'اقتصاص',
+    'controls.cropX': 'س',
+    'controls.cropY': 'ص',
+    'controls.cropWidth': 'العرض (٪)',
+    'controls.cropHeight': 'الارتفاع (٪)',
+    'controls.keepVertical': 'حافظ على منطقة الاقتصاص عمودية',
+    'controls.download': 'تحميل الصورة',
+    'controls.reset': 'إعادة تعيين التغييرات',
+    'controls.clear': 'مسح الصورة',
+    'error.title': 'خطأ:',
+    'error.ai': 'فشل في الحصول على التصحيح التلقائي من الذكاء الاصطناعي. الرجاء المحاولة مرة أخرى.',
+    'alert.noImage': 'لا يوجد صورة للتنزيل.',
+    'alert.noContext': 'تعذر إنشاء سياق الكانفاس للتنزيل.',
+  },
 };
 
 export type Language = keyof typeof translations;
-export const LANGUAGES: Language[] = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'zh', 'hi', 'bn', 'id', 'tr'];
+export const LANGUAGES: Language[] = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'zh', 'hi', 'bn', 'id', 'tr', 'ar'];
 export const DEFAULT_LANGUAGE: Language = 'en';
