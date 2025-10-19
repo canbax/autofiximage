@@ -33,6 +33,10 @@ export const translations = {
     'alert.noImage': 'No image to download.',
     'alert.noContext': 'Could not create canvas context for download.',
 
+    // Language Switcher
+    'languageSwitcher.search': 'Search language...',
+    'languageSwitcher.noResults': 'No results found',
+
   },
   es: {
     // Navbar
@@ -67,6 +71,10 @@ export const translations = {
     'error.ai': 'No se pudo obtener la autocorrección de la IA. Por favor, inténtalo de nuevo.',
     'alert.noImage': 'No hay imagen para descargar.',
     'alert.noContext': 'No se pudo crear el contexto del lienzo para la descarga.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Buscar idioma...',
+    'languageSwitcher.noResults': 'No se encontraron resultados',
   },
   tr: {
     'navbar.pricing': 'Fiyatlandırma',
@@ -92,6 +100,10 @@ export const translations = {
     'error.ai': 'Yapay zekadan otomatik düzeltme alınamadı. Lütfen tekrar deneyin.',
     'alert.noImage': 'İndirilecek resim yok.',
     'alert.noContext': 'İndirme için tuval bağlamı oluşturulamadı.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Dil ara...',
+    'languageSwitcher.noResults': 'Sonuç bulunamadı',
   },
   pt: {
     'navbar.pricing': 'Preços',
@@ -117,6 +129,10 @@ export const translations = {
     'error.ai': 'Falha ao obter a autocorreção da IA. Por favor, tente novamente.',
     'alert.noImage': 'Nenhuma imagem para baixar.',
     'alert.noContext': 'Não foi possível criar o contexto da tela para o download.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Pesquisar idioma...',
+    'languageSwitcher.noResults': 'Nenhum resultado encontrado',
   },
   fr: {
     'navbar.pricing': 'Tarifs',
@@ -142,6 +158,10 @@ export const translations = {
     'error.ai': "Échec de la correction automatique de l'IA. Veuillez réessayer.",
     'alert.noImage': 'Aucune image à télécharger.',
     'alert.noContext': 'Impossible de créer le contexte du canevas pour le téléchargement.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Rechercher une langue...',
+    'languageSwitcher.noResults': 'Aucun résultat trouvé',
   },
   de: {
     'navbar.pricing': 'Preise',
@@ -167,6 +187,10 @@ export const translations = {
     'error.ai': 'Fehler bei der Autokorrektur durch die KI. Bitte versuchen Sie es erneut.',
     'alert.noImage': 'Kein Bild zum Herunterladen.',
     'alert.noContext': 'Canvas-Kontext für den Download konnte nicht erstellt werden.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Sprache suchen...',
+    'languageSwitcher.noResults': 'Keine Ergebnisse gefunden',
   },
   it: {
     'navbar.pricing': 'Prezzi',
@@ -192,6 +216,10 @@ export const translations = {
     'error.ai': "Impossibile ottenere la correzione automatica dall'IA. Riprova.",
     'alert.noImage': 'Nessuna immagine da scaricare.',
     'alert.noContext': 'Impossibile creare il contesto del canvas per il download.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Cerca lingua...',
+    'languageSwitcher.noResults': 'Nessun risultato trovato',
   },
   zh: {
     'navbar.pricing': '价钱',
@@ -217,6 +245,10 @@ export const translations = {
     'error.ai': '无法从 AI 获取自动校正。请重试。',
     'alert.noImage': '没有可供下载的图像。',
     'alert.noContext': '无法为下载创建画布上下文。',
+
+    // Language Switcher
+    'languageSwitcher.search': '搜索语言...',
+    'languageSwitcher.noResults': '未找到结果',
   },
   hi: {
     'navbar.pricing': 'कीमत',
@@ -242,6 +274,10 @@ export const translations = {
     'error.ai': 'AI से स्वतः-सुधार प्राप्त करने में विफल। कृपया पुन: प्रयास करें।',
     'alert.noImage': 'डाउनलोड करने के लिए कोई छवि नहीं है।',
     'alert.noContext': 'डाउनलोड के लिए कैनवास संदर्भ नहीं बना सका।',
+
+    // Language Switcher
+    'languageSwitcher.search': 'भाषा खोजें...',
+    'languageSwitcher.noResults': 'कोई परिणाम नहीं मिला',
   },
   ja: {
     'navbar.pricing': '価格',
@@ -267,6 +303,10 @@ export const translations = {
     'error.ai': 'AIから自動修正を取得できませんでした。もう一度お試しください。',
     'alert.noImage': 'ダウンロードする画像がありません。',
     'alert.noContext': 'ダウンロード用のキャンバスコンテキストを作成できませんでした。',
+
+    // Language Switcher
+    'languageSwitcher.search': '言語を検索...',
+    'languageSwitcher.noResults': '結果が見つかりません',
   },
   ru: {
     'navbar.pricing': 'Цены',
@@ -292,6 +332,10 @@ export const translations = {
     'error.ai': 'Не удалось получить автокоррекцию от ИИ. Пожалуйста, попробуйте еще раз.',
     'alert.noImage': 'Нет изображения для скачивания.',
     'alert.noContext': 'Не удалось создать контекст холста для скачивания.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Поиск языка...',
+    'languageSwitcher.noResults': 'результатов не найдено',
   },
   id: {
     'navbar.pricing': 'Harga',
@@ -317,6 +361,10 @@ export const translations = {
     'error.ai': 'Gagal mendapatkan koreksi otomatis dari AI. Silakan coba lagi.',
     'alert.noImage': 'Tidak ada gambar untuk diunduh.',
     'alert.noContext': 'Tidak dapat membuat konteks kanvas untuk pengunduhan.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'Cari bahasa...',
+    'languageSwitcher.noResults': 'Tidak ada hasil yang ditemukan',
   },
   bn: {
     'navbar.pricing': 'মূল্য',
@@ -342,6 +390,10 @@ export const translations = {
     'error.ai': 'AI থেকে স্বয়ংক্রিয়-সংশোধন পেতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
     'alert.noImage': 'ডাউনলোড করার জন্য কোন ছবি নেই।',
     'alert.noContext': 'ডাউনলোডের জন্য ক্যানভাস কনটেক্সট তৈরি করা যায়নি।',
+
+    // Language Switcher
+    'languageSwitcher.search': 'ভাষা অনুসন্ধান করুন...',
+    'languageSwitcher.noResults': 'কোন ফলাফল পাওয়া যায়নি',
   },
   ar: {
     'navbar.pricing': 'أسعار',
@@ -367,6 +419,10 @@ export const translations = {
     'error.ai': 'فشل في الحصول على التصحيح التلقائي من الذكاء الاصطناعي. الرجاء المحاولة مرة أخرى.',
     'alert.noImage': 'لا يوجد صورة للتنزيل.',
     'alert.noContext': 'تعذر إنشاء سياق الكانفاس للتنزيل.',
+
+    // Language Switcher
+    'languageSwitcher.search': 'ابحث عن لغة...',
+    'languageSwitcher.noResults': 'لم يتم العثور على نتائج',
   },
 };
 

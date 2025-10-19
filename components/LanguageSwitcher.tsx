@@ -4,9 +4,11 @@ import { LANGUAGES } from '../lib/i18n';
 import { GlobeIcon } from './icons';
 
 export const LanguageSwitcher: React.FC = () => {
-  const { language, setLanguage } = useTranslation();
+  const { language, setLanguage, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const languageNames: { [key: string]: string } = {
     en: 'English',
@@ -35,6 +37,19 @@ export const LanguageSwitcher: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      // Reset search term and focus input when dropdown opens
+      setSearchTerm('');
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
+
+  const filteredLanguages = LANGUAGES.filter(lang =>
+    languageNames[lang].toLowerCase().includes(searchTerm.toLowerCase()) ||
+    lang.toLowerCase().includes(searchTerm.toLowerCase())
+  ).sort((a, b) => languageNames[a].localeCompare(languageNames[b]));
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -49,23 +64,37 @@ export const LanguageSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-20 rtl:origin-top-left rtl:left-0 rtl:right-auto">
-          <div className="py-1 max-h-60 overflow-y-auto" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            {LANGUAGES.sort((a, b) => languageNames[a].localeCompare(languageNames[b])).map((lang) => (
-              <a
-                key={lang}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setLanguage(lang);
-                  setIsOpen(false);
-                }}
-                className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
-                role="menuitem"
-              >
-                {languageNames[lang]}
-              </a>
-            ))}
+        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-20 rtl:origin-top-left rtl:left-0 rtl:right-auto flex flex-col">
+          <div className="p-2 border-b border-gray-700">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder={t('languageSwitcher.search')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-md text-sm text-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          <div className="py-1 max-h-60 overflow-y-auto" role="menu" aria-orientation="vertical">
+            {filteredLanguages.length > 0 ? (
+              filteredLanguages.map((lang) => (
+                <a
+                  key={lang}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setLanguage(lang);
+                    setIsOpen(false);
+                  }}
+                  className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
+                  role="menuitem"
+                >
+                  {languageNames[lang]}
+                </a>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-gray-500 text-center">{t('languageSwitcher.noResults')}</div>
+            )}
           </div>
         </div>
       )}
