@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import { LANGUAGES } from '../lib/i18n';
@@ -25,6 +26,23 @@ export const LanguageSwitcher: React.FC = () => {
     id: 'Bahasa Indonesia',
     tr: 'Türkçe',
     ar: 'العربية',
+  };
+
+  const languageFlags: { [key: string]: string } = {
+    en: '🇬🇧',
+    es: '🇪🇸',
+    fr: '🇫🇷',
+    de: '🇩🇪',
+    it: '🇮🇹',
+    pt: '🇵🇹',
+    ru: '🇷🇺',
+    ja: '🇯🇵',
+    zh: '🇨🇳',
+    hi: '🇮🇳',
+    bn: '🇧🇩',
+    id: '🇮🇩',
+    tr: '🇹🇷',
+    ar: '🇸🇦',
   };
 
   useEffect(() => {
@@ -89,7 +107,10 @@ export const LanguageSwitcher: React.FC = () => {
                   className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-700'}`}
                   role="menuitem"
                 >
-                  {languageNames[lang]}
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg" aria-hidden="true">{languageFlags[lang]}</span>
+                    <span>{languageNames[lang]}</span>
+                  </div>
                 </a>
               ))
             ) : (
