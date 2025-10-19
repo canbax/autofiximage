@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ImageUploader } from './components/ImageUploader';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams } from './types';
 import { getAutoCorrection } from './services/geminiService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
+import LandingPage from './components/LandingPage';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
@@ -220,20 +220,18 @@ const App: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 pt-24">
-        <header className="w-full max-w-7xl mx-auto text-center mb-6">
-          <p className="text-2xl text-gray-300">
-            {t('app.header')}
-          </p>
-        </header>
-        
-        <main className="w-full max-w-7xl flex-grow">
+      <div
+        className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4 pt-24"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
+          backgroundSize: '2rem 2rem',
+        }}
+      >
+        <main className="w-full max-w-7xl flex-grow flex flex-col justify-center">
           {!image ? (
-            <div className="flex items-center justify-center h-full">
-              <ImageUploader onImageUpload={handleImageUpload} />
-            </div>
+            <LandingPage onImageUpload={handleImageUpload} />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[70vh] w-full">
               <div className="lg:col-span-2 h-full">
                 <ImageEditor 
                   image={image} 
@@ -260,7 +258,7 @@ const App: React.FC = () => {
               </div>
             </div>
           )}
-          {error && (
+          {error && image && (
               <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
                   <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
               </div>

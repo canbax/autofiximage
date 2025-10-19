@@ -1,5 +1,9 @@
 export const translations = {
   en: {
+    // Landing Page
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Intelligently Straighten, Crop, and Perfect Your Photos in Seconds.',
+    
     // Navbar
     'navbar.pricing': 'Pricing',
     'navbar.login': 'Login',
@@ -39,20 +43,15 @@ export const translations = {
 
   },
   es: {
-    // Navbar
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Endereza, recorta y perfecciona tus fotos de forma inteligente en segundos.',
     'navbar.pricing': 'Precios',
     'navbar.login': 'Iniciar sesión',
-
-    // App Header
     'app.header': 'Sube una imagen para editarla manualmente o deja que la IA perfeccione su rotación y recorte.',
-    
-    // Image Uploader
     'uploader.dragDrop': 'Arrastra y suelta tu imagen aquí',
     'uploader.or': 'o',
     'uploader.browse': 'Busca un archivo',
     'uploader.formats': 'PNG, JPG, GIF, WEBP',
-
-    // Control Panel
     'controls.title': 'Controles del Editor',
     'controls.autoCorrect': 'Autocorrección con IA',
     'controls.rotation': 'Rotación (°)',
@@ -65,18 +64,16 @@ export const translations = {
     'controls.download': 'Descargar Imagen',
     'controls.reset': 'Restablecer Cambios',
     'controls.clear': 'Quitar Imagen',
-    
-    // Errors & Alerts
     'error.title': 'Error:',
     'error.ai': 'No se pudo obtener la autocorrección de la IA. Por favor, inténtalo de nuevo.',
     'alert.noImage': 'No hay imagen para descargar.',
     'alert.noContext': 'No se pudo crear el contexto del lienzo para la descarga.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Buscar idioma...',
     'languageSwitcher.noResults': 'No se encontraron resultados',
   },
   tr: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Fotoğraflarınızı Saniyeler İçinde Akıllıca Düzeltin, Kırpın ve Mükemmelleştirin.',
     'navbar.pricing': 'Fiyatlandırma',
     'navbar.login': 'Giriş Yap',
     'app.header': 'Manuel olarak düzenlemek için bir resim yükleyin veya yapay zekanın dönüşünü ve kırpmasını mükemmelleştirmesine izin verin.',
@@ -100,15 +97,15 @@ export const translations = {
     'error.ai': 'Yapay zekadan otomatik düzeltme alınamadı. Lütfen tekrar deneyin.',
     'alert.noImage': 'İndirilecek resim yok.',
     'alert.noContext': 'İndirme için tuval bağlamı oluşturulamadı.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Dil ara...',
     'languageSwitcher.noResults': 'Sonuç bulunamadı',
   },
   pt: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Endireite, corte e aperfeiçoe suas fotos de forma inteligente em segundos.',
     'navbar.pricing': 'Preços',
     'navbar.login': 'Entrar',
-    'app.header': 'Carregue uma imagem para editar manualmente ou deixe a IA aperfeiçoar sua rotação e corte.',
+    'app.header': 'Carregue uma imagem para editar manually ou deixe a IA aperfeiçoar sua rotação e corte.',
     'uploader.dragDrop': 'Arraste e solte sua imagem aqui',
     'uploader.or': 'ou',
     'uploader.browse': 'Procurar um arquivo',
@@ -129,12 +126,12 @@ export const translations = {
     'error.ai': 'Falha ao obter a autocorreção da IA. Por favor, tente novamente.',
     'alert.noImage': 'Nenhuma imagem para baixar.',
     'alert.noContext': 'Não foi possível criar o contexto da tela para o download.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Pesquisar idioma...',
     'languageSwitcher.noResults': 'Nenhum resultado encontrado',
   },
   fr: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Redressez, recadrez et perfectionnez intelligemment vos photos en quelques secondes.',
     'navbar.pricing': 'Tarifs',
     'navbar.login': 'Connexion',
     'app.header': "Téléchargez une image pour la modifier manuellement ou laissez l'IA perfectionner sa rotation et son recadrage.",
@@ -158,12 +155,12 @@ export const translations = {
     'error.ai': "Échec de la correction automatique de l'IA. Veuillez réessayer.",
     'alert.noImage': 'Aucune image à télécharger.',
     'alert.noContext': 'Impossible de créer le contexte du canevas pour le téléchargement.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Rechercher une langue...',
     'languageSwitcher.noResults': 'Aucun résultat trouvé',
   },
   de: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Richten Sie Ihre Fotos in Sekundenschnelle intelligent aus, schneiden Sie sie zu und perfektionieren Sie sie.',
     'navbar.pricing': 'Preise',
     'navbar.login': 'Anmelden',
     'app.header': 'Laden Sie ein Bild hoch, um es manuell zu bearbeiten, oder lassen Sie die KI die Drehung und den Zuschnitt perfektionieren.',
@@ -187,12 +184,12 @@ export const translations = {
     'error.ai': 'Fehler bei der Autokorrektur durch die KI. Bitte versuchen Sie es erneut.',
     'alert.noImage': 'Kein Bild zum Herunterladen.',
     'alert.noContext': 'Canvas-Kontext für den Download konnte nicht erstellt werden.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Sprache suchen...',
     'languageSwitcher.noResults': 'Keine Ergebnisse gefunden',
   },
   it: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Raddrizza, ritaglia e perfeziona intelligentemente le tue foto in pochi secondi.',
     'navbar.pricing': 'Prezzi',
     'navbar.login': 'Accedi',
     'app.header': "Carica un'immagine per modificarla manualmente o lascia che l'IA perfezioni la rotazione e il ritaglio.",
@@ -216,12 +213,12 @@ export const translations = {
     'error.ai': "Impossibile ottenere la correzione automatica dall'IA. Riprova.",
     'alert.noImage': 'Nessuna immagine da scaricare.',
     'alert.noContext': 'Impossibile creare il contesto del canvas per il download.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Cerca lingua...',
     'languageSwitcher.noResults': 'Nessun risultato trovato',
   },
   zh: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': '在几秒钟内智能地拉直、裁剪和完善您的照片。',
     'navbar.pricing': '价钱',
     'navbar.login': '登录',
     'app.header': '上传图像以手动编辑，或让 AI 完善其旋转和裁剪。',
@@ -245,12 +242,12 @@ export const translations = {
     'error.ai': '无法从 AI 获取自动校正。请重试。',
     'alert.noImage': '没有可供下载的图像。',
     'alert.noContext': '无法为下载创建画布上下文。',
-
-    // Language Switcher
     'languageSwitcher.search': '搜索语言...',
     'languageSwitcher.noResults': '未找到结果',
   },
   hi: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'सेकंडों में अपनी तस्वीरों को समझदारी से सीधा करें, काटें और परफेक्ट करें।',
     'navbar.pricing': 'कीमत',
     'navbar.login': 'लॉग इन करें',
     'app.header': 'मैन्युअल रूप से संपादित करने के लिए एक छवि अपलोड करें या AI को इसके रोटेशन और क्रॉप को सही करने दें।',
@@ -274,12 +271,12 @@ export const translations = {
     'error.ai': 'AI से स्वतः-सुधार प्राप्त करने में विफल। कृपया पुन: प्रयास करें।',
     'alert.noImage': 'डाउनलोड करने के लिए कोई छवि नहीं है।',
     'alert.noContext': 'डाउनलोड के लिए कैनवास संदर्भ नहीं बना सका।',
-
-    // Language Switcher
     'languageSwitcher.search': 'भाषा खोजें...',
     'languageSwitcher.noResults': 'कोई परिणाम नहीं मिला',
   },
   ja: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': '数秒で写真をインテリジェントにまっすぐにし、トリミングし、完璧にします。',
     'navbar.pricing': '価格',
     'navbar.login': 'ログイン',
     'app.header': '画像をアップロードして手動で編集するか、AIに回転と切り抜きを完璧にさせます。',
@@ -303,12 +300,12 @@ export const translations = {
     'error.ai': 'AIから自動修正を取得できませんでした。もう一度お試しください。',
     'alert.noImage': 'ダウンロードする画像がありません。',
     'alert.noContext': 'ダウンロード用のキャンバスコンテキストを作成できませんでした。',
-
-    // Language Switcher
     'languageSwitcher.search': '言語を検索...',
     'languageSwitcher.noResults': '結果が見つかりません',
   },
   ru: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Интеллектуально выравнивайте, обрезайте и совершенствуйте ваши фотографии за секунды.',
     'navbar.pricing': 'Цены',
     'navbar.login': 'Войти',
     'app.header': 'Загрузите изображение для ручного редактирования или позвольте ИИ усовершенствовать его поворот и обрезку.',
@@ -332,12 +329,12 @@ export const translations = {
     'error.ai': 'Не удалось получить автокоррекцию от ИИ. Пожалуйста, попробуйте еще раз.',
     'alert.noImage': 'Нет изображения для скачивания.',
     'alert.noContext': 'Не удалось создать контекст холста для скачивания.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Поиск языка...',
     'languageSwitcher.noResults': 'результатов не найдено',
   },
   id: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'Luruskan, potong, dan sempurnakan foto Anda secara cerdas dalam hitungan detik.',
     'navbar.pricing': 'Harga',
     'navbar.login': 'Masuk',
     'app.header': 'Unggah gambar untuk diedit secara manual atau biarkan AI menyempurnakan rotasi dan pemotongannya.',
@@ -361,12 +358,12 @@ export const translations = {
     'error.ai': 'Gagal mendapatkan koreksi otomatis dari AI. Silakan coba lagi.',
     'alert.noImage': 'Tidak ada gambar untuk diunduh.',
     'alert.noContext': 'Tidak dapat membuat konteks kanvas untuk pengunduhan.',
-
-    // Language Switcher
     'languageSwitcher.search': 'Cari bahasa...',
     'languageSwitcher.noResults': 'Tidak ada hasil yang ditemukan',
   },
   bn: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'সেকেন্ডের মধ্যে আপনার ফটোগুলিকে বুদ্ধিমত্তার সাথে सीधा করুন, ক্রপ করুন এবং নিখুঁত করুন।',
     'navbar.pricing': 'মূল্য',
     'navbar.login': 'লগইন',
     'app.header': 'ম্যানুয়ালি সম্পাদনা করার জন্য একটি ছবি আপলোড করুন অথবা AI কে এর ঘূর্ণন এবং ক্রপ নিখুঁত করতে দিন।',
@@ -390,12 +387,12 @@ export const translations = {
     'error.ai': 'AI থেকে স্বয়ংক্রিয়-সংশোধন পেতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
     'alert.noImage': 'ডাউনলোড করার জন্য কোন ছবি নেই।',
     'alert.noContext': 'ডাউনলোডের জন্য ক্যানভাস কনটেক্সট তৈরি করা যায়নি।',
-
-    // Language Switcher
     'languageSwitcher.search': 'ভাষা অনুসন্ধান করুন...',
     'languageSwitcher.noResults': 'কোন ফলাফল পাওয়া যায়নি',
   },
   ar: {
+    'landing.title': 'PixelPerfect AI',
+    'landing.subtitle': 'قم بتصويب صورك واقتصاصها وإتقانها بذكاء في ثوانٍ.',
     'navbar.pricing': 'أسعار',
     'navbar.login': 'تسجيل الدخول',
     'app.header': 'قم بتحميل صورة لتعديلها يدويًا أو دع الذكاء الاصطناعي يضبط دورانها واقتصاصها.',
@@ -419,8 +416,6 @@ export const translations = {
     'error.ai': 'فشل في الحصول على التصحيح التلقائي من الذكاء الاصطناعي. الرجاء المحاولة مرة أخرى.',
     'alert.noImage': 'لا يوجد صورة للتنزيل.',
     'alert.noContext': 'تعذر إنشاء سياق الكانفاس للتنزيل.',
-
-    // Language Switcher
     'languageSwitcher.search': 'ابحث عن لغة...',
     'languageSwitcher.noResults': 'لم يتم العثور على نتائج',
   },
