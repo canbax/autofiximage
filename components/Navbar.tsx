@@ -54,6 +54,8 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
     setIsMenuOpen(false);
   };
 
+  const modeKey = mode.replace(/-(\w)/g, (_, c) => c.toUpperCase());
+
   return (
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-10 border-b border-gray-200/50 dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
             <Logo className="h-8 w-8" />
             <span className="font-bold text-xl text-gray-900 dark:text-white">PixelPerfect AI</span>
             {image && (
-              <span className="hidden sm:block text-lg text-gray-500 dark:text-gray-400">/ {t(`app.mode.${mode}`)}</span>
+              <span className="hidden sm:block text-lg text-gray-500 dark:text-gray-400">/ {t(`app.mode.${modeKey}`)}</span>
             )}
           </a>
           <div className="flex items-center space-x-2">
