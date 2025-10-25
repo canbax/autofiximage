@@ -28,6 +28,10 @@ interface ControlPanelProps {
   setResizeHeight: (value: number) => void;
   lockAspectRatio: boolean;
   setLockAspectRatio: (value: boolean) => void;
+  resizeContain: boolean;
+  setResizeContain: (value: boolean) => void;
+  resizeBgColor: string;
+  setResizeBgColor: (value: string) => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -74,6 +78,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   setResizeHeight,
   lockAspectRatio,
   setLockAspectRatio,
+  resizeContain,
+  setResizeContain,
+  resizeBgColor,
+  setResizeBgColor
 }) => {
   const { t } = useTranslation();
 
@@ -252,6 +260,38 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       onChange={(e) => setLockAspectRatio(e.target.checked)}
                       label={t('controls.lockAspectRatio')}
                   />
+                  {!lockAspectRatio && (
+                      <div className="flex flex-col gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                          <Checkbox
+                              id="resize-contain"
+                              checked={resizeContain}
+                              onChange={(e) => setResizeContain(e.target.checked)}
+                              label={t('controls.resizeContain')}
+                          />
+                          {resizeContain && (
+                              <InputGroup label={t('controls.resizeBgColor')} icon={<div className="w-5 h-5" />}>
+                                  <div className="flex items-center gap-2">
+                                      <div className="relative w-8 h-8 rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden flex-shrink-0">
+                                          <div className="absolute inset-0 checkerboard" />
+                                          <div 
+                                              className="w-full h-full"
+                                              style={{ backgroundColor: resizeBgColor }}
+                                          />
+                                      </div>
+                                      <input
+                                          type="color"
+                                          value={resizeBgColor === 'transparent' ? '#ffffff' : resizeBgColor}
+                                          onChange={e => setResizeBgColor(e.target.value)}
+                                          className="w-full h-8 p-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer"
+                                      />
+                                      <Button variant="secondary" onClick={() => setResizeBgColor('transparent')} className="text-xs px-2 py-1">
+                                          {t('controls.resizeTransparent')}
+                                      </Button>
+                                  </div>
+                              </InputGroup>
+                          )}
+                      </div>
+                  )}
               </div>
           </>
       )}

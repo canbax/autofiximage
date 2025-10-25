@@ -21,9 +21,12 @@ interface ImageEditorProps {
   mode: 'crop-rotate' | 'resize';
   resizeWidth: number;
   resizeHeight: number;
+  lockAspectRatio: boolean;
+  resizeContain: boolean;
+  resizeBgColor: string;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode, resizeWidth, resizeHeight }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode, resizeWidth, resizeHeight, lockAspectRatio, resizeContain, resizeBgColor }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
   const resizeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,10 +42,27 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
       if (ctx) {
         ctx.imageSmoothingQuality = 'high';
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
+        
+        if (!lockAspectRatio && resizeContain) {
+            // Fill background
+            ctx.fillStyle = resizeBgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw 'contained' image
+            const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+            const newWidth = image.naturalWidth * ratio;
+            const newHeight = image.naturalHeight * ratio;
+            const x = (canvas.width - newWidth) / 2;
+            const y = (canvas.height - newHeight) / 2;
+            ctx.drawImage(image, x, y, newWidth, newHeight);
+
+        } else {
+             // Default behavior: distorted or aspect-locked fill
+             ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
+        }
       }
     }
-  }, [mode, image, resizeWidth, resizeHeight]);
+  }, [mode, image, resizeWidth, resizeHeight, lockAspectRatio, resizeContain, resizeBgColor]);
 
   const getTransformedCoordinates = useCallback((e: MouseEvent | React.MouseEvent): { x: number, y: number } => {
     if (!containerRef.current) return { x: 0, y: 0 };

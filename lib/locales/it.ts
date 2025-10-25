@@ -49,6 +49,9 @@ export const it = {
   'controls.width': 'Larghezza (px)',
   'controls.height': 'Altezza (px)',
   'controls.lockAspectRatio': 'Blocca proporzioni',
+  'controls.resizeContain': 'Contenere (mantenere le proporzioni)',
+  'controls.resizeBgColor': 'Colore di Sfondo',
+  'controls.resizeTransparent': 'Trasparente',
   'error.title': 'Errore:',
   'error.ai': "Impossibile ottenere la correzione automatica dall'IA. Riprova.",
   'alert.noImage': 'Nessuna immagine da scaricare.',
@@ -146,5 +149,5 @@ export const it = {
   'privacy.usage.l6': 'Inviarti e-mail',
   'privacy.usage.l7': 'Trovare e prevenire le frodi',
   'privacy.logs.title': '3. File di registro',
-  'privacy.logs.p1': 'PixelPerfect AI segue una procedura standard di utilizzo dei file di registro. Questi file registrano i visitatori quando visitano i siti Web. Tutte le società di hosting lo fanno e fanno parte dell\'analisi dei servizi di hosting. Le informazioni raccolte dai file di registro includono indirizzi di protocollo Internet (IP), tipo di browser, provider di servizi Internet (ISP), data e ora, pagine di riferimento/uscita e possibilmente il numero di clic. Questi non sono collegati ad alcuna informazione che sia personalmente identificabile. Lo scopo delle informazioni è analizzare le tendenze, amministrare il sito, tracciare i movimenti degli utenti sul sito Web e raccogliere informazioni demografiche.',
+  'privacy.logs.p1': 'PixelPerfect AI segue una procedura standard di utilizzo dei file di registro. Questi file registrano i visitatori quando visitano i siti Web. Tutte le società di hosting lo fanno e fanno parte dell\'analisi dei servizi di hosting. Le informazioni raccolte dai file di registro includono indirizzi di protocollo Internet (IP), tipo di browser, provider di servizi Internet (ISP), data e ora, pagine di riferimento/uscita e possibilmente il numero di clic. Questi non sono collegati ad alcuna informazione che sia personally identificabile. Lo scopo delle informazioni è analizzare le tendenze, amministrare il sito, tracciare i movimenti degli utenti sul sito Web e raccogliere informazioni demografiche.',
 };

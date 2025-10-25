@@ -41,6 +41,8 @@ const App: React.FC = () => {
   const [resizeWidth, setResizeWidth] = useState(0);
   const [resizeHeight, setResizeHeight] = useState(0);
   const [lockAspectRatio, setLockAspectRatio] = useState(true);
+  const [resizeContain, setResizeContain] = useState(true);
+  const [resizeBgColor, setResizeBgColor] = useState('transparent');
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -64,13 +66,32 @@ const App: React.FC = () => {
       });
       setResizeWidth(image.naturalWidth);
       setResizeHeight(image.naturalHeight);
+      
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(image, image.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
+            const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+            const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+            setResizeBgColor(hex);
+        }
+      } catch (e) {
+        setResizeBgColor('transparent');
+      }
+
     } else {
       setCrop(DEFAULT_CROP);
       setResizeWidth(0);
       setResizeHeight(0);
+      setResizeBgColor('transparent');
     }
     setAspectRatioKey('free');
     setMode('crop-rotate');
+    setResizeContain(true);
+    setLockAspectRatio(true);
   }, [image]);
 
 
@@ -93,6 +114,23 @@ const App: React.FC = () => {
         setResizeHeight(img.naturalHeight);
         setAspectRatioKey('free');
         setMode('crop-rotate');
+
+        // Smartly pick a default background color from the top-right corner
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            if (ctx) {
+                ctx.drawImage(img, img.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
+                const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+                const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+                setResizeBgColor(hex);
+            }
+        } catch (e) {
+            console.error("Error picking corner color, defaulting to transparent.", e);
+            setResizeBgColor('transparent');
+        }
       };
       img.src = e.target?.result as string;
     };
@@ -248,7 +286,23 @@ const App: React.FC = () => {
             
             canvas.width = resizeWidth;
             canvas.height = resizeHeight;
-            ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
+
+            if (!lockAspectRatio && resizeContain) {
+                // Fill background
+                ctx.fillStyle = resizeBgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw contained image
+                const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+                const newWidth = image.naturalWidth * ratio;
+                const newHeight = image.naturalHeight * ratio;
+                const x = (canvas.width - newWidth) / 2;
+                const y = (canvas.height - newHeight) / 2;
+                ctx.drawImage(image, x, y, newWidth, newHeight);
+            } else {
+                // Distorted or aspect-locked resize
+                ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
+            }
             
             finalImageBlob = await new Promise((resolve, reject) => {
                 canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
@@ -335,6 +389,9 @@ const App: React.FC = () => {
                     mode={mode}
                     resizeWidth={resizeWidth}
                     resizeHeight={resizeHeight}
+                    lockAspectRatio={lockAspectRatio}
+                    resizeContain={resizeContain}
+                    resizeBgColor={resizeBgColor}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
@@ -360,6 +417,10 @@ const App: React.FC = () => {
                     setResizeHeight={setResizeHeight}
                     lockAspectRatio={lockAspectRatio}
                     setLockAspectRatio={setLockAspectRatio}
+                    resizeContain={resizeContain}
+                    setResizeContain={setResizeContain}
+                    resizeBgColor={resizeBgColor}
+                    setResizeBgColor={setResizeBgColor}
                   />
                 </div>
               </div>
