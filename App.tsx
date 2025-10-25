@@ -24,6 +24,7 @@ const AD_CLIENT = 'ca-pub-9521603226003896';
 const AD_SLOT_SIDE = '1234567890';
 const AD_SLOT_BOTTOM = '1234567891';
 
+type AppMode = 'crop-rotate' | 'resize';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +37,10 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
   const [route, setRoute] = useState(window.location.hash);
-
+  const [mode, setMode] = useState<AppMode>('crop-rotate');
+  const [resizeWidth, setResizeWidth] = useState(0);
+  const [resizeHeight, setResizeHeight] = useState(0);
+  const [lockAspectRatio, setLockAspectRatio] = useState(true);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -58,10 +62,15 @@ const App: React.FC = () => {
         width: image.naturalWidth,
         height: image.naturalHeight,
       });
+      setResizeWidth(image.naturalWidth);
+      setResizeHeight(image.naturalHeight);
     } else {
       setCrop(DEFAULT_CROP);
+      setResizeWidth(0);
+      setResizeHeight(0);
     }
     setAspectRatioKey('free');
+    setMode('crop-rotate');
   }, [image]);
 
 
@@ -80,7 +89,10 @@ const App: React.FC = () => {
           width: img.naturalWidth,
           height: img.naturalHeight,
         });
+        setResizeWidth(img.naturalWidth);
+        setResizeHeight(img.naturalHeight);
         setAspectRatioKey('free');
+        setMode('crop-rotate');
       };
       img.src = e.target?.result as string;
     };
@@ -137,7 +149,7 @@ const App: React.FC = () => {
 
   // Keyboard controls for cropper
   useEffect(() => {
-    if (!image) return;
+    if (!image || mode !== 'crop-rotate') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -181,7 +193,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [image, setCrop]);
+  }, [image, setCrop, mode]);
   
   const handleImageUpload = (file: File) => {
     setOriginalFile(file);
@@ -193,9 +205,7 @@ const App: React.FC = () => {
     setOriginalFile(null);
     setImage(null);
     setError(null);
-    setRotation(DEFAULT_ROTATION);
-    setCrop(DEFAULT_CROP);
-    setAspectRatioKey('free');
+    handleReset();
   };
 
   const handleAutoCorrect = async () => {
@@ -228,49 +238,69 @@ const App: React.FC = () => {
     }
 
     try {
-        let correctedImageBlob: Blob;
-        const cropInPercentage: CropParams = {
-            x: (crop.x / image.naturalWidth) * 100,
-            y: (crop.y / image.naturalHeight) * 100,
-            width: (crop.width / image.naturalWidth) * 100,
-            height: (crop.height / image.naturalHeight) * 100,
-        };
+        let finalImageBlob: Blob;
+        let fileName = originalFile.name || 'image.png';
 
-        if (keepCropperVertical) {
-             correctedImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
-        } else {
+        if (mode === 'resize') {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             if (!ctx) throw new Error(t('alert.noContext'));
-
-            canvas.width = crop.width;
-            canvas.height = crop.height;
-
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate((rotation * Math.PI) / 180);
-            ctx.translate(-canvas.width / 2, -canvas.height / 2);
             
-            ctx.drawImage(
-                image,
-                crop.x,
-                crop.y,
-                crop.width,
-                crop.height,
-                0, 0,
-                canvas.width,
-                canvas.height
-            );
-            ctx.restore();
+            canvas.width = resizeWidth;
+            canvas.height = resizeHeight;
+            ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
             
-            correctedImageBlob = await new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(), originalFile.type);
+            finalImageBlob = await new Promise((resolve, reject) => {
+                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
             });
+            fileName = `resized-${fileName}`;
+
+        } else { // crop-rotate mode
+            if (keepCropperVertical) {
+                const cropInPercentage: CropParams = {
+                    x: (crop.x / image.naturalWidth) * 100,
+                    y: (crop.y / image.naturalHeight) * 100,
+                    width: (crop.width / image.naturalWidth) * 100,
+                    height: (crop.height / image.naturalHeight) * 100,
+                };
+                 finalImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
+            } else {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) throw new Error(t('alert.noContext'));
+
+                canvas.width = crop.width;
+                canvas.height = crop.height;
+
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate((rotation * Math.PI) / 180);
+                ctx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
+                
+                ctx.drawImage(image, 0, 0);
+
+                const finalCanvas = document.createElement('canvas');
+                const finalCtx = finalCanvas.getContext('2d');
+                if (!finalCtx) throw new Error(t('alert.noContext'));
+                
+                finalCanvas.width = crop.width;
+                finalCanvas.height = crop.height;
+
+                finalCtx.drawImage(
+                    canvas,
+                    crop.x, crop.y, crop.width, crop.height,
+                    0, 0, crop.width, crop.height
+                );
+
+                finalImageBlob = await new Promise((resolve, reject) => {
+                    finalCanvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+                });
+            }
+            fileName = `edited-${fileName}`;
         }
         
         const link = document.createElement('a');
-        link.download = `edited-${originalFile.name || 'image.png'}`;
-        link.href = URL.createObjectURL(correctedImageBlob);
+        link.download = fileName;
+        link.href = URL.createObjectURL(finalImageBlob);
         link.click();
         URL.revokeObjectURL(link.href);
 
@@ -302,6 +332,7 @@ const App: React.FC = () => {
                     setCrop={setCrop}
                     aspectRatio={numericAspectRatio}
                     keepCropperVertical={keepCropperVertical}
+                    mode={mode}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
@@ -320,6 +351,13 @@ const App: React.FC = () => {
                     setKeepCropperVertical={setKeepCropperVertical}
                     aspectRatioKey={aspectRatioKey}
                     setAspectRatioKey={setAspectRatioKey}
+                    mode={mode}
+                    resizeWidth={resizeWidth}
+                    setResizeWidth={setResizeWidth}
+                    resizeHeight={resizeHeight}
+                    setResizeHeight={setResizeHeight}
+                    lockAspectRatio={lockAspectRatio}
+                    setLockAspectRatio={setLockAspectRatio}
                   />
                 </div>
               </div>
@@ -337,7 +375,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar image={image} mode={mode} setMode={setMode} />
       <LoginDialog />
       <PricingDialog />
       <ApiDocsDialog />

@@ -9,7 +9,14 @@ import { useApiDocs } from '../context/ApiDocsContext';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { MenuIcon } from './icons';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  image: HTMLImageElement | null;
+  mode: 'crop-rotate' | 'resize';
+  setMode: (mode: 'crop-rotate' | 'resize') => void;
+}
+
+
+const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
   const { t } = useTranslation();
   const { user, openLoginDialog, logout } = useAuth();
   const { openPricingDialog } = usePricing();
@@ -34,10 +41,16 @@ const Navbar: React.FC = () => {
     openPricingDialog();
     setIsMenuOpen(false);
   };
+  
+  const handleCropRotateClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMode('crop-rotate');
+    setIsMenuOpen(false);
+  };
 
   const handleResizeClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // TODO: Implement resize functionality
+    setMode('resize');
     setIsMenuOpen(false);
   };
 
@@ -48,6 +61,9 @@ const Navbar: React.FC = () => {
           <a href="#" className="flex items-center gap-3">
             <Logo className="h-8 w-8" />
             <span className="font-bold text-xl text-gray-900 dark:text-white">PixelPerfect AI</span>
+            {image && (
+              <span className="hidden sm:block text-lg text-gray-500 dark:text-gray-400">/ {t(`app.mode.${mode}`)}</span>
+            )}
           </a>
           <div className="flex items-center space-x-2">
             {user && (
@@ -78,7 +94,12 @@ const Navbar: React.FC = () => {
               {isMenuOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
                   <div className="py-1" role="menu" aria-orientation="vertical">
-                    <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
+                    {image && (
+                        <>
+                          <a href="#" onClick={handleCropRotateClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.cropRotate')}</a>
+                          <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
+                        </>
+                    )}
                     <a href="#" onClick={handlePricingClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.pricing')}</a>
                     <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
                     <a href="#/privacy" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</a>

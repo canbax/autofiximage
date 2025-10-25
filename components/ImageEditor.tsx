@@ -18,9 +18,10 @@ interface ImageEditorProps {
   rotation: number;
   aspectRatio: number | null;
   keepCropperVertical: boolean;
+  mode: 'crop-rotate' | 'resize';
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
 
@@ -86,7 +87,9 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
       });
 
     } else if (type === 'resize' && handle) {
-        let { x, y, width, height } = { ...startCrop };
+        // FIX: The original destructuring `let { x, y, width, height } = { ...startCrop };` was causing a TS error.
+        // The spread was redundant; destructuring directly from `startCrop` is cleaner and correct.
+        let { x, y, width, height } = startCrop;
         const startRight = x + width;
         const startBottom = y + height;
     
@@ -212,10 +215,10 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
             style={{ transform: `rotate(${rotation}deg)` }}
         >
             <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-            {!keepCropperVertical && cropperMarkup}
+            {mode === 'crop-rotate' && !keepCropperVertical && cropperMarkup}
         </div>
 
-        {keepCropperVertical && cropperMarkup}
+        {mode === 'crop-rotate' && keepCropperVertical && cropperMarkup}
         
         <style>{`
           .handle-n { top: -6px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
