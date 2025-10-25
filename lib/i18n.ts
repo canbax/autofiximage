@@ -31,5 +31,5 @@ export const translations = {
 };
 
 export type Language = keyof typeof translations;
-export const LANGUAGES: Language[] = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'zh', 'hi', 'bn', 'id', 'tr', 'ar'];
+export const LANGUAGES: Language[] = ['tr', 'en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'zh', 'hi', 'bn', 'id', 'ar'];
 export const DEFAULT_LANGUAGE: Language = 'en';

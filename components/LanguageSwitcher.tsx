@@ -67,7 +67,7 @@ export const LanguageSwitcher: React.FC = () => {
   const filteredLanguages = LANGUAGES.filter(lang =>
     languageNames[lang].toLowerCase().includes(searchTerm.toLowerCase()) ||
     lang.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => languageNames[a].localeCompare(languageNames[b]));
+  );
 
   return (
     <div className="relative" ref={dropdownRef}>
