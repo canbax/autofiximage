@@ -35,6 +35,7 @@ const App: React.FC = () => {
   const [aspectRatioKey, setAspectRatioKey] = useState('free');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
   const [route, setRoute] = useState(window.location.hash);
   const [mode, setMode] = useState<AppMode>('crop-rotate');
@@ -131,8 +132,17 @@ const App: React.FC = () => {
             console.error("Error picking corner color, defaulting to transparent.", e);
             setResizeBgColor('transparent');
         }
+        setIsProcessingImage(false);
+      };
+      img.onerror = () => {
+          setError('error.imageLoad');
+          setIsProcessingImage(false);
       };
       img.src = e.target?.result as string;
+    };
+    reader.onerror = () => {
+        setError('error.fileRead');
+        setIsProcessingImage(false);
     };
     reader.readAsDataURL(originalFile);
   }, [originalFile]);
@@ -234,6 +244,7 @@ const App: React.FC = () => {
   }, [image, setCrop, mode]);
   
   const handleImageUpload = (file: File) => {
+    setIsProcessingImage(true);
     setOriginalFile(file);
     setImage(null);
     setError(null);
@@ -263,7 +274,7 @@ const App: React.FC = () => {
       setRotation(result.rotation);
       setCrop(newCropInPixels);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+      setError(e instanceof Error ? e.message : 'error.unknown');
     } finally {
       setIsLoading(false);
     }
@@ -375,7 +386,7 @@ const App: React.FC = () => {
         return (
           <>
             {!image ? (
-              <LandingPage onImageUpload={handleImageUpload} />
+              <LandingPage onImageUpload={handleImageUpload} isProcessing={isProcessingImage} />
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
                 <div className="lg:col-span-2 h-full">
@@ -425,9 +436,9 @@ const App: React.FC = () => {
                 </div>
               </div>
             )}
-            {error && image && (
+            {error && (
                 <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
-                    <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
+                    <strong>{t('error.title')}</strong> {t(error)}
                 </div>
             )}
           </>

@@ -4,9 +4,10 @@ import { useTranslation } from '../hooks/useTranslation';
 
 interface LandingPageProps {
   onImageUpload: (file: File) => void;
+  isProcessing: boolean;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onImageUpload }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onImageUpload, isProcessing }) => {
   const { t } = useTranslation();
 
   return (
@@ -26,7 +27,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onImageUpload }) => {
         className="mt-10 w-full animate-fade-in"
         style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}
       >
-        <ImageUploader onImageUpload={onImageUpload} />
+        <ImageUploader onImageUpload={onImageUpload} isProcessing={isProcessing} />
       </div>
     </div>
   );

@@ -84,6 +84,6 @@ export async function getAutoCorrection(
 
   } catch (error) {
     console.error("Error getting AI correction:", error);
-    throw new Error("Failed to get auto-correction from AI. Please try again.");
+    throw new Error("error.ai");
   }
 }
