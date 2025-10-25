@@ -333,6 +333,8 @@ const App: React.FC = () => {
                     aspectRatio={numericAspectRatio}
                     keepCropperVertical={keepCropperVertical}
                     mode={mode}
+                    resizeWidth={resizeWidth}
+                    resizeHeight={resizeHeight}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">

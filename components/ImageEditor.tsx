@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import { CropParams } from '../types';
 
 type Handle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
@@ -19,11 +19,30 @@ interface ImageEditorProps {
   aspectRatio: number | null;
   keepCropperVertical: boolean;
   mode: 'crop-rotate' | 'resize';
+  resizeWidth: number;
+  resizeHeight: number;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode, resizeWidth, resizeHeight }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
+  const resizeCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (mode === 'resize' && resizeCanvasRef.current && image && resizeWidth > 0 && resizeHeight > 0) {
+      const canvas = resizeCanvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = resizeWidth;
+      canvas.height = resizeHeight;
+
+      if (ctx) {
+        ctx.imageSmoothingQuality = 'high';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
+      }
+    }
+  }, [mode, image, resizeWidth, resizeHeight]);
 
   const getTransformedCoordinates = useCallback((e: MouseEvent | React.MouseEvent): { x: number, y: number } => {
     if (!containerRef.current) return { x: 0, y: 0 };
@@ -207,29 +226,43 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-900 p-4 rounded-lg shadow-inner select-none overflow-hidden">
       <div
         ref={containerRef}
-        className="relative max-w-full max-h-full touch-none"
+        className="relative max-w-full max-h-full touch-none flex items-center justify-center"
         style={{ aspectRatio: `${image.naturalWidth} / ${image.naturalHeight}` }}
       >
-        <div 
-            className="w-full h-full"
-            style={{ transform: `rotate(${rotation}deg)` }}
-        >
-            <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-            {mode === 'crop-rotate' && !keepCropperVertical && cropperMarkup}
-        </div>
+        {mode === 'crop-rotate' ? (
+          <>
+            <div 
+                className="w-full h-full"
+                style={{ transform: `rotate(${rotation}deg)` }}
+            >
+                <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
+                {!keepCropperVertical && cropperMarkup}
+            </div>
 
-        {mode === 'crop-rotate' && keepCropperVertical && cropperMarkup}
-        
-        <style>{`
-          .handle-n { top: -6px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
-          .handle-s { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
-          .handle-w { left: -6px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
-          .handle-e { right: -6px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
-          .handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
-          .handle-ne { top: -6px; right: -6px; cursor: ne-resize; }
-          .handle-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
-          .handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
-        `}</style>
+            {keepCropperVertical && cropperMarkup}
+            
+            <style>{`
+              .handle-n { top: -6px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+              .handle-s { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+              .handle-w { left: -6px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
+              .handle-e { right: -6px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+              .handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
+              .handle-ne { top: -6px; right: -6px; cursor: ne-resize; }
+              .handle-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+              .handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
+            `}</style>
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+             <canvas 
+                ref={resizeCanvasRef} 
+                className="object-contain max-w-full max-h-full rounded-md shadow-lg"
+                style={{
+                  aspectRatio: `${resizeWidth} / ${resizeHeight}`,
+                }}
+              />
+          </div>
+        )}
       </div>
     </div>
   );
