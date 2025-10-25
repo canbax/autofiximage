@@ -17,7 +17,7 @@ const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
 
 // TODO: Replace with your own AdSense Client and Slot IDs
-const AD_CLIENT = 'ca-pub-XXXXXXXXXXXXXXXX';
+const AD_CLIENT = 'ca-pub-9521603226003896';
 const AD_SLOT_SIDE = '1234567890';
 const AD_SLOT_BOTTOM = '1234567891';
 
