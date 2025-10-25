@@ -9,6 +9,7 @@ export const bn = {
   'navbar.terms': 'ব্যবহারের শর্তাবলী',
   'navbar.privacy': 'গোপনীয়তা নীতি',
   'navbar.contact': 'যোগাযোগ করুন',
+  'navbar.resize': 'আকার পরিবর্তন',
   'app.header': 'ম্যানুয়ালি সম্পাদনা করার জন্য একটি ছবি আপলোড করুন অথবা AI কে এর ঘূর্ণন এবং ক্রপ নিখুঁত করতে দিন।',
   'uploader.dragDrop': 'আপনার ছবি এখানে টেনে আনুন',
   'uploader.or': 'অথবা',

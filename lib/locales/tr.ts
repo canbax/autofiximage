@@ -9,6 +9,7 @@ export const tr = {
   'navbar.terms': 'Kullanım Şartları',
   'navbar.privacy': 'Gizlilik Politikası',
   'navbar.contact': 'Bize Ulaşın',
+  'navbar.resize': 'Yeniden Boyutlandır',
   'app.header': 'Manuel olarak düzenlemek için bir resim yükleyin veya yapay zekanın dönüşünü ve kırpmasını mükemmelleştirmesine izin verin.',
   'uploader.dragDrop': 'Resminizi buraya sürükleyip bırakın',
   'uploader.or': 'veya',

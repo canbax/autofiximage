@@ -35,6 +35,12 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(false);
   };
 
+  const handleResizeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // TODO: Implement resize functionality
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-10 border-b border-gray-200/50 dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,6 +78,7 @@ const Navbar: React.FC = () => {
               {isMenuOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
                   <div className="py-1" role="menu" aria-orientation="vertical">
+                    <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
                     <a href="#" onClick={handlePricingClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.pricing')}</a>
                     <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
                     <a href="#/privacy" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</a>

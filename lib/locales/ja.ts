@@ -9,6 +9,7 @@ export const ja = {
   'navbar.terms': '利用規約',
   'navbar.privacy': 'プライバシーポリシー',
   'navbar.contact': 'お問い合わせ',
+  'navbar.resize': 'サイズ変更',
   'app.header': '画像をアップロードして手動で編集するか、AIに回転と切り抜きを完璧にさせます。',
   'uploader.dragDrop': 'ここに画像をドラッグ＆ドロップしてください',
   'uploader.or': 'または',

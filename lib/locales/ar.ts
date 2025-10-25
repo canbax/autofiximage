@@ -9,6 +9,7 @@ export const ar = {
   'navbar.terms': 'شروط الاستخدام',
   'navbar.privacy': 'سياسة الخصوصية',
   'navbar.contact': 'اتصل بنا',
+  'navbar.resize': 'تغيير الحجم',
   'app.header': 'قم بتحميل صورة لتعديلها يدويًا أو دع الذكاء الاصطناعي يضبط دورانها واقتصاصها.',
   'uploader.dragDrop': 'اسحب وأفلت صورتك هنا',
   'uploader.or': 'أو',

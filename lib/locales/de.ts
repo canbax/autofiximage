@@ -9,6 +9,7 @@ export const de = {
   'navbar.terms': 'Nutzungsbedingungen',
   'navbar.privacy': 'Datenschutzrichtlinie',
   'navbar.contact': 'Kontaktieren Sie uns',
+  'navbar.resize': 'Größe ändern',
   'app.header': 'Laden Sie ein Bild hoch, um es manuell zu bearbeiten, oder lassen Sie die KI die Drehung und den Zuschnitt perfektionieren.',
   'uploader.dragDrop': 'Ziehen Sie Ihr Bild hierher',
   'uploader.or': 'oder',

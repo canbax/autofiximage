@@ -9,6 +9,7 @@ export const zh = {
   'navbar.terms': '使用条款',
   'navbar.privacy': '隐私政策',
   'navbar.contact': '联系我们',
+  'navbar.resize': '调整大小',
   'app.header': '上传图像以手动编辑，或让 AI 完善其旋转和裁剪。',
   'uploader.dragDrop': '将您的图片拖放到此处',
   'uploader.or': '或者',

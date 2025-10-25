@@ -9,6 +9,7 @@ export const en = {
   'navbar.terms': 'Terms of Use',
   'navbar.privacy': 'Privacy Policy',
   'navbar.contact': 'Contact Us',
+  'navbar.resize': 'Resize',
   'app.header': 'Upload an image to manually edit or let AI perfect its rotation and crop.',
   'uploader.dragDrop': 'Drag & drop your image here',
   'uploader.or': 'or',

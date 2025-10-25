@@ -9,6 +9,7 @@ export const fr = {
   'navbar.terms': "Conditions d'utilisation",
   'navbar.privacy': 'Politique de confidentialité',
   'navbar.contact': 'Nous contacter',
+  'navbar.resize': 'Redimensionner',
   'app.header': "Téléchargez une image pour la modifier manuellement ou laissez l'IA perfectionner sa rotation et son recadrage.",
   'uploader.dragDrop': 'Glissez-déposez votre image ici',
   'uploader.or': 'ou',

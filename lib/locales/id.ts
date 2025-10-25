@@ -9,6 +9,7 @@ export const id = {
   'navbar.terms': 'Syarat Penggunaan',
   'navbar.privacy': 'Kebijakan Privasi',
   'navbar.contact': 'Hubungi Kami',
+  'navbar.resize': 'Ubah Ukuran',
   'app.header': 'Unggah gambar untuk diedit secara manual atau biarkan AI menyempurnakan rotasi dan pemotongannya.',
   'uploader.dragDrop': 'Seret & lepas gambar Anda di sini',
   'uploader.or': 'atau',
