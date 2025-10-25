@@ -19,7 +19,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, id
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="peer appearance-none w-5 h-5 bg-gray-700 border-2 border-gray-600 rounded-md checked:bg-indigo-600 checked:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition cursor-pointer"
+          className="peer appearance-none w-5 h-5 bg-gray-200 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-md checked:bg-indigo-600 checked:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-indigo-500 transition cursor-pointer"
         />
         <svg
           className="absolute w-3.5 h-3.5 text-white pointer-events-none top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 peer-checked:opacity-100 transition-opacity"
@@ -35,7 +35,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, id
           />
         </svg>
       </div>
-      <span className="text-sm font-medium text-gray-300 select-none">{label}</span>
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 select-none">{label}</span>
     </label>
   );
 };

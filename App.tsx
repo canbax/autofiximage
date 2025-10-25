@@ -194,7 +194,7 @@ const App: React.FC = () => {
       <LoginDialog />
       <PricingDialog />
       <ApiDocsDialog />
-      <div className="min-h-screen bg-gray-900 text-gray-100 pt-16">
+      <div className="min-h-screen text-gray-800 dark:text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
           
           <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 mr-6 items-center justify-center">
@@ -207,13 +207,21 @@ const App: React.FC = () => {
             />
           </aside>
 
-          <div
-            className="flex-grow w-full max-w-7xl"
-            style={{
-              backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
-              backgroundSize: '2rem 2rem',
-            }}
-          >
+          <div className="flex-grow w-full max-w-7xl relative">
+             <div 
+                className="absolute inset-0 -z-10 dark:hidden"
+                style={{
+                  backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+                  backgroundSize: '2rem 2rem',
+                }}
+              />
+              <div 
+                className="absolute inset-0 -z-10 hidden dark:block"
+                style={{
+                  backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
+                  backgroundSize: '2rem 2rem',
+                }}
+              />
             <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">
               {!image ? (
                 <LandingPage onImageUpload={handleImageUpload} />
@@ -246,7 +254,7 @@ const App: React.FC = () => {
                 </div>
               )}
               {error && image && (
-                  <div className="mt-4 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-md text-center max-w-xl mx-auto">
+                  <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
                       <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
                   </div>
               )}
@@ -264,7 +272,7 @@ const App: React.FC = () => {
           </aside>
         </div>
         
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-gray-800/80 backdrop-blur-sm z-20 flex items-center justify-center border-t border-gray-700">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm z-20 flex items-center justify-center border-t border-gray-200 dark:border-gray-700">
            <AdBanner
               className="w-full"
               data-ad-client={AD_CLIENT}

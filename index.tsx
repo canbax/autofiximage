@@ -5,6 +5,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { PricingProvider } from './context/PricingContext';
 import { ApiDocsProvider } from './context/ApiDocsContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,14 +15,16 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <LanguageProvider>
-        <PricingProvider>
-          <ApiDocsProvider>
-            <App />
-          </ApiDocsProvider>
-        </PricingProvider>
-      </LanguageProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <PricingProvider>
+            <ApiDocsProvider>
+              <App />
+            </ApiDocsProvider>
+          </PricingProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

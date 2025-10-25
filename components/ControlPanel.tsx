@@ -21,7 +21,7 @@ interface ControlPanelProps {
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
     <div>
-        <label className="block text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-2">
             {icon}
             {label}
         </label>
@@ -35,7 +35,7 @@ const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTM
         type="number"
         value={value}
         onChange={onChange}
-        className="w-full bg-gray-900 border border-gray-600 rounded-md p-2 text-sm text-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
+        className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm text-gray-900 dark:text-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
         {...props}
     />
 );
@@ -83,8 +83,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
 
   return (
-    <div className="w-full h-full bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg shadow-lg flex flex-col space-y-6 overflow-y-auto">
-      <h2 className="text-xl font-bold text-white">{t('controls.title')}</h2>
+    <div className="w-full h-full bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg shadow-lg flex flex-col space-y-6 overflow-y-auto">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('controls.title')}</h2>
       
       <div className="flex flex-col gap-6">
         <Button onClick={onAutoCorrect} isLoading={isLoading} variant="primary">
@@ -101,7 +101,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     step="0.1"
                     value={rotation}
                     onChange={(e) => setRotation(parseFloat(e.target.value))}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                 />
                 <NumberInput
                     value={Number(rotation.toFixed(1))}
@@ -161,7 +161,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
       </div>
 
-      <div className="mt-auto pt-6 border-t border-gray-700 flex flex-col gap-3">
+      <div className="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col gap-3">
           <Button onClick={onDownload} variant="secondary">
               <DownloadIcon />
               {t('controls.download')}

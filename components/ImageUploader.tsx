@@ -48,16 +48,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) =
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`flex justify-center items-center w-full px-6 py-12 border-2 border-dashed rounded-lg transition-colors duration-300 ${isDragging ? 'border-indigo-500 bg-gray-800' : 'border-gray-600 hover:border-gray-500'}`}
+        className={`flex justify-center items-center w-full px-6 py-12 border-2 border-dashed rounded-lg transition-colors duration-300 ${isDragging ? 'border-indigo-500 bg-indigo-50 dark:bg-gray-800' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500'}`}
       >
         <div className="text-center">
-          <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <p className="mt-5 text-lg font-semibold text-gray-300">
+          <UploadIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+          <p className="mt-5 text-lg font-semibold text-gray-800 dark:text-gray-300">
             {t('uploader.dragDrop')}
           </p>
           <p className="mt-1 text-sm text-gray-500">{t('uploader.or')}</p>
           <label htmlFor="file-upload" className="relative cursor-pointer mt-4 inline-block">
-            <span className="px-4 py-2 rounded-md font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-500 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 focus-within:ring-indigo-500 transition-colors">
+            <span className="px-4 py-2 rounded-md font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-500 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900 focus-within:ring-indigo-500 transition-colors">
               {t('uploader.browse')}
             </span>
             <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*"/>

@@ -186,7 +186,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
   );
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-900 p-4 rounded-lg shadow-inner select-none overflow-hidden">
+    <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-900 p-4 rounded-lg shadow-inner select-none overflow-hidden">
       <div
         ref={containerRef}
         className="relative max-w-full max-h-full touch-none"

@@ -95,39 +95,39 @@ export const ApiDocsDialog: React.FC = () => {
   -F 'image=@/path/to/your/image.jpg'`;
 
     return (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-40 flex items-center justify-center animate-fade-in" style={{ animationDuration: '0.2s' }}>
-            <div className="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl m-4 relative border border-gray-700 h-[90vh] flex flex-col" role="dialog" aria-labelledby="api-dialog-title">
-                <button onClick={closeApiDocsDialog} className="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors z-10" aria-label="Close">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-80 z-40 flex items-center justify-center animate-fade-in" style={{ animationDuration: '0.2s' }}>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl m-4 relative border border-gray-200 dark:border-gray-700 h-[90vh] flex flex-col" role="dialog" aria-labelledby="api-dialog-title">
+                <button onClick={closeApiDocsDialog} className="absolute top-3 right-3 text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-white transition-colors z-10" aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
-                <div className="text-center border-b border-gray-700 pb-4">
-                    <h2 id="api-dialog-title" className="text-2xl font-bold text-white">{t('apiDocs.title')}</h2>
-                    <p className="mt-2 text-gray-400">{t('apiDocs.subtitle')}</p>
+                <div className="text-center border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <h2 id="api-dialog-title" className="text-2xl font-bold text-gray-900 dark:text-white">{t('apiDocs.title')}</h2>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">{t('apiDocs.subtitle')}</p>
                 </div>
 
                 <div className="flex-grow overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
                     {/* Left Column: Docs & Code */}
-                    <div className="prose prose-invert prose-sm max-w-none">
-                        <h3 className="text-lg font-semibold text-white">{t('apiDocs.authHeader')}</h3>
+                    <div className="prose prose-sm dark:prose-invert max-w-none prose-pre:bg-gray-100 prose-pre:dark:bg-gray-900/80">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('apiDocs.authHeader')}</h3>
                         <p>{t('apiDocs.authText')}</p>
 
-                        <h3 className="text-lg font-semibold text-white mt-6">{t('apiDocs.endpointHeader')}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">{t('apiDocs.endpointHeader')}</h3>
                         <p>{t('apiDocs.endpointText')}</p>
-                        <pre className="bg-gray-900/80 p-3 rounded-md text-xs whitespace-pre-wrap"><code>POST /v1/autocorrect</code></pre>
+                        <pre className="p-3 rounded-md text-xs whitespace-pre-wrap"><code>POST /v1/autocorrect</code></pre>
                         
-                        <h3 className="text-lg font-semibold text-white mt-6">{t('apiDocs.exampleHeader')}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">{t('apiDocs.exampleHeader')}</h3>
                         <p>{t('apiDocs.exampleText')}</p>
                         <div className="relative">
-                           <pre className="bg-gray-900/80 p-3 rounded-md text-xs whitespace-pre-wrap"><code className="language-bash">{codeSnippet}</code></pre>
+                           <pre className="p-3 rounded-md text-xs whitespace-pre-wrap"><code className="language-bash">{codeSnippet}</code></pre>
                         </div>
                     </div>
 
                     {/* Right Column: Key, Usage, Test */}
                     <div className="space-y-6">
                         <div>
-                            <h3 className="text-lg font-semibold text-white">{t('apiDocs.keyHeader')}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('apiDocs.keyHeader')}</h3>
                             <div className="flex items-center gap-2 mt-2">
-                                <input type="text" readOnly value={user.apiKey} className="w-full bg-gray-900 border border-gray-600 rounded-md p-2 text-sm text-gray-400 font-mono" />
+                                <input type="text" readOnly value={user.apiKey} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm text-gray-500 dark:text-gray-400 font-mono" />
                                 <Button onClick={handleCopyToClipboard} variant="secondary" className="flex-shrink-0">
                                     {isCopied ? <CheckIcon /> : <CopyIcon />}
                                 </Button>
@@ -136,13 +136,13 @@ export const ApiDocsDialog: React.FC = () => {
                         </div>
 
                         <div>
-                            <h3 className="text-lg font-semibold text-white">{t('apiDocs.usage.title')}</h3>
-                            <div className="mt-2 bg-gray-900 p-3 rounded-md">
-                                <div className="flex justify-between items-center text-sm font-medium text-gray-300">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('apiDocs.usage.title')}</h3>
+                            <div className="mt-2 bg-gray-100 dark:bg-gray-900 p-3 rounded-md">
+                                <div className="flex justify-between items-center text-sm font-medium text-gray-700 dark:text-gray-300">
                                     <span>{t(`pricing.${user.plan}Plan.title`)} Plan</span>
                                     <span>{usageText}</span>
                                 </div>
-                                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                                <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2 mt-2">
                                     <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${usagePercentage}%` }}></div>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-1">{t('apiDocs.usage.resetInfo')}</p>
@@ -150,19 +150,19 @@ export const ApiDocsDialog: React.FC = () => {
                         </div>
 
                         <div>
-                             <h3 className="text-lg font-semibold text-white">{t('apiDocs.tryIt.title')}</h3>
-                             <p className="text-xs text-gray-400 mt-1 mb-3">{t('apiDocs.tryIt.subtitle')}</p>
-                             <div className="bg-gray-900 p-4 rounded-lg text-center">
+                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('apiDocs.tryIt.title')}</h3>
+                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">{t('apiDocs.tryIt.subtitle')}</p>
+                             <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg text-center">
                                 {testState === 'idle' && (
                                     <label className="cursor-pointer">
-                                        <div className="p-4 border-2 border-dashed border-gray-600 rounded-lg hover:border-indigo-500 transition-colors">
-                                           <p className="text-sm font-semibold">{t('apiDocs.tryIt.upload')}</p>
+                                        <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-indigo-500 transition-colors">
+                                           <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('apiDocs.tryIt.upload')}</p>
                                         </div>
                                         <input type="file" className="sr-only" accept="image/*" onChange={handleApiTest} />
                                     </label>
                                 )}
                                 {testState === 'loading' && <Spinner />}
-                                {testState === 'error' && <p className="text-red-400">{testError}</p>}
+                                {testState === 'error' && <p className="text-red-500 dark:text-red-400">{testError}</p>}
                                 {testState === 'success' && resultImage && (
                                     <div>
                                         <img src={resultImage} alt="API result" className="max-w-full max-h-48 mx-auto rounded-md" />
