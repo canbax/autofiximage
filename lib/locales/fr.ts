@@ -72,7 +72,6 @@ export const fr = {
   'apiDocs.tryIt.another': 'Tester une autre image',
   'apiDocs.error.limitReached': "Limite de crédit API atteinte. Veuillez mettre à niveau votre plan.",
   'apiDocs.error.unknown': 'Une erreur inconnue est survenue.',
-  // Contact Page
   'contact.title': 'Nous contacter',
   'contact.subtitle': 'Vous avez une question ou un commentaire ? Remplissez le formulaire ci-dessous et nous vous répondrons.',
   'contact.nameLabel': 'Nom complet',
@@ -81,4 +80,12 @@ export const fr = {
   'contact.sendButton': 'Envoyer le message',
   'contact.formSuccessTitle': 'Message envoyé !',
   'contact.formSuccessBody': 'Merci de nous avoir contactés ! Nous examinerons votre message et vous répondrons dès que possible.',
-};
+
+  // Terms Page
+  'terms.intro.title': '1. Introduction',
+  'terms.intro.p1': "Bienvenue sur PixelPerfect AI. Ces termes et conditions décrivent les règles et réglementations pour l'utilisation du site Web de PixelPerfect AI, situé à l'URL de cette application.",
+  'terms.intro.p2': "En accédant à ce site Web, nous supposons que vous acceptez ces termes et conditions. Ne continuez pas à utiliser PixelPerfect AI si vous n'acceptez pas tous les termes et conditions énoncés sur cette page.",
+  'terms.cookies.title': '2. Cookies',
+  'terms.cookies.p1': "Nous utilisons des cookies. En accédant à PixelPerfect AI, vous avez accepté d'utiliser des cookies en accord avec la politique de confidentialité de PixelPerfect AI. La plupart des sites Web interactifs utilisent des cookies pour nous permettre de récupérer les détails de l'utilisateur à chaque visite. Les cookies sont utilisés par notre site Web pour activer la fonctionnalité de certaines zones afin de faciliter la visite des personnes sur notre site Web. Certains de nos partenaires affiliés/publicitaires могут également utiliser des cookies.",
+  'terms.license.title': '3. Licence',
+  'terms.license.p1': "Sauf indication
