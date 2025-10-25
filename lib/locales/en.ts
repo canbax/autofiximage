@@ -9,6 +9,9 @@ export const en = {
   'navbar.login': 'Login',
   'navbar.logout': 'Logout',
   'navbar.welcome': 'Welcome, ',
+  'navbar.terms': 'Terms of Use',
+  'navbar.privacy': 'Privacy Policy',
+  'navbar.contact': 'Contact Us',
 
   // App Header
   'app.header': 'Upload an image to manually edit or let AI perfect its rotation and crop.',
