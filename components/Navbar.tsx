@@ -100,6 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <>
                           <a href="#" onClick={handleCropRotateClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.cropRotate')}</a>
                           <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
+                          <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                         </>
                     )}
                     <a href="#" onClick={handlePricingClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.pricing')}</a>
