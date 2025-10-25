@@ -89,8 +89,6 @@ export const tr = {
   'contact.sendButton': 'Mesaj Gönder',
   'contact.formSuccessTitle': 'Mesaj Gönderildi!',
   'contact.formSuccessBody': 'Bize ulaştığınız için teşekkürler! Mesajınızı inceleyip en kısa sürede size geri döneceğiz.',
-
-  // Terms Page
   'terms.intro.title': '1. Giriş',
   'terms.intro.p1': "PixelPerfect AI'a hoş geldiniz. Bu hüküm ve koşullar, bu uygulamanın URL'sinde bulunan PixelPerfect AI Web Sitesinin kullanımına ilişkin kural ve yönetmelikleri özetlemektedir.",
   'terms.intro.p2': 'Bu web sitesine erişerek bu hüküm ve koşulları kabul ettiğinizi varsayıyoruz. Bu sayfada belirtilen tüm hüküm ve koşulları kabul etmiyorsanız PixelPerfect AI kullanmaya devam etmeyin.',
@@ -111,8 +109,6 @@ export const tr = {
   'terms.disclaimer.l4': 'yürürlükteki yasalar uyarınca hariç tutulamayacak olan bizim veya sizin yükümlülüklerimizden herhangi birini hariç tutmaz.',
   'terms.disclaimer.p2': 'Bu Bölümde ve bu sorumluluk reddi beyanının başka yerlerinde belirtilen sorumluluk sınırlamaları ve yasakları: (a) bir önceki paragrafa tabidir; ve (b) sözleşmeden, haksız fiilden ve yasal görevin ihlalinden doğan yükümlülükler de dahil olmak üzere sorumluluk reddi beyanı kapsamında doğan tüm yükümlülükleri yönetir.',
   'terms.disclaimer.p3': 'Web sitesi ve web sitesindeki bilgi ve hizmetler ücretsiz olarak sağlandığı sürece, herhangi bir nitelikteki herhangi bir kayıp veya hasardan sorumlu olmayacağız.',
-
-  // Privacy Page
   'privacy.info.title': '1. Topladığımız Bilgiler',
   'privacy.info.p1': 'Sizden istenen kişisel bilgiler ve istenme nedenleri, sizden kişisel bilgilerinizi vermenizi istediğimiz noktada size açıklanacaktır.',
   'privacy.info.p2': "Doğrudan bizimle iletişime geçerseniz, adınız, e-posta adresiniz, telefon numaranız, bize gönderebileceğiniz mesajın ve/veya eklerin içeriği ve sağlamayı seçebileceğiniz diğer bilgiler gibi hakkınızda ek bilgiler alabiliriz.",

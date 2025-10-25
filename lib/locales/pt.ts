@@ -80,8 +80,6 @@ export const pt = {
   'contact.sendButton': 'Enviar mensagem',
   'contact.formSuccessTitle': 'Mensagem enviada!',
   'contact.formSuccessBody': 'Obrigado por entrar em contato! Analisaremos sua mensagem e retornaremos o mais breve possível.',
-
-  // Terms Page
   'terms.intro.title': '1. Introdução',
   'terms.intro.p1': 'Bem-vindo ao PixelPerfect AI. Estes termos e condições descrevem as regras e regulamentos para o uso do site da PixelPerfect AI, localizado no URL desta aplicação.',
   'terms.intro.p2': 'Ao acessar este site, presumimos que você aceita estes termos e condições. Não continue a usar o PixelPerfect AI se não concordar em aceitar todos os termos e condições declarados nesta página.',
@@ -102,8 +100,6 @@ export const pt = {
   'terms.disclaimer.l4': 'excluir qualquer uma de nossas ou suas responsabilidades que não possam ser excluídas pela lei aplicável.',
   'terms.disclaimer.p2': 'As limitações e proibições de responsabilidade estabelecidas nesta Seção e em outras partes desta isenção de responsabilidade: (a) estão sujeitas ao parágrafo anterior; e (b) regem todas as responsabilidades decorrentes da isenção de responsabilidade, incluindo responsabilidades decorrentes de contrato, ato ilícito e violação de dever legal.',
   'terms.disclaimer.p3': 'Enquanto o site e as informações e serviços no site forem fornecidos gratuitamente, não seremos responsáveis por qualquer perda ou dano de qualquer natureza.',
-
-  // Privacy Page
   'privacy.info.title': '1. Informações que Coletamos',
   'privacy.info.p1': 'As informações pessoais que lhe são solicitadas e os motivos pelos quais lhe são solicitadas serão esclarecidos no momento em que lhe pedirmos que forneça suas informações pessoais.',
   'privacy.info.p2': 'Se você nos contatar diretamente, poderemos receber informações adicionais sobre você, como seu nome, endereço de e-mail, número de telefone, o conteúdo da mensagem e/ou anexos que você possa nos enviar e qualquer outra informação que você decida fornecer.',

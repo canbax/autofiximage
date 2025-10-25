@@ -89,8 +89,6 @@ export const es = {
   'contact.sendButton': 'Enviar mensaje',
   'contact.formSuccessTitle': '¡Mensaje enviado!',
   'contact.formSuccessBody': '¡Gracias por contactarnos! Revisaremos su mensaje y nos pondremos en contacto con usted lo antes posible.',
-
-  // Terms Page
   'terms.intro.title': '1. Introducción',
   'terms.intro.p1': 'Bienvenido a PixelPerfect AI. Estos términos y condiciones describen las reglas y regulaciones para el uso del sitio web de PixelPerfect AI, ubicado en la URL de esta aplicación.',
   'terms.intro.p2': 'Al acceder a este sitio web, asumimos que acepta estos términos y condiciones. No continúe utilizando PixelPerfect AI si no está de acuerdo con todos los términos y condiciones establecidos en esta página.',
@@ -111,8 +109,6 @@ export const es = {
   'terms.disclaimer.l4': 'excluirá cualquiera de nuestras o sus responsabilidades que no puedan ser excluidas según la ley aplicable.',
   'terms.disclaimer.p2': 'Las limitaciones y prohibiciones de responsabilidad establecidas en esta Sección y en otras partes de este descargo de responsabilidad: (a) están sujetas al párrafo anterior; y (b) rigen todas las responsabilidades que surjan en virtud del descargo de responsabilidad, incluidas las responsabilidades que surjan en contrato, en agravio y por incumplimiento de un deber legal.',
   'terms.disclaimer.p3': 'Mientras el sitio web y la información y los servicios en el sitio web se proporcionen de forma gratuita, no seremos responsables de ninguna pérdida o daño de ninguna naturaleza.',
-
-  // Privacy Page
   'privacy.info.title': '1. Información que recopilamos',
   'privacy.info.p1': 'La información personal que se le solicita que proporcione, y las razones por las que se le solicita que la proporcione, se le aclararán en el momento en que le pidamos que proporcione su información personal.',
   'privacy.info.p2': 'Si se comunica con nosotros directamente, es posible que recibamos información adicional sobre usted, como su nombre, dirección de correo electrónico, número de teléfono, el contenido del mensaje y/o los archivos adjuntos que nos envíe, y cualquier otra información que elija proporcionar.',

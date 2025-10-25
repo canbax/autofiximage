@@ -1,9 +1,6 @@
 export const en = {
-  // Landing Page
   'landing.title': 'PixelPerfect AI',
   'landing.subtitle': 'Intelligently Straighten, Crop, and Perfect Your Photos in Seconds.',
-  
-  // Navbar
   'navbar.pricing': 'Pricing',
   'navbar.api': 'API',
   'navbar.login': 'Login',
@@ -12,17 +9,11 @@ export const en = {
   'navbar.terms': 'Terms of Use',
   'navbar.privacy': 'Privacy Policy',
   'navbar.contact': 'Contact Us',
-
-  // App Header
   'app.header': 'Upload an image to manually edit or let AI perfect its rotation and crop.',
-
-  // Image Uploader
   'uploader.dragDrop': 'Drag & drop your image here',
   'uploader.or': 'or',
   'uploader.browse': 'Browse for a file',
   'uploader.formats': 'PNG, JPG, GIF, WEBP',
-  
-  // Control Panel
   'controls.title': 'Editor Controls',
   'controls.autoCorrect': 'Auto-Correct with AI',
   'controls.rotation': 'Rotation (°)',
@@ -35,18 +26,12 @@ export const en = {
   'controls.download': 'Download Image',
   'controls.reset': 'Reset Changes',
   'controls.clear': 'Clear Image',
-
-  // Errors & Alerts
   'error.title': 'Error:',
   'error.ai': 'Failed to get auto-correction from AI. Please try again.',
   'alert.noImage': 'No image to download.',
   'alert.noContext': 'Could not create canvas context for download.',
-
-  // Language Switcher
   'languageSwitcher.search': 'Search language...',
   'languageSwitcher.noResults': 'No results found',
-
-  // Login Dialog
   'loginDialog.title': 'Login',
   'loginDialog.emailLabel': 'Email Address',
   'loginDialog.sendLink': 'Send Login Link',
@@ -56,8 +41,6 @@ export const en = {
   'loginDialog.clickHere': 'Click here to log in',
   'loginDialog.error.expired': 'The login link has expired. Please try again.',
   'loginDialog.error.invalidEmail': 'Please enter a valid email address.',
-
-  // Pricing Dialog
   'pricing.title': 'Choose Your Plan',
   'pricing.subtitle': 'Unlock your creative potential with the right plan for you.',
   'pricing.month': 'mo',
@@ -78,8 +61,6 @@ export const en = {
   'pricing.proPlan.feature2': 'High-resolution downloads',
   'pricing.proPlan.feature3': 'Priority support',
   'pricing.proPlan.feature4': 'Access to new features first',
-
-  // API Docs Dialog
   'apiDocs.title': 'API Access & Documentation',
   'apiDocs.subtitle': 'Integrate PixelPerfect AI into your own applications.',
   'apiDocs.authHeader': 'Authentication',
@@ -100,8 +81,6 @@ export const en = {
   'apiDocs.tryIt.another': 'Test another image',
   'apiDocs.error.limitReached': 'API credit limit reached. Please upgrade your plan.',
   'apiDocs.error.unknown': 'An unknown error occurred.',
-
-  // Contact Page
   'contact.title': 'Contact Us',
   'contact.subtitle': 'Have a question or feedback? Fill out the form below and we\'ll get back to you.',
   'contact.nameLabel': 'Full Name',
@@ -110,8 +89,6 @@ export const en = {
   'contact.sendButton': 'Send Message',
   'contact.formSuccessTitle': 'Message Sent!',
   'contact.formSuccessBody': 'Thanks for reaching out! We\'ll review your message and get back to you as soon as possible.',
-  
-  // Terms Page
   'terms.intro.title': '1. Introduction',
   'terms.intro.p1': 'Welcome to PixelPerfect AI. These terms and conditions outline the rules and regulations for the use of PixelPerfect AI\'s Website, located at this application\'s URL.',
   'terms.intro.p2': 'By accessing this website we assume you accept these terms and conditions. Do not continue to use PixelPerfect AI if you do not agree to take all of the terms and conditions stated on this page.',
@@ -132,8 +109,6 @@ export const en = {
   'terms.disclaimer.l4': 'exclude any of our or your liabilities that may not be excluded under applicable law.',
   'terms.disclaimer.p2': 'The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.',
   'terms.disclaimer.p3': 'As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.',
-
-  // Privacy Page
   'privacy.info.title': '1. Information We Collect',
   'privacy.info.p1': 'The personal information that you are asked to provide, and the reasons why you are asked to provide it, will be made clear to you at the point we ask you to provide your personal information.',
   'privacy.info.p2': 'If you contact us directly, we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, and any other information you may choose to provide.',
