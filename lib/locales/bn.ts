@@ -72,4 +72,13 @@ export const bn = {
   'apiDocs.tryIt.another': 'অন্য একটি ছবি পরীক্ষা করুন',
   'apiDocs.error.limitReached': 'API ক্রেডিট সীমা পৌঁছেছে। অনুগ্রহ করে আপনার প্ল্যান আপগ্রেড করুন।',
   'apiDocs.error.unknown': 'একটি অজানা ত্রুটি ঘটেছে।',
+  // Contact Page
+  'contact.title': 'যোগাযোগ করুন',
+  'contact.subtitle': 'কোন প্রশ্ন বা মতামত আছে? নিচের ফর্মটি পূরণ করুন এবং আমরা আপনার সাথে যোগাযোগ করব।',
+  'contact.nameLabel': 'পুরো নাম',
+  'contact.emailLabel': 'ইমেল ঠিকানা',
+  'contact.messageLabel': 'আপনার বার্তা',
+  'contact.sendButton': 'বার্তা পাঠান',
+  'contact.formSuccessTitle': 'বার্তা পাঠানো হয়েছে!',
+  'contact.formSuccessBody': 'যোগাযোগ করার জন্য ধন্যবাদ! আমরা আপনার বার্তা পর্যালোচনা করব এবং যত তাড়াতাড়ি সম্ভব আপনার সাথে যোগাযোগ করব।',
 };

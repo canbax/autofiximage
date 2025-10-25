@@ -72,4 +72,13 @@ export const ar = {
   'apiDocs.tryIt.another': 'اختبار صورة أخرى',
   'apiDocs.error.limitReached': 'تم الوصول إلى حد ائتمان API. يرجى ترقية خطتك.',
   'apiDocs.error.unknown': 'حدث خطأ غير معروف.',
+  // Contact Page
+  'contact.title': 'اتصل بنا',
+  'contact.subtitle': 'هل لديك سؤال أو ملاحظات؟ املأ النموذج أدناه وسنعاود الاتصال بك.',
+  'contact.nameLabel': 'الاسم الكامل',
+  'contact.emailLabel': 'عنوان البريد الإلكتروني',
+  'contact.messageLabel': 'رسالتك',
+  'contact.sendButton': 'إرسال رسالة',
+  'contact.formSuccessTitle': 'تم إرسال الرسالة!',
+  'contact.formSuccessBody': 'شكرًا لتواصلك معنا! سنراجع رسالتك وسنعاود الاتصال بك في أقرب وقت ممكن.',
 };

@@ -100,4 +100,14 @@ export const en = {
   'apiDocs.tryIt.another': 'Test another image',
   'apiDocs.error.limitReached': 'API credit limit reached. Please upgrade your plan.',
   'apiDocs.error.unknown': 'An unknown error occurred.',
+
+  // Contact Page
+  'contact.title': 'Contact Us',
+  'contact.subtitle': 'Have a question or feedback? Fill out the form below and we\'ll get back to you.',
+  'contact.nameLabel': 'Full Name',
+  'contact.emailLabel': 'Email Address',
+  'contact.messageLabel': 'Your Message',
+  'contact.sendButton': 'Send Message',
+  'contact.formSuccessTitle': 'Message Sent!',
+  'contact.formSuccessBody': 'Thanks for reaching out! We\'ll review your message and get back to you as soon as possible.',
 };

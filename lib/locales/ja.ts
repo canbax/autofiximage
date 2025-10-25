@@ -72,4 +72,13 @@ export const ja = {
   'apiDocs.tryIt.another': '別の画像をテストする',
   'apiDocs.error.limitReached': 'APIクレジットの上限に達しました。プランをアップグレードしてください。',
   'apiDocs.error.unknown': '不明なエラーが発生しました。',
+  // Contact Page
+  'contact.title': 'お問い合わせ',
+  'contact.subtitle': 'ご質問やご意見がありますか？以下のフォームにご記入の上、ご連絡ください。',
+  'contact.nameLabel': '氏名',
+  'contact.emailLabel': 'メールアドレス',
+  'contact.messageLabel': 'メッセージ',
+  'contact.sendButton': 'メッセージを送信',
+  'contact.formSuccessTitle': 'メッセージが送信されました！',
+  'contact.formSuccessBody': 'お問い合わせいただきありがとうございます。メッセージを確認し、できるだけ早く返信いたします。',
 };

@@ -12,6 +12,9 @@ import { PricingDialog } from './components/PricingDialog';
 import { ApiDocsDialog } from './components/ApiDocsDialog';
 import { fileToBase64 } from './lib/utils';
 import { applyCorrection } from './lib/imageUtils';
+import TermsPage from './components/TermsPage';
+import PrivacyPage from './components/PrivacyPage';
+import ContactPage from './components/ContactPage';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
 const DEFAULT_ROTATION = 0;
@@ -31,6 +34,19 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
+  const [route, setRoute] = useState(window.location.hash);
+
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setRoute(window.location.hash);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -187,6 +203,57 @@ const App: React.FC = () => {
     }
   };
 
+  const renderContent = () => {
+    switch (route) {
+      case '#/terms':
+        return <TermsPage />;
+      case '#/privacy':
+        return <PrivacyPage />;
+      case '#/contact':
+        return <ContactPage />;
+      default:
+        return (
+          <>
+            {!image ? (
+              <LandingPage onImageUpload={handleImageUpload} />
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
+                <div className="lg:col-span-2 h-full">
+                  <ImageEditor 
+                    image={image} 
+                    rotation={rotation} 
+                    crop={crop} 
+                    setCrop={setCrop} 
+                    keepCropperVertical={keepCropperVertical}
+                  />
+                </div>
+                <div className="lg:col-span-1 h-full">
+                  <ControlPanel
+                    rotation={rotation}
+                    setRotation={setRotation}
+                    crop={crop}
+                    setCrop={setCrop}
+                    onAutoCorrect={handleAutoCorrect}
+                    onReset={handleReset}
+                    onDownload={handleDownload}
+                    onClearImage={handleClearImage}
+                    isLoading={isLoading}
+                    keepCropperVertical={keepCropperVertical}
+                    setKeepCropperVertical={setKeepCropperVertical}
+                  />
+                </div>
+              </div>
+            )}
+            {error && image && (
+                <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
+                    <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
+                </div>
+            )}
+          </>
+        );
+    }
+  };
+
 
   return (
     <>
@@ -223,41 +290,7 @@ const App: React.FC = () => {
                 }}
               />
             <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">
-              {!image ? (
-                <LandingPage onImageUpload={handleImageUpload} />
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
-                  <div className="lg:col-span-2 h-full">
-                    <ImageEditor 
-                      image={image} 
-                      rotation={rotation} 
-                      crop={crop} 
-                      setCrop={setCrop} 
-                      keepCropperVertical={keepCropperVertical}
-                    />
-                  </div>
-                  <div className="lg:col-span-1 h-full">
-                    <ControlPanel
-                      rotation={rotation}
-                      setRotation={setRotation}
-                      crop={crop}
-                      setCrop={setCrop}
-                      onAutoCorrect={handleAutoCorrect}
-                      onReset={handleReset}
-                      onDownload={handleDownload}
-                      onClearImage={handleClearImage}
-                      isLoading={isLoading}
-                      keepCropperVertical={keepCropperVertical}
-                      setKeepCropperVertical={setKeepCropperVertical}
-                    />
-                  </div>
-                </div>
-              )}
-              {error && image && (
-                  <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
-                      <strong>{t('error.title')}</strong> {error === 'Failed to get auto-correction from AI. Please try again.' ? t('error.ai') : error}
-                  </div>
-              )}
+              {renderContent()}
             </main>
           </div>
           

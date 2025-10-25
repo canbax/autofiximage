@@ -72,4 +72,13 @@ export const hi = {
   'apiDocs.tryIt.another': 'दूसरी छवि का परीक्षण करें',
   'apiDocs.error.limitReached': 'एपीआई क्रेडिट सीमा समाप्त हो गई है। कृपया अपनी योजना अपग्रेड करें।',
   'apiDocs.error.unknown': 'एक अज्ञात त्रुटि हुई।',
+  // Contact Page
+  'contact.title': 'संपर्क करें',
+  'contact.subtitle': 'कोई प्रश्न या प्रतिक्रिया है? नीचे दिया गया फॉर्म भरें और हम आपसे संपर्क करेंगे।',
+  'contact.nameLabel': 'पूरा नाम',
+  'contact.emailLabel': 'ईमेल पता',
+  'contact.messageLabel': 'आपका संदेश',
+  'contact.sendButton': 'संदेश भेजें',
+  'contact.formSuccessTitle': 'संदेश भेजा गया!',
+  'contact.formSuccessBody': 'हमसे संपर्क करने के लिए धन्यवाद! हम आपके संदेश की समीक्षा करेंगे और जल्द से जल्द आपसे संपर्क करेंगे।',
 };

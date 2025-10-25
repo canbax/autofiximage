@@ -72,4 +72,13 @@ export const de = {
   'apiDocs.tryIt.another': 'Ein anderes Bild testen',
   'apiDocs.error.limitReached': 'API-Guthabenlimit erreicht. Bitte upgraden Sie Ihren Plan.',
   'apiDocs.error.unknown': 'Ein unbekannter Fehler ist aufgetreten.',
+  // Contact Page
+  'contact.title': 'Kontaktieren Sie uns',
+  'contact.subtitle': 'Haben Sie eine Frage oder ein Feedback? Füllen Sie das folgende Formular aus und wir melden uns bei Ihnen.',
+  'contact.nameLabel': 'Vollständiger Name',
+  'contact.emailLabel': 'E-Mail-Adresse',
+  'contact.messageLabel': 'Ihre Nachricht',
+  'contact.sendButton': 'Nachricht senden',
+  'contact.formSuccessTitle': 'Nachricht gesendet!',
+  'contact.formSuccessBody': 'Vielen Dank für Ihre Kontaktaufnahme! Wir werden Ihre Nachricht prüfen und uns so schnell wie möglich bei Ihnen melden.',
 };

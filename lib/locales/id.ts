@@ -72,4 +72,13 @@ export const id = {
   'apiDocs.tryIt.another': 'Uji gambar lain',
   'apiDocs.error.limitReached': 'Batas kredit API tercapai. Harap tingkatkan paket Anda.',
   'apiDocs.error.unknown': 'Terjadi kesalahan yang tidak diketahui.',
+  // Contact Page
+  'contact.title': 'Hubungi Kami',
+  'contact.subtitle': 'Punya pertanyaan atau masukan? Isi formulir di bawah ini dan kami akan menghubungi Anda.',
+  'contact.nameLabel': 'Nama lengkap',
+  'contact.emailLabel': 'Alamat email',
+  'contact.messageLabel': 'Pesan Anda',
+  'contact.sendButton': 'Kirim pesan',
+  'contact.formSuccessTitle': 'Pesan terkirim!',
+  'contact.formSuccessBody': 'Terima kasih telah menghubungi kami! Kami akan meninjau pesan Anda dan akan segera menghubungi Anda.',
 };

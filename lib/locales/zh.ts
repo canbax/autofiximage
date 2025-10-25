@@ -72,4 +72,13 @@ export const zh = {
   'apiDocs.tryIt.another': '测试另一张图片',
   'apiDocs.error.limitReached': '已达到 API 信用额度上限。请升级您的计划。',
   'apiDocs.error.unknown': '发生未知错误。',
+  // Contact Page
+  'contact.title': '联系我们',
+  'contact.subtitle': '有任何问题或反馈吗？请填写下面的表格，我们会尽快与您联系。',
+  'contact.nameLabel': '全名',
+  'contact.emailLabel': '电子邮件地址',
+  'contact.messageLabel': '您的留言',
+  'contact.sendButton': '发送消息',
+  'contact.formSuccessTitle': '消息已发送！',
+  'contact.formSuccessBody': '感谢您的联系！我们将审核您的消息并尽快给您回复。',
 };

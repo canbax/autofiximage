@@ -72,4 +72,13 @@ export const ru = {
   'apiDocs.tryIt.another': 'Протестировать другое изображение',
   'apiDocs.error.limitReached': 'Достигнут лимит кредитов API. Пожалуйста, обновите ваш план.',
   'apiDocs.error.unknown': 'Произошла неизвестная ошибка.',
+  // Contact Page
+  'contact.title': 'Свяжитесь с нами',
+  'contact.subtitle': 'Есть вопрос или отзыв? Заполните форму ниже, и мы свяжемся с вами.',
+  'contact.nameLabel': 'Полное имя',
+  'contact.emailLabel': 'Адрес электронной почты',
+  'contact.messageLabel': 'Ваше сообщение',
+  'contact.sendButton': 'Отправить сообщение',
+  'contact.formSuccessTitle': 'Сообщение отправлено!',
+  'contact.formSuccessBody': 'Спасибо за обращение! Мы рассмотрим ваше сообщение и свяжемся с вами в ближайшее время.',
 };

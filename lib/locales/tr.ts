@@ -81,4 +81,13 @@ export const tr = {
   'apiDocs.tryIt.another': 'Başka bir resmi test et',
   'apiDocs.error.limitReached': 'API kredi limitine ulaşıldı. Lütfen planınızı yükseltin.',
   'apiDocs.error.unknown': 'Bilinmeyen bir hata oluştu.',
+  // Contact Page
+  'contact.title': 'Bize Ulaşın',
+  'contact.subtitle': 'Bir sorunuz veya geri bildiriminiz mi var? Aşağıdaki formu doldurun, size geri dönelim.',
+  'contact.nameLabel': 'Ad Soyad',
+  'contact.emailLabel': 'E-posta Adresi',
+  'contact.messageLabel': 'Mesajınız',
+  'contact.sendButton': 'Mesaj Gönder',
+  'contact.formSuccessTitle': 'Mesaj Gönderildi!',
+  'contact.formSuccessBody': 'Bize ulaştığınız için teşekkürler! Mesajınızı inceleyip en kısa sürede size geri döneceğiz.',
 };
