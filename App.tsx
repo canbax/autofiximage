@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams } from './types';
@@ -16,7 +16,7 @@ import TermsPage from './components/TermsPage';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 
-const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 100, height: 100 };
+const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 0, height: 0 };
 const DEFAULT_ROTATION = 0;
 
 // TODO: Replace with your own AdSense Client and Slot IDs
@@ -31,6 +31,7 @@ const App: React.FC = () => {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [rotation, setRotation] = useState<number>(DEFAULT_ROTATION);
   const [crop, setCrop] = useState<CropParams>(DEFAULT_CROP);
+  const [aspectRatioKey, setAspectRatioKey] = useState('free');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
@@ -48,6 +49,21 @@ const App: React.FC = () => {
     };
   }, []);
 
+  const handleReset = useCallback(() => {
+    setRotation(DEFAULT_ROTATION);
+    if (image) {
+      setCrop({
+        x: 0,
+        y: 0,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      });
+    } else {
+      setCrop(DEFAULT_CROP);
+    }
+    setAspectRatioKey('free');
+  }, [image]);
+
 
   useEffect(() => {
     if (!originalFile) return;
@@ -57,12 +73,67 @@ const App: React.FC = () => {
       const img = new Image();
       img.onload = () => {
         setImage(img);
-        handleReset();
+        setRotation(DEFAULT_ROTATION);
+        setCrop({
+          x: 0,
+          y: 0,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+        });
+        setAspectRatioKey('free');
       };
       img.src = e.target?.result as string;
     };
     reader.readAsDataURL(originalFile);
   }, [originalFile]);
+
+  const numericAspectRatio = useMemo(() => {
+    if (aspectRatioKey === 'free' || !image) {
+      return null;
+    }
+    if (aspectRatioKey === 'original') {
+      return image.naturalWidth / image.naturalHeight;
+    }
+    const ratioString = aspectRatioKey.split('-')[0];
+    const parts = ratioString.split('/');
+    if (parts.length === 2) {
+      const [w, h] = parts.map(Number);
+      if (h > 0 && w > 0) return w / h;
+    }
+    return null;
+  }, [aspectRatioKey, image]);
+
+  // Adjust crop when aspect ratio changes
+  useEffect(() => {
+    if (numericAspectRatio === null || !image) return;
+
+    setCrop(c => {
+      const currentCenter = { x: c.x + c.width / 2, y: c.y + c.height / 2 };
+      let newWidth = c.width;
+      let newHeight = Math.round(newWidth / numericAspectRatio);
+      
+      if (currentCenter.y + newHeight / 2 > image.naturalHeight || currentCenter.y - newHeight / 2 < 0) {
+        newHeight = Math.min(image.naturalHeight, Math.round(currentCenter.y * 2), Math.round((image.naturalHeight - currentCenter.y) * 2));
+        newWidth = Math.round(newHeight * numericAspectRatio);
+      }
+      if (currentCenter.x + newWidth / 2 > image.naturalWidth || currentCenter.x - newWidth / 2 < 0) {
+        newWidth = Math.min(image.naturalWidth, Math.round(currentCenter.x * 2), Math.round((image.naturalWidth - currentCenter.x) * 2));
+        newHeight = Math.round(newWidth / numericAspectRatio);
+      }
+
+      let newX = Math.round(currentCenter.x - newWidth / 2);
+      let newY = Math.round(currentCenter.y - newHeight / 2);
+      
+      // Clamp position
+      if (newX < 0) newX = 0;
+      if (newY < 0) newY = 0;
+      if (newX + newWidth > image.naturalWidth) newX = image.naturalWidth - newWidth;
+      if (newY + newHeight > image.naturalHeight) newY = image.naturalHeight - newHeight;
+
+      return { x: newX, y: newY, width: newWidth, height: newHeight };
+    });
+  }, [numericAspectRatio, image]);
+
 
   // Keyboard controls for cropper
   useEffect(() => {
@@ -93,8 +164,8 @@ const App: React.FC = () => {
           }
     
           // Clamp position to stay within boundaries
-          const clampedX = Math.max(0, Math.min(newX, 100 - currentCrop.width));
-          const clampedY = Math.max(0, Math.min(newY, 100 - currentCrop.height));
+          const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentCrop.width));
+          const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentCrop.height));
           
           return {
             ...currentCrop,
@@ -124,22 +195,25 @@ const App: React.FC = () => {
     setError(null);
     setRotation(DEFAULT_ROTATION);
     setCrop(DEFAULT_CROP);
+    setAspectRatioKey('free');
   };
-
-  const handleReset = useCallback(() => {
-    setRotation(DEFAULT_ROTATION);
-    setCrop(DEFAULT_CROP);
-  }, []);
 
   const handleAutoCorrect = async () => {
     if (!image || !originalFile) return;
     setIsLoading(true);
     setError(null);
+    setAspectRatioKey('free'); // AI correction should be free form
     try {
       const base64Data = await fileToBase64(originalFile);
       const result = await getAutoCorrection(base64Data, originalFile.type);
+      const newCropInPixels = {
+        x: Math.round((result.crop.x / 100) * image.naturalWidth),
+        y: Math.round((result.crop.y / 100) * image.naturalHeight),
+        width: Math.round((result.crop.width / 100) * image.naturalWidth),
+        height: Math.round((result.crop.height / 100) * image.naturalHeight),
+      };
       setRotation(result.rotation);
-      setCrop(result.crop);
+      setCrop(newCropInPixels);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred.');
     } finally {
@@ -155,20 +229,22 @@ const App: React.FC = () => {
 
     try {
         let correctedImageBlob: Blob;
+        const cropInPercentage: CropParams = {
+            x: (crop.x / image.naturalWidth) * 100,
+            y: (crop.y / image.naturalHeight) * 100,
+            width: (crop.width / image.naturalWidth) * 100,
+            height: (crop.height / image.naturalHeight) * 100,
+        };
 
         if (keepCropperVertical) {
-             correctedImageBlob = await applyCorrection(image, rotation, crop, originalFile.type);
+             correctedImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
         } else {
-             // Fallback to simpler logic if the user chose the other mode.
-             // Note: applyCorrection contains the more accurate logic.
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             if (!ctx) throw new Error(t('alert.noContext'));
 
-            const cropWidth = (crop.width / 100) * image.naturalWidth;
-            const cropHeight = (crop.height / 100) * image.naturalHeight;
-            canvas.width = cropWidth;
-            canvas.height = cropHeight;
+            canvas.width = crop.width;
+            canvas.height = crop.height;
 
             ctx.save();
             ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -177,10 +253,10 @@ const App: React.FC = () => {
             
             ctx.drawImage(
                 image,
-                (crop.x / 100) * image.naturalWidth,
-                (crop.y / 100) * image.naturalHeight,
-                cropWidth,
-                cropHeight,
+                crop.x,
+                crop.y,
+                crop.width,
+                crop.height,
                 0, 0,
                 canvas.width,
                 canvas.height
@@ -223,12 +299,14 @@ const App: React.FC = () => {
                     image={image} 
                     rotation={rotation} 
                     crop={crop} 
-                    setCrop={setCrop} 
+                    setCrop={setCrop}
+                    aspectRatio={numericAspectRatio}
                     keepCropperVertical={keepCropperVertical}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
                   <ControlPanel
+                    image={image}
                     rotation={rotation}
                     setRotation={setRotation}
                     crop={crop}
@@ -240,6 +318,8 @@ const App: React.FC = () => {
                     isLoading={isLoading}
                     keepCropperVertical={keepCropperVertical}
                     setKeepCropperVertical={setKeepCropperVertical}
+                    aspectRatioKey={aspectRatioKey}
+                    setAspectRatioKey={setAspectRatioKey}
                   />
                 </div>
               </div>

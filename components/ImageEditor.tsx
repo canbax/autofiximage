@@ -16,10 +16,11 @@ interface ImageEditorProps {
   crop: CropParams;
   setCrop: (crop: CropParams) => void;
   rotation: number;
+  aspectRatio: number | null;
   keepCropperVertical: boolean;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, keepCropperVertical }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
 
@@ -52,7 +53,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
 
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!interactionRef.current || !containerRef.current) return;
+    if (!interactionRef.current || !containerRef.current || !image) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -63,64 +64,78 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     const rect = containerRef.current.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
 
-    const dx = currentX - startX;
-    const dy = currentY - startY;
+    const scaleX = image.naturalWidth / rect.width;
+    const scaleY = image.naturalHeight / rect.height;
 
-    const dxPercent = (dx / rect.width) * 100;
-    const dyPercent = (dy / rect.height) * 100;
+    const dxImage = (currentX - startX) * scaleX;
+    const dyImage = (currentY - startY) * scaleY;
 
     if (type === 'move') {
       let newCrop = { ...startCrop };
-      newCrop.x = startCrop.x + dxPercent;
-      newCrop.y = startCrop.y + dyPercent;
+      newCrop.x = startCrop.x + dxImage;
+      newCrop.y = startCrop.y + dyImage;
 
-      // Clamp position so the crop box stays within the 100x100 bounds
-      newCrop.x = Math.max(0, Math.min(newCrop.x, 100 - newCrop.width));
-      newCrop.y = Math.max(0, Math.min(newCrop.y, 100 - newCrop.height));
-      setCrop(newCrop);
+      // Clamp position so the crop box stays within the image bounds
+      newCrop.x = Math.max(0, Math.min(newCrop.x, image.naturalWidth - newCrop.width));
+      newCrop.y = Math.max(0, Math.min(newCrop.y, image.naturalHeight - newCrop.height));
+      setCrop({
+        x: Math.round(newCrop.x),
+        y: Math.round(newCrop.y),
+        width: Math.round(newCrop.width),
+        height: Math.round(newCrop.height),
+      });
 
     } else if (type === 'resize' && handle) {
-        const newCrop = { ...startCrop };
-        const startRight = startCrop.x + startCrop.width;
-        const startBottom = startCrop.y + startCrop.height;
-
-        if (handle.includes('n')) {
-            let newY = startCrop.y + dyPercent;
-            // Clamp so we don't go past the top, or make the crop area less than 1% high
-            newY = Math.max(0, Math.min(newY, startBottom - 1));
-            // Recalculate height based on the new Y, keeping the bottom edge fixed
-            newCrop.height = startBottom - newY;
-            newCrop.y = newY;
-        }
-
-        if (handle.includes('s')) {
-            let newBottom = startBottom + dyPercent;
-            // Clamp so we don't go past the bottom, or make the crop area less than 1% high
-            newBottom = Math.min(100, Math.max(newBottom, newCrop.y + 1));
-            // Recalculate height based on new bottom
-            newCrop.height = newBottom - newCrop.y;
-        }
-
-        if (handle.includes('w')) {
-            let newX = startCrop.x + dxPercent;
-            // Clamp so we don't go past the left, or make the crop area less than 1% wide
-            newX = Math.max(0, Math.min(newX, startRight - 1));
-            // Recalculate width based on the new X, keeping the right edge fixed
-            newCrop.width = startRight - newX;
-            newCrop.x = newX;
-        }
-
-        if (handle.includes('e')) {
-            let newRight = startRight + dxPercent;
-            // Clamp so we don't go past the right, or make the crop area less than 1% wide
-            newRight = Math.min(100, Math.max(newRight, newCrop.x + 1));
-            // Recalculate width based on new right
-            newCrop.width = newRight - newCrop.x;
+        let { x, y, width, height } = { ...startCrop };
+        const startRight = x + width;
+        const startBottom = y + height;
+    
+        if (handle.includes('e')) width += dxImage;
+        if (handle.includes('w')) { x += dxImage; width -= dxImage; }
+        if (handle.includes('s')) height += dyImage;
+        if (handle.includes('n')) { y += dyImage; height -= dyImage; }
+        
+        if (aspectRatio) {
+            if (handle.length === 2 && Math.abs(dyImage) > Math.abs(dxImage)) {
+                 width = height * aspectRatio;
+            } else {
+                 height = width / aspectRatio;
+            }
+            
+            if (handle.includes('n')) y = startBottom - height;
+            if (handle.includes('w')) x = startRight - width;
         }
         
-        setCrop(newCrop);
+        const MIN_SIZE = 20;
+        width = Math.max(MIN_SIZE, width);
+        height = Math.max(MIN_SIZE, height);
+        
+        x = Math.max(0, x);
+        y = Math.max(0, y);
+        
+        if (x + width > image.naturalWidth) {
+            width = image.naturalWidth - x;
+            if (aspectRatio) {
+                height = width / aspectRatio;
+                if (handle.includes('n')) y = startBottom - height;
+            }
+        }
+        if (y + height > image.naturalHeight) {
+            height = image.naturalHeight - y;
+            if (aspectRatio) {
+                width = height * aspectRatio;
+                if (handle.includes('w')) x = startRight - width;
+            }
+        }
+        
+        if (x + width > image.naturalWidth) x = image.naturalWidth - width;
+        if (y + height > image.naturalHeight) y = image.naturalHeight - height;
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+        
+        setCrop({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
     }
-  }, [setCrop, getTransformedCoordinates]);
+  }, [setCrop, getTransformedCoordinates, aspectRatio, image]);
 
   const handleMouseUp = useCallback(() => {
     interactionRef.current = null;
@@ -157,10 +172,10 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     <div
       className="absolute"
       style={{
-        left: `${crop.x}%`,
-        top: `${crop.y}%`,
-        width: `${crop.width}%`,
-        height: `${crop.height}%`,
+        left: `${(crop.x / image.naturalWidth) * 100}%`,
+        top: `${(crop.y / image.naturalHeight) * 100}%`,
+        width: `${(crop.width / image.naturalWidth) * 100}%`,
+        height: `${(crop.height / image.naturalHeight) * 100}%`,
         boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.6)`,
       }}
     >

@@ -1,11 +1,13 @@
 import React from 'react';
 import { CropParams } from '../types';
 import { Button } from './Button';
-import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon } from './icons';
+import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
 import { Checkbox } from './Checkbox';
+import { Select } from './Select';
 
 interface ControlPanelProps {
+  image: HTMLImageElement | null;
   rotation: number;
   setRotation: (value: number) => void;
   crop: CropParams;
@@ -17,6 +19,8 @@ interface ControlPanelProps {
   isLoading: boolean;
   keepCropperVertical: boolean;
   setKeepCropperVertical: (value: boolean) => void;
+  aspectRatioKey: string;
+  setAspectRatioKey: (value: string) => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -29,12 +33,12 @@ const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: Rea
     </div>
 );
 
-// Fix: Allow step, min, and max to be strings or numbers to match usage with both number and string values.
 const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; step?: number | string; min?: number | string; max?: number | string }> = ({ value, onChange, ...props }) => (
     <input
         type="number"
         value={value}
         onChange={onChange}
+        onWheel={(e) => (e.target as HTMLInputElement).blur()}
         className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm text-gray-900 dark:text-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
         {...props}
     />
@@ -42,6 +46,7 @@ const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTM
 
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
+  image,
   rotation,
   setRotation,
   crop,
@@ -53,29 +58,44 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   isLoading,
   keepCropperVertical,
   setKeepCropperVertical,
+  aspectRatioKey,
+  setAspectRatioKey,
 }) => {
   const { t } = useTranslation();
 
+  const aspectRatioOptions = [
+    { value: 'free', label: t('controls.aspectRatios.free') },
+    { value: 'original', label: t('controls.aspectRatios.original') },
+    { value: '1/1-square', label: t('controls.aspectRatios.square') },
+    { value: '4/3', label: t('controls.aspectRatios.monitor') },
+    { value: '16/9-widescreen', label: t('controls.aspectRatios.widescreen') },
+    { value: '1/1-profile', label: t('controls.aspectRatios.profilePicture') },
+    { value: '4/5', label: t('controls.aspectRatios.igPost') },
+    { value: '9/16-vertical', label: t('controls.aspectRatios.storyReelTikTok') },
+    { value: '16/9-twitter', label: t('controls.aspectRatios.twitterPost') },
+    { value: '1.91/1', label: t('controls.aspectRatios.fbPost') },
+    { value: '16/9-fbAd', label: t('controls.aspectRatios.fbAd') },
+    { value: '3/1', label: t('controls.aspectRatios.panorama') },
+    { value: '32/9', label: t('controls.aspectRatios.ultraWide') },
+  ];
+
   const handleCropChange = (field: keyof CropParams, value: string) => {
-    const numericValue = parseFloat(value) || 0;
+    if (!image) return;
+    const numericValue = parseInt(value, 10) || 0;
     const newCrop = { ...crop };
 
     switch (field) {
       case 'x':
-        // Clamp x between 0 and (100 - width)
-        newCrop.x = Math.max(0, Math.min(numericValue, 100 - newCrop.width));
+        newCrop.x = Math.max(0, Math.min(numericValue, image.naturalWidth - newCrop.width));
         break;
       case 'y':
-        // Clamp y between 0 and (100 - height)
-        newCrop.y = Math.max(0, Math.min(numericValue, 100 - newCrop.height));
+        newCrop.y = Math.max(0, Math.min(numericValue, image.naturalHeight - newCrop.height));
         break;
       case 'width':
-        // Clamp width between 1 and (100 - x)
-        newCrop.width = Math.max(1, Math.min(numericValue, 100 - newCrop.x));
+        newCrop.width = Math.max(1, Math.min(numericValue, image.naturalWidth - newCrop.x));
         break;
       case 'height':
-        // Clamp height between 1 and (100 - y)
-        newCrop.height = Math.max(1, Math.min(numericValue, 100 - newCrop.y));
+        newCrop.height = Math.max(1, Math.min(numericValue, image.naturalHeight - newCrop.y));
         break;
     }
     setCrop(newCrop);
@@ -117,37 +137,46 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <NumberInput 
-                        value={Number(crop.x.toFixed(2))} 
+                        value={Math.round(crop.x)} 
                         onChange={e => handleCropChange('x', e.target.value)}
-                        min={0} max={100}
+                        min={0} max={image?.naturalWidth || 0} step="1"
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropX')}</p>
                 </div>
                 <div>
                     <NumberInput 
-                        value={Number(crop.y.toFixed(2))} 
+                        value={Math.round(crop.y)} 
                         onChange={e => handleCropChange('y', e.target.value)}
-                        min={0} max={100}
+                        min={0} max={image?.naturalHeight || 0} step="1"
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropY')}</p>
                 </div>
                 <div>
                     <NumberInput 
-                        value={Number(crop.width.toFixed(2))} 
+                        value={Math.round(crop.width)} 
                         onChange={e => handleCropChange('width', e.target.value)}
-                        min={1} max={100}
+                        min={1} max={image?.naturalWidth || 0} step="1"
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropWidth')}</p>
                 </div>
                 <div>
                     <NumberInput 
-                        value={Number(crop.height.toFixed(2))} 
+                        value={Math.round(crop.height)} 
                         onChange={e => handleCropChange('height', e.target.value)}
-                        min={1} max={100}
+                        min={1} max={image?.naturalHeight || 0} step="1"
                     />
                     <p className="text-xs text-center text-gray-500 mt-1">{t('controls.cropHeight')}</p>
                 </div>
             </div>
+        </InputGroup>
+        
+        <InputGroup label={t('controls.aspectRatio')} icon={<AspectRatioIcon />}>
+            <Select
+                value={aspectRatioKey}
+                onChange={e => setAspectRatioKey(e.target.value)}
+                options={aspectRatioOptions}
+                searchPlaceholder={t('controls.searchPlaceholder')}
+            />
         </InputGroup>
 
         <div>
