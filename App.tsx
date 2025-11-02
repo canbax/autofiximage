@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
-import { CropParams } from './types';
+import { CropParams, BlurRegion } from './types';
 import { getAutoCorrection } from './services/geminiService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
@@ -49,7 +49,8 @@ const App: React.FC = () => {
   const [resizeBgColor, setResizeBgColor] = useState('transparent');
 
   // Blur State
-  const [blurAmount, setBlurAmount] = useState<number>(DEFAULT_BLUR_AMOUNT);
+  const [blurRegions, setBlurRegions] = useState<BlurRegion[]>([]);
+  const [activeBlurRegionId, setActiveBlurRegionId] = useState<string | null>(null);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -100,7 +101,8 @@ const App: React.FC = () => {
     setMode('crop-rotate');
     setResizeContain(true);
     setLockAspectRatio(true);
-    setBlurAmount(DEFAULT_BLUR_AMOUNT);
+    setBlurRegions([]);
+    setActiveBlurRegionId(null);
   }, [image]);
 
 
@@ -205,51 +207,59 @@ const App: React.FC = () => {
 
   // Keyboard controls for cropper
   useEffect(() => {
-    if (!image || (mode !== 'crop-rotate' && mode !== 'blur')) return;
-
+    if (!image) return;
+  
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
-
-        setSelection(currentSelection => {
-          const step = e.shiftKey ? 10 : 1; // Larger step with Shift key
-          let newX = currentSelection.x;
-          let newY = currentSelection.y;
-    
-          switch (e.key) {
-            case 'ArrowUp':
-              newY -= step;
-              break;
-            case 'ArrowDown':
-              newY += step;
-              break;
-            case 'ArrowLeft':
-              newX -= step;
-              break;
-            case 'ArrowRight':
-              newX += step;
-              break;
-          }
-    
-          // Clamp position to stay within boundaries
-          const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentSelection.width));
-          const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentSelection.height));
+        const step = e.shiftKey ? 10 : 1;
+  
+        if (mode === 'crop-rotate') {
+          setSelection(currentSelection => {
+            let newX = currentSelection.x;
+            let newY = currentSelection.y;
+      
+            switch (e.key) {
+              case 'ArrowUp': newY -= step; break;
+              case 'ArrowDown': newY += step; break;
+              case 'ArrowLeft': newX -= step; break;
+              case 'ArrowRight': newX += step; break;
+            }
+      
+            const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentSelection.width));
+            const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentSelection.height));
+            
+            return { ...currentSelection, x: clampedX, y: clampedY };
+          });
+        } else if (mode === 'blur' && activeBlurRegionId) {
+          setBlurRegions(currentRegions => 
+            currentRegions.map(region => {
+              if (region.id === activeBlurRegionId) {
+                let newX = region.selection.x;
+                let newY = region.selection.y;
           
-          return {
-            ...currentSelection,
-            x: clampedX,
-            y: clampedY,
-          };
-        });
+                switch (e.key) {
+                  case 'ArrowUp': newY -= step; break;
+                  case 'ArrowDown': newY += step; break;
+                  case 'ArrowLeft': newX -= step; break;
+                  case 'ArrowRight': newX += step; break;
+                }
+          
+                const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - region.selection.width));
+                const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - region.selection.height));
+                
+                return { ...region, selection: { ...region.selection, x: clampedX, y: clampedY } };
+              }
+              return region;
+            })
+          );
+        }
       }
     };
-
+  
     window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [image, setSelection, mode]);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [image, mode, activeBlurRegionId, setSelection, setBlurRegions]);
   
   const handleImageUpload = (file: File) => {
     setIsProcessingImage(true);
@@ -334,8 +344,7 @@ const App: React.FC = () => {
             // Draw the original image first.
             ctx.drawImage(image, 0, 0);
 
-            if (blurAmount > 0 && selection.width > 0 && selection.height > 0) {
-                // Create a temporary canvas to hold a fully blurred version of the image.
+            if (blurRegions.length > 0) {
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 if (!tempCtx) throw new Error(t('alert.noContext'));
@@ -343,20 +352,22 @@ const App: React.FC = () => {
                 tempCanvas.width = image.naturalWidth;
                 tempCanvas.height = image.naturalHeight;
 
-                // Apply the blur filter and draw the image onto the temporary canvas.
-                tempCtx.filter = `blur(${blurAmount}px)`;
-                tempCtx.drawImage(image, 0, 0);
+                for (const region of blurRegions) {
+                    if (region.blurAmount > 0 && region.selection.width > 0 && region.selection.height > 0) {
+                        // For each region, create a blurred version on the temp canvas,
+                        // then clip the main canvas and draw the blurred part in.
+                        tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                        tempCtx.filter = `blur(${region.blurAmount}px)`;
+                        tempCtx.drawImage(image, 0, 0);
 
-                // On the final canvas, create a clipping path for the blurred region.
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(selection.x, selection.y, selection.width, selection.height);
-                ctx.clip();
-                // Draw the blurred image from the temporary canvas. It will only appear within the clipped region.
-                ctx.drawImage(tempCanvas, 0, 0);
-
-                // Remove the clipping path.
-                ctx.restore();
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(region.selection.x, region.selection.y, region.selection.width, region.selection.height);
+                        ctx.clip();
+                        ctx.drawImage(tempCanvas, 0, 0);
+                        ctx.restore();
+                    }
+                }
             }
 
             finalImageBlob = await new Promise((resolve, reject) => {
@@ -417,6 +428,63 @@ const App: React.FC = () => {
     }
   };
 
+  const handleAddBlurRegion = () => {
+    if (!image) return;
+    const id = Date.now().toString();
+    const newRegion: BlurRegion = {
+      id,
+      selection: {
+        x: Math.round(image.naturalWidth / 2 - image.naturalWidth * 0.125),
+        y: Math.round(image.naturalHeight / 2 - image.naturalHeight * 0.125),
+        width: Math.round(image.naturalWidth * 0.25),
+        height: Math.round(image.naturalHeight * 0.25),
+      },
+      blurAmount: DEFAULT_BLUR_AMOUNT,
+    };
+    setBlurRegions(prev => [...prev, newRegion]);
+    setActiveBlurRegionId(id);
+  };
+
+  const handleUpdateBlurRegion = (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => {
+    setBlurRegions(prev => prev.map(r => (r.id === id ? { ...r, ...newProps } : r)));
+  };
+
+  const handleRemoveBlurRegion = (id: string) => {
+    setBlurRegions(prev => {
+      const newRegions = prev.filter(r => r.id !== id);
+      if (activeBlurRegionId === id) {
+        setActiveBlurRegionId(newRegions.length > 0 ? newRegions[newRegions.length - 1].id : null);
+      }
+      return newRegions;
+    });
+  };
+
+  const handleSelectBlurRegion = (id: string) => {
+    setActiveBlurRegionId(id);
+  };
+
+  const handleModeChange = (newMode: AppMode) => {
+    // If switching to blur mode for the first time (no blur regions exist)
+    // and a crop has been made (selection is smaller than the full image),
+    // use the current crop selection as the initial blur region.
+    if (
+        newMode === 'blur' &&
+        blurRegions.length === 0 &&
+        image &&
+        (selection.width < image.naturalWidth || selection.height < image.naturalHeight)
+    ) {
+        const id = Date.now().toString();
+        const newRegion: BlurRegion = {
+            id,
+            selection: { ...selection }, // Use the crop selection
+            blurAmount: DEFAULT_BLUR_AMOUNT,
+        };
+        setBlurRegions([newRegion]);
+        setActiveBlurRegionId(id);
+    }
+    setMode(newMode);
+  };
+
   const renderContent = () => {
     switch (route) {
       case '#/terms':
@@ -446,7 +514,10 @@ const App: React.FC = () => {
                     lockAspectRatio={lockAspectRatio}
                     resizeContain={resizeContain}
                     resizeBgColor={resizeBgColor}
-                    blurAmount={blurAmount}
+                    blurRegions={blurRegions}
+                    activeBlurRegionId={activeBlurRegionId}
+                    onUpdateBlurRegion={handleUpdateBlurRegion}
+                    onSelectBlurRegion={handleSelectBlurRegion}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
@@ -476,8 +547,12 @@ const App: React.FC = () => {
                     setResizeContain={setResizeContain}
                     resizeBgColor={resizeBgColor}
                     setResizeBgColor={setResizeBgColor}
-                    blurAmount={blurAmount}
-                    setBlurAmount={setBlurAmount}
+                    blurRegions={blurRegions}
+                    activeBlurRegionId={activeBlurRegionId}
+                    onAddBlurRegion={handleAddBlurRegion}
+                    onUpdateBlurRegion={handleUpdateBlurRegion}
+                    onRemoveBlurRegion={handleRemoveBlurRegion}
+                    onSelectBlurRegion={handleSelectBlurRegion}
                   />
                 </div>
               </div>
@@ -495,7 +570,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Navbar image={image} mode={mode} setMode={setMode} />
+      <Navbar image={image} mode={mode} setMode={handleModeChange} />
       <LoginDialog />
       <PricingDialog />
       <ApiDocsDialog />

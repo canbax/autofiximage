@@ -1,5 +1,5 @@
 import React from 'react';
-import { CropParams } from '../types';
+import { CropParams, BlurRegion } from '../types';
 import { Button } from './Button';
 import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
@@ -32,8 +32,12 @@ interface ControlPanelProps {
   setResizeContain: (value: boolean) => void;
   resizeBgColor: string;
   setResizeBgColor: (value: string) => void;
-  blurAmount: number;
-  setBlurAmount: (value: number) => void;
+  blurRegions: BlurRegion[];
+  activeBlurRegionId: string | null;
+  onAddBlurRegion: () => void;
+  onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
+  onRemoveBlurRegion: (id: string) => void;
+  onSelectBlurRegion: (id: string) => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -84,10 +88,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   setResizeContain,
   resizeBgColor,
   setResizeBgColor,
-  blurAmount,
-  setBlurAmount,
+  blurRegions,
+  activeBlurRegionId,
+  onAddBlurRegion,
+  onUpdateBlurRegion,
+  onRemoveBlurRegion,
+  onSelectBlurRegion,
 }) => {
   const { t } = useTranslation();
+  const activeBlurRegion = activeBlurRegionId ? blurRegions.find(r => r.id === activeBlurRegionId) : null;
 
   const aspectRatioOptions = [
     { value: 'free', label: t('controls.aspectRatios.free') },
@@ -303,22 +312,55 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {mode === 'blur' && (
           <>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('controls.blurEffect')}</h2>
-            <div className="flex flex-col gap-6">
-              <InputGroup label={t('controls.blurAmount')} icon={<BlurIcon />}>
-                  <NumberInput
-                    value={blurAmount}
-                    onChange={(e) => setBlurAmount(parseFloat(e.target.value) || 0)}
-                    onBlur={(e) => {
-                      const value = parseFloat(e.target.value);
-                      if (value < 10) {
-                        setBlurAmount(10);
-                      }
-                    }}
-                    step="1"
-                    min="10"
-                    max="50"
-                  />
-              </InputGroup>
+            <div className="flex flex-col gap-4">
+              <Button onClick={onAddBlurRegion} variant="secondary">{t('controls.addBlurArea')}</Button>
+              
+              {blurRegions.length > 0 && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">{t('controls.blurRegions')}</label>
+                  {blurRegions.map((region, index) => (
+                    <div
+                      key={region.id}
+                      onClick={() => onSelectBlurRegion(region.id)}
+                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
+                        activeBlurRegionId === region.id ? 'bg-indigo-100 dark:bg-indigo-900/50 ring-2 ring-indigo-400' : 'bg-gray-200/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <span className="text-sm font-semibold">{t('controls.blurArea')} {index + 1}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemoveBlurRegion(region.id);
+                        }}
+                        className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50"
+                        aria-label={`Remove blur area ${index + 1}`}
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeBlurRegion && (
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <InputGroup label={`${t('controls.blurAmount')} (${t('controls.blurArea')} ${blurRegions.findIndex(r => r.id === activeBlurRegionId) + 1})`} icon={<BlurIcon />}>
+                      <NumberInput
+                        value={activeBlurRegion.blurAmount}
+                        onChange={(e) => onUpdateBlurRegion(activeBlurRegionId!, { blurAmount: parseFloat(e.target.value) || 0 })}
+                        onBlur={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (value < 10) {
+                            onUpdateBlurRegion(activeBlurRegionId!, { blurAmount: 10 });
+                          }
+                        }}
+                        step="1"
+                        min="10"
+                        max="50"
+                      />
+                  </InputGroup>
+                </div>
+              )}
             </div>
           </>
       )}

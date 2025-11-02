@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useEffect } from 'react';
-import { CropParams } from '../types';
+import { CropParams, BlurRegion } from '../types';
 
 type Handle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
@@ -9,6 +9,7 @@ interface Interaction {
   startX: number;
   startY: number;
   startSelection: CropParams;
+  regionId?: string;
 }
 
 interface ImageEditorProps {
@@ -24,7 +25,10 @@ interface ImageEditorProps {
   lockAspectRatio: boolean;
   resizeContain: boolean;
   resizeBgColor: string;
-  blurAmount: number;
+  blurRegions: BlurRegion[];
+  activeBlurRegionId: string | null;
+  onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
+  onSelectBlurRegion: (id: string) => void;
 }
 
 export const ImageEditor: React.FC<ImageEditorProps> = ({ 
@@ -36,7 +40,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   mode, 
   resizeWidth, resizeHeight, 
   lockAspectRatio, resizeContain, resizeBgColor,
-  blurAmount
+  blurRegions, activeBlurRegionId, onUpdateBlurRegion, onSelectBlurRegion
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
@@ -104,7 +108,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    const { type, handle, startX, startY, startSelection } = interactionRef.current;
+    const { type, handle, startX, startY, startSelection, regionId } = interactionRef.current;
     const { x: currentX, y: currentY } = getTransformedCoordinates(e);
     
     const rect = containerRef.current.getBoundingClientRect();
@@ -123,12 +127,19 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
 
       newSelection.x = Math.max(0, Math.min(newSelection.x, image.naturalWidth - newSelection.width));
       newSelection.y = Math.max(0, Math.min(newSelection.y, image.naturalHeight - newSelection.height));
-      setSelection({
+
+      const finalSelection = {
         x: Math.round(newSelection.x),
         y: Math.round(newSelection.y),
         width: Math.round(newSelection.width),
         height: Math.round(newSelection.height),
-      });
+      };
+
+      if (mode === 'blur' && regionId) {
+        onUpdateBlurRegion(regionId, { selection: finalSelection });
+      } else if (mode === 'crop-rotate') {
+        setSelection(finalSelection);
+      }
 
     } else if (type === 'resize' && handle) {
         let { x, y, width, height } = startSelection;
@@ -176,9 +187,15 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
         if (x < 0) x = 0;
         if (y < 0) y = 0;
         
-        setSelection({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+        const finalSelection = { x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
+
+        if (mode === 'blur' && regionId) {
+          onUpdateBlurRegion(regionId, { selection: finalSelection });
+        } else if (mode === 'crop-rotate') {
+          setSelection(finalSelection);
+        }
     }
-  }, [setSelection, getTransformedCoordinates, aspectRatio, image, mode]);
+  }, [setSelection, getTransformedCoordinates, aspectRatio, image, mode, onUpdateBlurRegion]);
 
   const handleMouseUp = useCallback(() => {
     interactionRef.current = null;
@@ -186,7 +203,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
     window.removeEventListener('mouseup', handleMouseUp);
   }, [handleMouseMove]);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, regionId?: string, regionSelection?: CropParams) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -200,8 +217,13 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
       handle,
       startX,
       startY,
-      startSelection: { ...selection },
+      startSelection: mode === 'blur' ? { ...regionSelection! } : { ...selection },
+      regionId: mode === 'blur' ? regionId : undefined,
     };
+
+    if (mode === 'blur' && regionId) {
+      onSelectBlurRegion(regionId);
+    }
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
@@ -211,22 +233,40 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   
   if (!image) return null;
 
-  const renderSelectionBox = (currentSelection: CropParams, showGrid: boolean, blurEffect: boolean) => (
+  const renderSelectionBox = ({
+    boxKey,
+    currentSelection,
+    isGrid = false,
+    isBlur = false,
+    blurAmount = 0,
+    isActive = false,
+    onMouseDown,
+  }: {
+    boxKey: string | number;
+    currentSelection: CropParams;
+    isGrid?: boolean;
+    isBlur?: boolean;
+    blurAmount?: number;
+    isActive?: boolean;
+    onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  }) => (
     <div
+      key={boxKey}
       className="absolute"
       style={{
         left: `${(currentSelection.x / image.naturalWidth) * 100}%`,
         top: `${(currentSelection.y / image.naturalHeight) * 100}%`,
         width: `${(currentSelection.width / image.naturalWidth) * 100}%`,
         height: `${(currentSelection.height / image.naturalHeight) * 100}%`,
-        boxShadow: showGrid ? `0 0 0 9999px rgba(0, 0, 0, 0.6)` : 'none',
+        boxShadow: isGrid ? '0 0 0 9999px rgba(0, 0, 0, 0.6)' : 'none',
+        zIndex: isActive ? 10 : 1,
       }}
     >
       <div
-        className="w-full h-full cursor-move border-2 border-dashed border-white/70"
-        onMouseDown={handleMouseDown}
+        className={`w-full h-full cursor-move border-2 border-dashed ${isActive ? 'border-indigo-400' : 'border-white/70'}`}
+        onMouseDown={onMouseDown}
       >
-        {blurEffect && (
+        {isBlur && (
             <div 
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -234,7 +274,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
               }}
             />
         )}
-        {showGrid && (
+        {isGrid && (
           <>
             <div className="absolute top-0 left-1/3 w-px h-full bg-white/40"></div>
             <div className="absolute top-0 left-2/3 w-px h-full bg-white/40"></div>
@@ -247,12 +287,21 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
         <div
           key={handle}
           data-handle={handle}
-          onMouseDown={handleMouseDown}
-          className={`handle-${handle} absolute w-3 h-3 bg-white rounded-full border-2 border-gray-900`}
+          onMouseDown={onMouseDown}
+          className={`handle-${handle} absolute w-3 h-3 bg-white rounded-full border-2 ${isActive ? 'border-indigo-500' : 'border-gray-900'}`}
         />
       ))}
     </div>
   );
+
+  const cropRotateSelection = renderSelectionBox({
+    boxKey: 'crop-selection',
+    currentSelection: selection,
+    isGrid: true,
+    isActive: true,
+    onMouseDown: (e) => handleMouseDown(e)
+  });
+
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-900 p-4 rounded-lg shadow-inner select-none overflow-hidden">
@@ -268,14 +317,21 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 style={{ transform: `rotate(${rotation}deg)` }}
             >
                 <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-                {!keepCropperVertical && renderSelectionBox(selection, true, false)}
+                {!keepCropperVertical && cropRotateSelection}
             </div>
-            {keepCropperVertical && renderSelectionBox(selection, true, false)}
+            {keepCropperVertical && cropRotateSelection}
           </>
         ) : mode === 'blur' ? (
             <>
               <img src={image.src} alt="Source for blurring" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-              {renderSelectionBox(selection, false, true)}
+              {blurRegions.map(region => renderSelectionBox({
+                boxKey: region.id,
+                currentSelection: region.selection,
+                isBlur: true,
+                blurAmount: region.blurAmount,
+                isActive: region.id === activeBlurRegionId,
+                onMouseDown: (e) => handleMouseDown(e, region.id, region.selection)
+              }))}
             </>
         ) : ( // resize mode
           <div className="w-full h-full flex items-center justify-center">
