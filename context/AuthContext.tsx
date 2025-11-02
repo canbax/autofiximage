@@ -107,7 +107,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       }
     } catch (error) {
-      console.error("Failed to parse session data", error);
       localStorage.removeItem('session');
     }
   }, []);

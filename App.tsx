@@ -142,7 +142,6 @@ const App: React.FC = () => {
                 setResizeBgColor(hex);
             }
         } catch (e) {
-            console.error("Error picking corner color, defaulting to transparent.", e);
             setResizeBgColor('transparent');
         }
         setIsProcessingImage(false);
@@ -359,7 +358,6 @@ const App: React.FC = () => {
                 ctx.beginPath();
                 ctx.rect(blurSelection.x, blurSelection.y, blurSelection.width, blurSelection.height);
                 ctx.clip();
-                console.log('blurSelection: ', blurSelection);
                 // Draw the blurred image from the temporary canvas. It will only appear within the clipped region.
                 ctx.drawImage(tempCanvas, 0, 0);
 

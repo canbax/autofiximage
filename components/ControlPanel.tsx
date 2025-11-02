@@ -46,7 +46,7 @@ const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: Rea
     </div>
 );
 
-const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; step?: number | string; min?: number | string; max?: number | string }> = ({ value, onChange, ...props }) => (
+const NumberInput: React.FC<{ value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void; step?: number | string; min?: number | string; max?: number | string }> = ({ value, onChange, ...props }) => (
     <input
         type="number"
         value={value}
@@ -308,8 +308,13 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                   <NumberInput
                     value={blurAmount}
                     onChange={(e) => setBlurAmount(parseFloat(e.target.value) || 0)}
+                    onBlur={() => {
+                        if (blurAmount < 10) {
+                            setBlurAmount(10);
+                        }
+                    }}
                     step="1"
-                    min="0"
+                    min="10"
                     max="50"
                   />
               </InputGroup>

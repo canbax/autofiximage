@@ -20,7 +20,7 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {
-      console.error("AdSense error:", err);
+      // Ads sometimes cause errors, but we can ignore them.
     }
   }, []);
 

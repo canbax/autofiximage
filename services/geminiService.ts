@@ -83,7 +83,6 @@ export async function getAutoCorrection(
     }
 
   } catch (error) {
-    console.error("Error getting AI correction:", error);
     throw new Error("error.ai");
   }
 }
