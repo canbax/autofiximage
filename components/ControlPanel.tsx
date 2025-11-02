@@ -309,12 +309,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     value={blurAmount}
                     onChange={(e) => setBlurAmount(parseFloat(e.target.value) || 0)}
                     onBlur={() => {
-                        if (blurAmount < 10) {
-                            setBlurAmount(10);
-                        }
+                        
                     }}
                     step="1"
-                    min="10"
+                    min="1"
                     max="50"
                   />
               </InputGroup>

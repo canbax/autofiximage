@@ -236,8 +236,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
             <div 
               className="absolute inset-0 pointer-events-none"
               style={{
-                backdropFilter: `blur(${blurAmount}px)`,
-                backgroundColor: 'rgba(255,255,255,0.01)',
+                backdropFilter: `blur(${blurAmount}px)`
               }}
             />
         )}
