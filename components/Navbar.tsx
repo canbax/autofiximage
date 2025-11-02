@@ -11,8 +11,8 @@ import { MenuIcon } from './icons';
 
 interface NavbarProps {
   image: HTMLImageElement | null;
-  mode: 'crop-rotate' | 'resize';
-  setMode: (mode: 'crop-rotate' | 'resize') => void;
+  mode: 'crop-rotate' | 'resize' | 'blur';
+  setMode: (mode: 'crop-rotate' | 'resize' | 'blur') => void;
 }
 
 
@@ -51,6 +51,12 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
   const handleResizeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setMode('resize');
+    setIsMenuOpen(false);
+  };
+  
+  const handleBlurClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMode('blur');
     setIsMenuOpen(false);
   };
 
@@ -100,6 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <>
                           <a href="#" onClick={handleCropRotateClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.cropRotate')}</a>
                           <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
+                          <a href="#" onClick={handleBlurClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.blur')}</a>
                           <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                         </>
                     )}

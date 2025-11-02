@@ -18,13 +18,14 @@ import ContactPage from './components/ContactPage';
 
 const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 0, height: 0 };
 const DEFAULT_ROTATION = 0;
+const DEFAULT_BLUR_AMOUNT = 10;
 
 // TODO: Replace with your own AdSense Client and Slot IDs
 const AD_CLIENT = 'ca-pub-9521603226003896';
 const AD_SLOT_SIDE = '1234567890';
 const AD_SLOT_BOTTOM = '1234567891';
 
-type AppMode = 'crop-rotate' | 'resize';
+type AppMode = 'crop-rotate' | 'resize' | 'blur';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -39,11 +40,17 @@ const App: React.FC = () => {
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
   const [route, setRoute] = useState(window.location.hash);
   const [mode, setMode] = useState<AppMode>('crop-rotate');
+  
+  // Resize State
   const [resizeWidth, setResizeWidth] = useState(0);
   const [resizeHeight, setResizeHeight] = useState(0);
   const [lockAspectRatio, setLockAspectRatio] = useState(true);
   const [resizeContain, setResizeContain] = useState(true);
   const [resizeBgColor, setResizeBgColor] = useState('transparent');
+
+  // Blur State
+  const [blurSelection, setBlurSelection] = useState<CropParams>(DEFAULT_CROP);
+  const [blurAmount, setBlurAmount] = useState<number>(DEFAULT_BLUR_AMOUNT);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -59,12 +66,14 @@ const App: React.FC = () => {
   const handleReset = useCallback(() => {
     setRotation(DEFAULT_ROTATION);
     if (image) {
-      setCrop({
+      const fullImageCrop = {
         x: 0,
         y: 0,
         width: image.naturalWidth,
         height: image.naturalHeight,
-      });
+      };
+      setCrop(fullImageCrop);
+      setBlurSelection(fullImageCrop);
       setResizeWidth(image.naturalWidth);
       setResizeHeight(image.naturalHeight);
       
@@ -85,6 +94,7 @@ const App: React.FC = () => {
 
     } else {
       setCrop(DEFAULT_CROP);
+      setBlurSelection(DEFAULT_CROP);
       setResizeWidth(0);
       setResizeHeight(0);
       setResizeBgColor('transparent');
@@ -93,6 +103,7 @@ const App: React.FC = () => {
     setMode('crop-rotate');
     setResizeContain(true);
     setLockAspectRatio(true);
+    setBlurAmount(DEFAULT_BLUR_AMOUNT);
   }, [image]);
 
 
@@ -103,14 +114,16 @@ const App: React.FC = () => {
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        setImage(img);
-        setRotation(DEFAULT_ROTATION);
-        setCrop({
+        const fullImageCrop = {
           x: 0,
           y: 0,
           width: img.naturalWidth,
           height: img.naturalHeight,
-        });
+        };
+        setImage(img);
+        setRotation(DEFAULT_ROTATION);
+        setCrop(fullImageCrop);
+        setBlurSelection(fullImageCrop);
         setResizeWidth(img.naturalWidth);
         setResizeHeight(img.naturalHeight);
         setAspectRatioKey('free');
@@ -197,16 +210,18 @@ const App: React.FC = () => {
 
   // Keyboard controls for cropper
   useEffect(() => {
-    if (!image || mode !== 'crop-rotate') return;
+    if (!image || (mode !== 'crop-rotate' && mode !== 'blur')) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
 
-        setCrop(currentCrop => {
+        const setSelection = mode === 'blur' ? setBlurSelection : setCrop;
+
+        setSelection(currentSelection => {
           const step = e.shiftKey ? 10 : 1; // Larger step with Shift key
-          let newX = currentCrop.x;
-          let newY = currentCrop.y;
+          let newX = currentSelection.x;
+          let newY = currentSelection.y;
     
           switch (e.key) {
             case 'ArrowUp':
@@ -224,11 +239,11 @@ const App: React.FC = () => {
           }
     
           // Clamp position to stay within boundaries
-          const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentCrop.width));
-          const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentCrop.height));
+          const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentSelection.width));
+          const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentSelection.height));
           
           return {
-            ...currentCrop,
+            ...currentSelection,
             x: clampedX,
             y: clampedY,
           };
@@ -241,7 +256,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [image, setCrop, mode]);
+  }, [image, setCrop, setBlurSelection, mode]);
   
   const handleImageUpload = (file: File) => {
     setIsProcessingImage(true);
@@ -262,6 +277,7 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setAspectRatioKey('free'); // AI correction should be free form
+    setMode('crop-rotate');
     try {
       const base64Data = await fileToBase64(originalFile);
       const result = await getAutoCorrection(base64Data, originalFile.type);
@@ -299,11 +315,8 @@ const App: React.FC = () => {
             canvas.height = resizeHeight;
 
             if (!lockAspectRatio && resizeContain) {
-                // Fill background
                 ctx.fillStyle = resizeBgColor;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Draw contained image
                 const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
                 const newWidth = image.naturalWidth * ratio;
                 const newHeight = image.naturalHeight * ratio;
@@ -311,7 +324,6 @@ const App: React.FC = () => {
                 const y = (canvas.height - newHeight) / 2;
                 ctx.drawImage(image, x, y, newWidth, newHeight);
             } else {
-                // Distorted or aspect-locked resize
                 ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
             }
             
@@ -319,7 +331,48 @@ const App: React.FC = () => {
                 canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
             });
             fileName = `resized-${fileName}`;
+        } else if (mode === 'blur') {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error(t('alert.noContext'));
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            
+            ctx.drawImage(image, 0, 0);
 
+            if (blurAmount > 0 && blurSelection.width > 0 && blurSelection.height > 0) {
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                if (!tempCtx) throw new Error(t('alert.noContext'));
+
+                const padding = Math.ceil(blurAmount * 2);
+
+                const sourceX = Math.max(0, blurSelection.x - padding);
+                const sourceY = Math.max(0, blurSelection.y - padding);
+                const sourceWidth = Math.min(image.naturalWidth - sourceX, blurSelection.width + 2 * padding);
+                const sourceHeight = Math.min(image.naturalHeight - sourceY, blurSelection.height + 2 * padding);
+
+                tempCanvas.width = sourceWidth;
+                tempCanvas.height = sourceHeight;
+                tempCtx.filter = `blur(${blurAmount}px)`;
+                tempCtx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
+
+                const clipSourceX = blurSelection.x - sourceX;
+                const clipSourceY = blurSelection.y - sourceY;
+                
+                ctx.drawImage(
+                    tempCanvas,
+                    clipSourceX, clipSourceY,
+                    blurSelection.width, blurSelection.height,
+                    blurSelection.x, blurSelection.y,
+                    blurSelection.width, blurSelection.height
+                );
+            }
+
+            finalImageBlob = await new Promise((resolve, reject) => {
+                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+            });
+            fileName = `blurred-${fileName}`;
         } else { // crop-rotate mode
             if (keepCropperVertical) {
                 const cropInPercentage: CropParams = {
@@ -403,6 +456,9 @@ const App: React.FC = () => {
                     lockAspectRatio={lockAspectRatio}
                     resizeContain={resizeContain}
                     resizeBgColor={resizeBgColor}
+                    blurSelection={blurSelection}
+                    setBlurSelection={setBlurSelection}
+                    blurAmount={blurAmount}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
@@ -432,6 +488,8 @@ const App: React.FC = () => {
                     setResizeContain={setResizeContain}
                     resizeBgColor={resizeBgColor}
                     setResizeBgColor={setResizeBgColor}
+                    blurAmount={blurAmount}
+                    setBlurAmount={setBlurAmount}
                   />
                 </div>
               </div>

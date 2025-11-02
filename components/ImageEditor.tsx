@@ -8,7 +8,7 @@ interface Interaction {
   handle?: Handle;
   startX: number;
   startY: number;
-  startCrop: CropParams;
+  startSelection: CropParams;
 }
 
 interface ImageEditorProps {
@@ -18,15 +18,28 @@ interface ImageEditorProps {
   rotation: number;
   aspectRatio: number | null;
   keepCropperVertical: boolean;
-  mode: 'crop-rotate' | 'resize';
+  mode: 'crop-rotate' | 'resize' | 'blur';
   resizeWidth: number;
   resizeHeight: number;
   lockAspectRatio: boolean;
   resizeContain: boolean;
   resizeBgColor: string;
+  blurSelection: CropParams;
+  setBlurSelection: (selection: CropParams) => void;
+  blurAmount: number;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, rotation, aspectRatio, keepCropperVertical, mode, resizeWidth, resizeHeight, lockAspectRatio, resizeContain, resizeBgColor }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ 
+  image, 
+  crop, setCrop, 
+  rotation, 
+  aspectRatio, 
+  keepCropperVertical, 
+  mode, 
+  resizeWidth, resizeHeight, 
+  lockAspectRatio, resizeContain, resizeBgColor,
+  blurSelection, setBlurSelection, blurAmount
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
   const resizeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,11 +57,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         if (!lockAspectRatio && resizeContain) {
-            // Fill background
             ctx.fillStyle = resizeBgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw 'contained' image
             const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
             const newWidth = image.naturalWidth * ratio;
             const newHeight = image.naturalHeight * ratio;
@@ -57,7 +67,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
             ctx.drawImage(image, x, y, newWidth, newHeight);
 
         } else {
-             // Default behavior: distorted or aspect-locked fill
              ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
         }
       }
@@ -71,11 +80,10 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     const rawMouseX = e.clientX - rect.left;
     const rawMouseY = e.clientY - rect.top;
 
-    if (keepCropperVertical) {
+    if (keepCropperVertical || mode === 'blur') {
       return { x: rawMouseX, y: rawMouseY };
     }
 
-    // Apply the inverse rotation to the mouse coordinates to map them to the unrotated plane
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
     const angleRad = -rotation * (Math.PI / 180);
@@ -89,7 +97,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
         x: rotatedX + centerX,
         y: rotatedY + centerY,
     };
-  }, [rotation, keepCropperVertical]);
+  }, [rotation, keepCropperVertical, mode]);
 
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -98,7 +106,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     e.preventDefault();
     e.stopPropagation();
 
-    const { type, handle, startX, startY, startCrop } = interactionRef.current;
+    const { type, handle, startX, startY, startSelection } = interactionRef.current;
     const { x: currentX, y: currentY } = getTransformedCoordinates(e);
     
     const rect = containerRef.current.getBoundingClientRect();
@@ -109,26 +117,25 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
 
     const dxImage = (currentX - startX) * scaleX;
     const dyImage = (currentY - startY) * scaleY;
+    
+    const setSelection = mode === 'blur' ? setBlurSelection : setCrop;
 
     if (type === 'move') {
-      let newCrop = { ...startCrop };
-      newCrop.x = startCrop.x + dxImage;
-      newCrop.y = startCrop.y + dyImage;
+      let newSelection = { ...startSelection };
+      newSelection.x = startSelection.x + dxImage;
+      newSelection.y = startSelection.y + dyImage;
 
-      // Clamp position so the crop box stays within the image bounds
-      newCrop.x = Math.max(0, Math.min(newCrop.x, image.naturalWidth - newCrop.width));
-      newCrop.y = Math.max(0, Math.min(newCrop.y, image.naturalHeight - newCrop.height));
-      setCrop({
-        x: Math.round(newCrop.x),
-        y: Math.round(newCrop.y),
-        width: Math.round(newCrop.width),
-        height: Math.round(newCrop.height),
+      newSelection.x = Math.max(0, Math.min(newSelection.x, image.naturalWidth - newSelection.width));
+      newSelection.y = Math.max(0, Math.min(newSelection.y, image.naturalHeight - newSelection.height));
+      setSelection({
+        x: Math.round(newSelection.x),
+        y: Math.round(newSelection.y),
+        width: Math.round(newSelection.width),
+        height: Math.round(newSelection.height),
       });
 
     } else if (type === 'resize' && handle) {
-        // FIX: The original destructuring `let { x, y, width, height } = { ...startCrop };` was causing a TS error.
-        // The spread was redundant; destructuring directly from `startCrop` is cleaner and correct.
-        let { x, y, width, height } = startCrop;
+        let { x, y, width, height } = startSelection;
         const startRight = x + width;
         const startBottom = y + height;
     
@@ -137,13 +144,12 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
         if (handle.includes('s')) height += dyImage;
         if (handle.includes('n')) { y += dyImage; height -= dyImage; }
         
-        if (aspectRatio) {
+        if (mode === 'crop-rotate' && aspectRatio) {
             if (handle.length === 2 && Math.abs(dyImage) > Math.abs(dxImage)) {
                  width = height * aspectRatio;
             } else {
                  height = width / aspectRatio;
             }
-            
             if (handle.includes('n')) y = startBottom - height;
             if (handle.includes('w')) x = startRight - width;
         }
@@ -151,20 +157,19 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
         const MIN_SIZE = 20;
         width = Math.max(MIN_SIZE, width);
         height = Math.max(MIN_SIZE, height);
-        
         x = Math.max(0, x);
         y = Math.max(0, y);
         
         if (x + width > image.naturalWidth) {
             width = image.naturalWidth - x;
-            if (aspectRatio) {
+            if (mode === 'crop-rotate' && aspectRatio) {
                 height = width / aspectRatio;
                 if (handle.includes('n')) y = startBottom - height;
             }
         }
         if (y + height > image.naturalHeight) {
             height = image.naturalHeight - y;
-            if (aspectRatio) {
+            if (mode === 'crop-rotate' && aspectRatio) {
                 width = height * aspectRatio;
                 if (handle.includes('w')) x = startRight - width;
             }
@@ -175,9 +180,9 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
         if (x < 0) x = 0;
         if (y < 0) y = 0;
         
-        setCrop({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+        setSelection({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
     }
-  }, [setCrop, getTransformedCoordinates, aspectRatio, image]);
+  }, [setCrop, setBlurSelection, getTransformedCoordinates, aspectRatio, image, mode]);
 
   const handleMouseUp = useCallback(() => {
     interactionRef.current = null;
@@ -194,12 +199,14 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
     
     const { x: startX, y: startY } = getTransformedCoordinates(e);
     
+    const startSelection = mode === 'blur' ? blurSelection : crop;
+
     interactionRef.current = {
       type: handle ? 'resize' : 'move',
       handle,
       startX,
       startY,
-      startCrop: { ...crop },
+      startSelection: { ...startSelection },
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -210,26 +217,38 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
   
   if (!image) return null;
 
-  const cropperMarkup = (
+  const renderSelectionBox = (selection: CropParams, showGrid: boolean, blurEffect: boolean) => (
     <div
       className="absolute"
       style={{
-        left: `${(crop.x / image.naturalWidth) * 100}%`,
-        top: `${(crop.y / image.naturalHeight) * 100}%`,
-        width: `${(crop.width / image.naturalWidth) * 100}%`,
-        height: `${(crop.height / image.naturalHeight) * 100}%`,
-        boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.6)`,
+        left: `${(selection.x / image.naturalWidth) * 100}%`,
+        top: `${(selection.y / image.naturalHeight) * 100}%`,
+        width: `${(selection.width / image.naturalWidth) * 100}%`,
+        height: `${(selection.height / image.naturalHeight) * 100}%`,
+        boxShadow: showGrid ? `0 0 0 9999px rgba(0, 0, 0, 0.6)` : 'none',
       }}
     >
       <div
         className="w-full h-full cursor-move border-2 border-dashed border-white/70"
         onMouseDown={handleMouseDown}
       >
-        {/* Rule of thirds grid */}
-        <div className="absolute top-0 left-1/3 w-px h-full bg-white/40"></div>
-        <div className="absolute top-0 left-2/3 w-px h-full bg-white/40"></div>
-        <div className="absolute top-1/3 left-0 w-full h-px bg-white/40"></div>
-        <div className="absolute top-2/3 left-0 w-full h-px bg-white/40"></div>
+        {blurEffect && (
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backdropFilter: `blur(${blurAmount}px)`,
+                backgroundColor: 'rgba(255,255,255,0.01)',
+              }}
+            />
+        )}
+        {showGrid && (
+          <>
+            <div className="absolute top-0 left-1/3 w-px h-full bg-white/40"></div>
+            <div className="absolute top-0 left-2/3 w-px h-full bg-white/40"></div>
+            <div className="absolute top-1/3 left-0 w-full h-px bg-white/40"></div>
+            <div className="absolute top-2/3 left-0 w-full h-px bg-white/40"></div>
+          </>
+        )}
       </div>
       {handles.map((handle) => (
         <div
@@ -256,23 +275,16 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
                 style={{ transform: `rotate(${rotation}deg)` }}
             >
                 <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-                {!keepCropperVertical && cropperMarkup}
+                {!keepCropperVertical && renderSelectionBox(crop, true, false)}
             </div>
-
-            {keepCropperVertical && cropperMarkup}
-            
-            <style>{`
-              .handle-n { top: -6px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
-              .handle-s { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
-              .handle-w { left: -6px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
-              .handle-e { right: -6px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
-              .handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
-              .handle-ne { top: -6px; right: -6px; cursor: ne-resize; }
-              .handle-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
-              .handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
-            `}</style>
+            {keepCropperVertical && renderSelectionBox(crop, true, false)}
           </>
-        ) : (
+        ) : mode === 'blur' ? (
+            <>
+              <img src={image.src} alt="Source for blurring" className="w-full h-full object-contain pointer-events-none" draggable={false} />
+              {renderSelectionBox(blurSelection, false, true)}
+            </>
+        ) : ( // resize mode
           <div className="w-full h-full flex items-center justify-center">
              <canvas 
                 ref={resizeCanvasRef} 
@@ -283,6 +295,16 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ image, crop, setCrop, 
               />
           </div>
         )}
+        <style>{`
+            .handle-n { top: -6px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+            .handle-s { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+            .handle-w { left: -6px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
+            .handle-e { right: -6px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+            .handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
+            .handle-ne { top: -6px; right: -6px; cursor: ne-resize; }
+            .handle-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+            .handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
+        `}</style>
       </div>
     </div>
   );

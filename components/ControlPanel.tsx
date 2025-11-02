@@ -1,7 +1,7 @@
 import React from 'react';
 import { CropParams } from '../types';
 import { Button } from './Button';
-import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, ResizeIcon } from './icons';
+import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
 import { Checkbox } from './Checkbox';
 import { Select } from './Select';
@@ -21,7 +21,7 @@ interface ControlPanelProps {
   setKeepCropperVertical: (value: boolean) => void;
   aspectRatioKey: string;
   setAspectRatioKey: (value: string) => void;
-  mode: 'crop-rotate' | 'resize';
+  mode: 'crop-rotate' | 'resize' | 'blur';
   resizeWidth: number;
   setResizeWidth: (value: number) => void;
   resizeHeight: number;
@@ -32,6 +32,8 @@ interface ControlPanelProps {
   setResizeContain: (value: boolean) => void;
   resizeBgColor: string;
   setResizeBgColor: (value: string) => void;
+  blurAmount: number;
+  setBlurAmount: (value: number) => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -81,7 +83,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   resizeContain,
   setResizeContain,
   resizeBgColor,
-  setResizeBgColor
+  setResizeBgColor,
+  blurAmount,
+  setBlurAmount,
 }) => {
   const { t } = useTranslation();
 
@@ -293,6 +297,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       </div>
                   )}
               </div>
+          </>
+      )}
+
+      {mode === 'blur' && (
+          <>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('controls.blurEffect')}</h2>
+            <div className="flex flex-col gap-6">
+              <InputGroup label={t('controls.blurAmount')} icon={<BlurIcon />}>
+                  <NumberInput
+                    value={blurAmount}
+                    onChange={(e) => setBlurAmount(parseFloat(e.target.value) || 0)}
+                    step="1"
+                    min="0"
+                    max="50"
+                  />
+              </InputGroup>
+            </div>
           </>
       )}
 

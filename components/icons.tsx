@@ -91,3 +91,13 @@ export const ResizeIcon: React.FC<{ className?: string }> = ({ className = "w-5 
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 8V4m0 0h4M3 4l4 4m8 0V4m0 0h-4m4 0l-4 4m-8 8v4m0 0h4m-4 0l4-4m8 0v4m0 0h-4m4 0l-4-4" />
     </svg>
 );
+
+export const BlurIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="2" opacity="1"></circle>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.8"></circle>
+    <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.6"></circle>
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4"></circle>
+    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.2"></circle>
+  </svg>
+);
