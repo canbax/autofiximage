@@ -15,16 +15,6 @@ export const LanguageSwitcher: React.FC = () => {
   const languageNames: { [key: string]: string } = {
     en: 'English',
     es: 'Español',
-    fr: 'Français',
-    de: 'Deutsch',
-    it: 'Italiano',
-    pt: 'Português',
-    ru: 'Русский',
-    ja: '日本語',
-    zh: '中文 (简体)',
-    hi: 'हिन्दी',
-    bn: 'বাংলা',
-    id: 'Bahasa Indonesia',
     tr: 'Türkçe',
     ar: 'العربية',
   };
@@ -32,16 +22,6 @@ export const LanguageSwitcher: React.FC = () => {
   const languageFlags: { [key: string]: string } = {
     en: '🇬🇧',
     es: '🇪🇸',
-    fr: '🇫🇷',
-    de: '🇩🇪',
-    it: '🇮🇹',
-    pt: '🇵🇹',
-    ru: '🇷🇺',
-    ja: '🇯🇵',
-    zh: '🇨🇳',
-    hi: '🇮🇳',
-    bn: '🇧🇩',
-    id: '🇮🇩',
     tr: '🇹🇷',
     ar: '🇸🇦',
   };
