@@ -338,35 +338,33 @@ const App: React.FC = () => {
             canvas.width = image.naturalWidth;
             canvas.height = image.naturalHeight;
             
+            // Draw the original image first.
             ctx.drawImage(image, 0, 0);
 
             if (blurAmount > 0 && blurSelection.width > 0 && blurSelection.height > 0) {
+                // Create a temporary canvas to hold a fully blurred version of the image.
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 if (!tempCtx) throw new Error(t('alert.noContext'));
 
-                const padding = Math.ceil(blurAmount * 2);
+                tempCanvas.width = image.naturalWidth;
+                tempCanvas.height = image.naturalHeight;
 
-                const sourceX = Math.max(0, blurSelection.x - padding);
-                const sourceY = Math.max(0, blurSelection.y - padding);
-                const sourceWidth = Math.min(image.naturalWidth - sourceX, blurSelection.width + 2 * padding);
-                const sourceHeight = Math.min(image.naturalHeight - sourceY, blurSelection.height + 2 * padding);
-
-                tempCanvas.width = sourceWidth;
-                tempCanvas.height = sourceHeight;
+                // Apply the blur filter and draw the image onto the temporary canvas.
                 tempCtx.filter = `blur(${blurAmount}px)`;
-                tempCtx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
+                tempCtx.drawImage(image, 0, 0);
 
-                const clipSourceX = blurSelection.x - sourceX;
-                const clipSourceY = blurSelection.y - sourceY;
-                
-                ctx.drawImage(
-                    tempCanvas,
-                    clipSourceX, clipSourceY,
-                    blurSelection.width, blurSelection.height,
-                    blurSelection.x, blurSelection.y,
-                    blurSelection.width, blurSelection.height
-                );
+                // On the final canvas, create a clipping path for the blurred region.
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(blurSelection.x, blurSelection.y, blurSelection.width, blurSelection.height);
+                ctx.clip();
+                console.log('blurSelection: ', blurSelection);
+                // Draw the blurred image from the temporary canvas. It will only appear within the clipped region.
+                ctx.drawImage(tempCanvas, 0, 0);
+
+                // Remove the clipping path.
+                ctx.restore();
             }
 
             finalImageBlob = await new Promise((resolve, reject) => {
