@@ -10,8 +10,8 @@ interface ControlPanelProps {
   image: HTMLImageElement | null;
   rotation: number;
   setRotation: (value: number) => void;
-  crop: CropParams;
-  setCrop: (value: CropParams) => void;
+  selection: CropParams;
+  setSelection: (value: CropParams) => void;
   onAutoCorrect: () => void;
   onReset: () => void;
   onDownload: () => void;
@@ -62,8 +62,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   image,
   rotation,
   setRotation,
-  crop,
-  setCrop,
+  selection,
+  setSelection,
   onAutoCorrect,
   onReset,
   onDownload,
@@ -108,23 +108,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const handleCropChange = (field: keyof CropParams, value: string) => {
     if (!image) return;
     const numericValue = parseInt(value, 10) || 0;
-    const newCrop = { ...crop };
+    const newSelection = { ...selection };
 
     switch (field) {
       case 'x':
-        newCrop.x = Math.max(0, Math.min(numericValue, image.naturalWidth - newCrop.width));
+        newSelection.x = Math.max(0, Math.min(numericValue, image.naturalWidth - newSelection.width));
         break;
       case 'y':
-        newCrop.y = Math.max(0, Math.min(numericValue, image.naturalHeight - newCrop.height));
+        newSelection.y = Math.max(0, Math.min(numericValue, image.naturalHeight - newSelection.height));
         break;
       case 'width':
-        newCrop.width = Math.max(1, Math.min(numericValue, image.naturalWidth - newCrop.x));
+        newSelection.width = Math.max(1, Math.min(numericValue, image.naturalWidth - newSelection.x));
         break;
       case 'height':
-        newCrop.height = Math.max(1, Math.min(numericValue, image.naturalHeight - newCrop.y));
+        newSelection.height = Math.max(1, Math.min(numericValue, image.naturalHeight - newSelection.y));
         break;
     }
-    setCrop(newCrop);
+    setSelection(newSelection);
   };
 
   const handleResizeChange = (dimension: 'width' | 'height', value: string) => {
@@ -186,7 +186,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <NumberInput 
-                                value={Math.round(crop.x)} 
+                                value={Math.round(selection.x)} 
                                 onChange={e => handleCropChange('x', e.target.value)}
                                 min={0} max={image?.naturalWidth || 0} step="1"
                             />
@@ -194,7 +194,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         </div>
                         <div>
                             <NumberInput 
-                                value={Math.round(crop.y)} 
+                                value={Math.round(selection.y)} 
                                 onChange={e => handleCropChange('y', e.target.value)}
                                 min={0} max={image?.naturalHeight || 0} step="1"
                             />
@@ -202,7 +202,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         </div>
                         <div>
                             <NumberInput 
-                                value={Math.round(crop.width)} 
+                                value={Math.round(selection.width)} 
                                 onChange={e => handleCropChange('width', e.target.value)}
                                 min={1} max={image?.naturalWidth || 0} step="1"
                             />
@@ -210,7 +210,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         </div>
                         <div>
                             <NumberInput 
-                                value={Math.round(crop.height)} 
+                                value={Math.round(selection.height)} 
                                 onChange={e => handleCropChange('height', e.target.value)}
                                 min={1} max={image?.naturalHeight || 0} step="1"
                             />
@@ -308,11 +308,14 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                   <NumberInput
                     value={blurAmount}
                     onChange={(e) => setBlurAmount(parseFloat(e.target.value) || 0)}
-                    onBlur={() => {
-                        
+                    onBlur={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (value < 10) {
+                        setBlurAmount(10);
+                      }
                     }}
                     step="1"
-                    min="1"
+                    min="10"
                     max="50"
                   />
               </InputGroup>

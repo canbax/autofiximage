@@ -13,8 +13,8 @@ interface Interaction {
 
 interface ImageEditorProps {
   image: HTMLImageElement | null;
-  crop: CropParams;
-  setCrop: (crop: CropParams) => void;
+  selection: CropParams;
+  setSelection: (selection: CropParams) => void;
   rotation: number;
   aspectRatio: number | null;
   keepCropperVertical: boolean;
@@ -24,21 +24,19 @@ interface ImageEditorProps {
   lockAspectRatio: boolean;
   resizeContain: boolean;
   resizeBgColor: string;
-  blurSelection: CropParams;
-  setBlurSelection: (selection: CropParams) => void;
   blurAmount: number;
 }
 
 export const ImageEditor: React.FC<ImageEditorProps> = ({ 
   image, 
-  crop, setCrop, 
+  selection, setSelection, 
   rotation, 
   aspectRatio, 
   keepCropperVertical, 
   mode, 
   resizeWidth, resizeHeight, 
   lockAspectRatio, resizeContain, resizeBgColor,
-  blurSelection, setBlurSelection, blurAmount
+  blurAmount
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
@@ -117,8 +115,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
 
     const dxImage = (currentX - startX) * scaleX;
     const dyImage = (currentY - startY) * scaleY;
-    
-    const setSelection = mode === 'blur' ? setBlurSelection : setCrop;
 
     if (type === 'move') {
       let newSelection = { ...startSelection };
@@ -182,7 +178,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
         
         setSelection({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
     }
-  }, [setCrop, setBlurSelection, getTransformedCoordinates, aspectRatio, image, mode]);
+  }, [setSelection, getTransformedCoordinates, aspectRatio, image, mode]);
 
   const handleMouseUp = useCallback(() => {
     interactionRef.current = null;
@@ -198,15 +194,13 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
     if (!containerRef.current) return;
     
     const { x: startX, y: startY } = getTransformedCoordinates(e);
-    
-    const startSelection = mode === 'blur' ? blurSelection : crop;
 
     interactionRef.current = {
       type: handle ? 'resize' : 'move',
       handle,
       startX,
       startY,
-      startSelection: { ...startSelection },
+      startSelection: { ...selection },
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -217,14 +211,14 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   
   if (!image) return null;
 
-  const renderSelectionBox = (selection: CropParams, showGrid: boolean, blurEffect: boolean) => (
+  const renderSelectionBox = (currentSelection: CropParams, showGrid: boolean, blurEffect: boolean) => (
     <div
       className="absolute"
       style={{
-        left: `${(selection.x / image.naturalWidth) * 100}%`,
-        top: `${(selection.y / image.naturalHeight) * 100}%`,
-        width: `${(selection.width / image.naturalWidth) * 100}%`,
-        height: `${(selection.height / image.naturalHeight) * 100}%`,
+        left: `${(currentSelection.x / image.naturalWidth) * 100}%`,
+        top: `${(currentSelection.y / image.naturalHeight) * 100}%`,
+        width: `${(currentSelection.width / image.naturalWidth) * 100}%`,
+        height: `${(currentSelection.height / image.naturalHeight) * 100}%`,
         boxShadow: showGrid ? `0 0 0 9999px rgba(0, 0, 0, 0.6)` : 'none',
       }}
     >
@@ -274,14 +268,14 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 style={{ transform: `rotate(${rotation}deg)` }}
             >
                 <img src={image.src} alt="Source for cropping" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-                {!keepCropperVertical && renderSelectionBox(crop, true, false)}
+                {!keepCropperVertical && renderSelectionBox(selection, true, false)}
             </div>
-            {keepCropperVertical && renderSelectionBox(crop, true, false)}
+            {keepCropperVertical && renderSelectionBox(selection, true, false)}
           </>
         ) : mode === 'blur' ? (
             <>
               <img src={image.src} alt="Source for blurring" className="w-full h-full object-contain pointer-events-none" draggable={false} />
-              {renderSelectionBox(blurSelection, false, true)}
+              {renderSelectionBox(selection, false, true)}
             </>
         ) : ( // resize mode
           <div className="w-full h-full flex items-center justify-center">

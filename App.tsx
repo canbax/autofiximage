@@ -16,7 +16,7 @@ import TermsPage from './components/TermsPage';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 
-const DEFAULT_CROP: CropParams = { x: 0, y: 0, width: 0, height: 0 };
+const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
 const DEFAULT_ROTATION = 0;
 const DEFAULT_BLUR_AMOUNT = 10;
 
@@ -32,7 +32,7 @@ const App: React.FC = () => {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [rotation, setRotation] = useState<number>(DEFAULT_ROTATION);
-  const [crop, setCrop] = useState<CropParams>(DEFAULT_CROP);
+  const [selection, setSelection] = useState<CropParams>(DEFAULT_SELECTION);
   const [aspectRatioKey, setAspectRatioKey] = useState('free');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,6 @@ const App: React.FC = () => {
   const [resizeBgColor, setResizeBgColor] = useState('transparent');
 
   // Blur State
-  const [blurSelection, setBlurSelection] = useState<CropParams>(DEFAULT_CROP);
   const [blurAmount, setBlurAmount] = useState<number>(DEFAULT_BLUR_AMOUNT);
 
   useEffect(() => {
@@ -72,8 +71,7 @@ const App: React.FC = () => {
         width: image.naturalWidth,
         height: image.naturalHeight,
       };
-      setCrop(fullImageCrop);
-      setBlurSelection(fullImageCrop);
+      setSelection(fullImageCrop);
       setResizeWidth(image.naturalWidth);
       setResizeHeight(image.naturalHeight);
       
@@ -93,8 +91,7 @@ const App: React.FC = () => {
       }
 
     } else {
-      setCrop(DEFAULT_CROP);
-      setBlurSelection(DEFAULT_CROP);
+      setSelection(DEFAULT_SELECTION);
       setResizeWidth(0);
       setResizeHeight(0);
       setResizeBgColor('transparent');
@@ -122,8 +119,7 @@ const App: React.FC = () => {
         };
         setImage(img);
         setRotation(DEFAULT_ROTATION);
-        setCrop(fullImageCrop);
-        setBlurSelection(fullImageCrop);
+        setSelection(fullImageCrop);
         setResizeWidth(img.naturalWidth);
         setResizeHeight(img.naturalHeight);
         setAspectRatioKey('free');
@@ -179,7 +175,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (numericAspectRatio === null || !image) return;
 
-    setCrop(c => {
+    setSelection(c => {
       const currentCenter = { x: c.x + c.width / 2, y: c.y + c.height / 2 };
       let newWidth = c.width;
       let newHeight = Math.round(newWidth / numericAspectRatio);
@@ -214,8 +210,6 @@ const App: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
-
-        const setSelection = mode === 'blur' ? setBlurSelection : setCrop;
 
         setSelection(currentSelection => {
           const step = e.shiftKey ? 10 : 1; // Larger step with Shift key
@@ -255,7 +249,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [image, setCrop, setBlurSelection, mode]);
+  }, [image, setSelection, mode]);
   
   const handleImageUpload = (file: File) => {
     setIsProcessingImage(true);
@@ -287,7 +281,7 @@ const App: React.FC = () => {
         height: Math.round((result.crop.height / 100) * image.naturalHeight),
       };
       setRotation(result.rotation);
-      setCrop(newCropInPixels);
+      setSelection(newCropInPixels);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'error.unknown');
     } finally {
@@ -340,7 +334,7 @@ const App: React.FC = () => {
             // Draw the original image first.
             ctx.drawImage(image, 0, 0);
 
-            if (blurAmount > 0 && blurSelection.width > 0 && blurSelection.height > 0) {
+            if (blurAmount > 0 && selection.width > 0 && selection.height > 0) {
                 // Create a temporary canvas to hold a fully blurred version of the image.
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
@@ -356,7 +350,7 @@ const App: React.FC = () => {
                 // On the final canvas, create a clipping path for the blurred region.
                 ctx.save();
                 ctx.beginPath();
-                ctx.rect(blurSelection.x, blurSelection.y, blurSelection.width, blurSelection.height);
+                ctx.rect(selection.x, selection.y, selection.width, selection.height);
                 ctx.clip();
                 // Draw the blurred image from the temporary canvas. It will only appear within the clipped region.
                 ctx.drawImage(tempCanvas, 0, 0);
@@ -372,10 +366,10 @@ const App: React.FC = () => {
         } else { // crop-rotate mode
             if (keepCropperVertical) {
                 const cropInPercentage: CropParams = {
-                    x: (crop.x / image.naturalWidth) * 100,
-                    y: (crop.y / image.naturalHeight) * 100,
-                    width: (crop.width / image.naturalWidth) * 100,
-                    height: (crop.height / image.naturalHeight) * 100,
+                    x: (selection.x / image.naturalWidth) * 100,
+                    y: (selection.y / image.naturalHeight) * 100,
+                    width: (selection.width / image.naturalWidth) * 100,
+                    height: (selection.height / image.naturalHeight) * 100,
                 };
                  finalImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
             } else {
@@ -383,8 +377,8 @@ const App: React.FC = () => {
                 const ctx = canvas.getContext('2d');
                 if (!ctx) throw new Error(t('alert.noContext'));
 
-                canvas.width = crop.width;
-                canvas.height = crop.height;
+                canvas.width = selection.width;
+                canvas.height = selection.height;
 
                 ctx.translate(canvas.width / 2, canvas.height / 2);
                 ctx.rotate((rotation * Math.PI) / 180);
@@ -396,13 +390,13 @@ const App: React.FC = () => {
                 const finalCtx = finalCanvas.getContext('2d');
                 if (!finalCtx) throw new Error(t('alert.noContext'));
                 
-                finalCanvas.width = crop.width;
-                finalCanvas.height = crop.height;
+                finalCanvas.width = selection.width;
+                finalCanvas.height = selection.height;
 
                 finalCtx.drawImage(
                     canvas,
-                    crop.x, crop.y, crop.width, crop.height,
-                    0, 0, crop.width, crop.height
+                    selection.x, selection.y, selection.width, selection.height,
+                    0, 0, selection.width, selection.height
                 );
 
                 finalImageBlob = await new Promise((resolve, reject) => {
@@ -442,8 +436,8 @@ const App: React.FC = () => {
                   <ImageEditor 
                     image={image} 
                     rotation={rotation} 
-                    crop={crop} 
-                    setCrop={setCrop}
+                    selection={selection}
+                    setSelection={setSelection}
                     aspectRatio={numericAspectRatio}
                     keepCropperVertical={keepCropperVertical}
                     mode={mode}
@@ -452,8 +446,6 @@ const App: React.FC = () => {
                     lockAspectRatio={lockAspectRatio}
                     resizeContain={resizeContain}
                     resizeBgColor={resizeBgColor}
-                    blurSelection={blurSelection}
-                    setBlurSelection={setBlurSelection}
                     blurAmount={blurAmount}
                   />
                 </div>
@@ -462,8 +454,8 @@ const App: React.FC = () => {
                     image={image}
                     rotation={rotation}
                     setRotation={setRotation}
-                    crop={crop}
-                    setCrop={setCrop}
+                    selection={selection}
+                    setSelection={setSelection}
                     onAutoCorrect={handleAutoCorrect}
                     onReset={handleReset}
                     onDownload={handleDownload}
