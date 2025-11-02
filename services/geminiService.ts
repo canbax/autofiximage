@@ -38,10 +38,10 @@ const facesSchema = {
       items: {
         type: Type.OBJECT,
         properties: {
-          x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box as a percentage (0-100)." },
-          y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box as a percentage (0-100)." },
-          width: { type: Type.NUMBER, description: "Width of the face bounding box as a percentage (0-100)." },
-          height: { type: Type.NUMBER, description: "Height of the face bounding box as a percentage (0-100)." }
+          x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box in pixels." },
+          y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box in pixels." },
+          width: { type: Type.NUMBER, description: "Width of the face bounding box in pixels." },
+          height: { type: Type.NUMBER, description: "Height of the face bounding box in pixels." }
         },
         required: ["x", "y", "width", "height"]
       }
@@ -108,9 +108,11 @@ export async function getAutoCorrection(
 
 export async function detectFaces(
   base64ImageData: string,
-  mimeType: string
+  mimeType: string,
+  imageWidth: number,
+  imageHeight: number
 ): Promise<CropParams[]> {
-  const prompt = `Analyze this image and identify all human faces. For each face found, provide a bounding box (with x, y, width, height as percentages from 0 to 100). Return your answer as a JSON object with a 'faces' key, which should be an array of these bounding box objects. If no faces are found, return an empty array.`;
+  const prompt = `Analyze this image, which has dimensions ${imageWidth}x${imageHeight} pixels. Identify all human faces. For each face found, provide a bounding box with its exact top-left coordinates (x, y) and dimensions (width, height) in pixels. Return your answer as a JSON object with a 'faces' key, which should be an array of these bounding box objects. If no faces are found, return an empty array.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -131,18 +133,26 @@ export async function detectFaces(
     const result = JSON.parse(jsonString);
 
     if (result && Array.isArray(result.faces)) {
-      // Validate each face object
-      return result.faces.filter((face: any): face is CropParams =>
-        typeof face.x === 'number' &&
-        typeof face.y === 'number' &&
-        typeof face.width === 'number' &&
-        typeof face.height === 'number'
-      ).map(face => ({
-        x: Math.max(0, Math.min(100, face.x)),
-        y: Math.max(0, Math.min(100, face.y)),
-        width: Math.max(1, Math.min(100, face.width)),
-        height: Math.max(1, Math.min(100, face.height)),
-      }));
+      // Validate and clamp each face object to be within image bounds.
+      return result.faces
+        .filter((face: any): face is CropParams =>
+          typeof face.x === 'number' &&
+          typeof face.y === 'number' &&
+          typeof face.width === 'number' &&
+          typeof face.height === 'number'
+        )
+        .map(face => {
+            const x = Math.max(0, face.x);
+            const y = Math.max(0, face.y);
+            const width = Math.min(imageWidth - x, face.width);
+            const height = Math.min(imageHeight - y, face.height);
+            return {
+                x: Math.round(x),
+                y: Math.round(y),
+                width: Math.round(Math.max(1, width)),
+                height: Math.round(Math.max(1, height)),
+            };
+        });
     } else {
       return [];
     }
