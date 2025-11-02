@@ -67,6 +67,7 @@ export const ar = {
   'error.imageLoad': 'فشل تحميل ملف الصورة. قد يكون تالفًا أو بتنسيق غير مدعوم.',
   'error.fileRead': 'فشل قراءة الملف المحدد.',
   'error.unknown': 'حدث خطأ غير معروف.',
+  'error.faceDetectorInit': 'فشل تهيئة ميزة اكتشاف الوجوه.',
   'alert.noImage': 'لا يوجد صورة للتنزيل.',
   'alert.noContext': 'تعذر إنشاء سياق الكانفاس للتنزيل.',
   'alert.noFaces': 'لم يتم اكتشاف أي وجوه في الصورة.',

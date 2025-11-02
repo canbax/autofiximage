@@ -67,6 +67,7 @@ export const tr = {
   'error.imageLoad': 'Resim dosyası yüklenemedi. Bozuk veya desteklenmeyen bir biçimde olabilir.',
   'error.fileRead': 'Seçilen dosya okunamadı.',
   'error.unknown': 'Bilinmeyen bir hata oluştu.',
+  'error.faceDetectorInit': 'Yüz tanıma özelliği başlatılamadı.',
   'alert.noImage': 'İndirilecek resim yok.',
   'alert.noContext': 'İndirme için tuval bağlamı oluşturulamadı.',
   'alert.noFaces': 'Resimde yüz algılanmadı.',

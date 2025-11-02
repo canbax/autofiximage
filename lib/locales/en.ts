@@ -67,6 +67,7 @@ export const en = {
   'error.imageLoad': 'Failed to load the image file. It might be corrupted or in an unsupported format.',
   'error.fileRead': 'Failed to read the selected file.',
   'error.unknown': 'An unknown error occurred.',
+  'error.faceDetectorInit': 'Failed to initialize the face detection feature.',
   'alert.noImage': 'No image to download.',
   'alert.noContext': 'Could not create canvas context for download.',
   'alert.noFaces': 'No faces were detected in the image.',

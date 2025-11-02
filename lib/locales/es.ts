@@ -67,6 +67,7 @@ export const es = {
   'error.imageLoad': 'No se pudo cargar el archivo de imagen. Puede estar dañado o en un formato no compatible.',
   'error.fileRead': 'No se pudo leer el archivo seleccionado.',
   'error.unknown': 'Ocurrió un error desconocido.',
+  'error.faceDetectorInit': 'No se pudo inicializar la función de detección de rostros.',
   'alert.noImage': 'No hay imagen para descargar.',
   'alert.noContext': 'No se pudo crear el contexto del lienzo para la descarga.',
   'alert.noFaces': 'No se detectaron caras en la imagen.',
