@@ -1,5 +1,3 @@
-
-
 export const ar = {
   'landing.title': 'PixelPerfect AI',
   'landing.subtitle': 'قم بتصويب صورك واقتصاصها وإتقانها بذكاء في ثوانٍ.',
@@ -56,6 +54,7 @@ export const ar = {
   'controls.addBlurArea': 'إضافة منطقة تمويه',
   'controls.blurRegions': 'مناطق التمويه',
   'controls.blurArea': 'منطقة التمويه',
+  'controls.detectFaces': 'اكتشاف الوجوه',
   'controls.resizeImage': 'تغيير حجم الصورة',
   'controls.width': 'العرض (px)',
   'controls.height': 'الارتفاع (px)',
@@ -70,6 +69,7 @@ export const ar = {
   'error.unknown': 'حدث خطأ غير معروف.',
   'alert.noImage': 'لا يوجد صورة للتنزيل.',
   'alert.noContext': 'تعذر إنشاء سياق الكانفاس للتنزيل.',
+  'alert.noFaces': 'لم يتم اكتشاف أي وجوه في الصورة.',
   'languageSwitcher.search': 'ابحث عن لغة...',
   'languageSwitcher.noResults': 'لم يتم العثور على نتائج',
   'loginDialog.title': 'تسجيل الدخول',

@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { CropParams } from "../types";
 
@@ -29,6 +28,26 @@ const correctionSchema = {
     }
   },
   required: ["rotation", "crop"]
+};
+
+const facesSchema = {
+  type: Type.OBJECT,
+  properties: {
+    faces: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box as a percentage (0-100)." },
+          y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box as a percentage (0-100)." },
+          width: { type: Type.NUMBER, description: "Width of the face bounding box as a percentage (0-100)." },
+          height: { type: Type.NUMBER, description: "Height of the face bounding box as a percentage (0-100)." }
+        },
+        required: ["x", "y", "width", "height"]
+      }
+    }
+  },
+  required: ["faces"]
 };
 
 
@@ -80,6 +99,52 @@ export async function getAutoCorrection(
         };
     } else {
         throw new Error("Invalid format received from AI");
+    }
+
+  } catch (error) {
+    throw new Error("error.ai");
+  }
+}
+
+export async function detectFaces(
+  base64ImageData: string,
+  mimeType: string
+): Promise<CropParams[]> {
+  const prompt = `Analyze this image and identify all human faces. For each face found, provide a bounding box (with x, y, width, height as percentages from 0 to 100). Return your answer as a JSON object with a 'faces' key, which should be an array of these bounding box objects. If no faces are found, return an empty array.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: {
+        parts: [
+          { inlineData: { data: base64ImageData, mimeType: mimeType } },
+          { text: prompt },
+        ],
+      },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: facesSchema,
+      },
+    });
+
+    const jsonString = response.text;
+    const result = JSON.parse(jsonString);
+
+    if (result && Array.isArray(result.faces)) {
+      // Validate each face object
+      return result.faces.filter((face: any): face is CropParams =>
+        typeof face.x === 'number' &&
+        typeof face.y === 'number' &&
+        typeof face.width === 'number' &&
+        typeof face.height === 'number'
+      ).map(face => ({
+        x: Math.max(0, Math.min(100, face.x)),
+        y: Math.max(0, Math.min(100, face.y)),
+        width: Math.max(1, Math.min(100, face.width)),
+        height: Math.max(1, Math.min(100, face.height)),
+      }));
+    } else {
+      return [];
     }
 
   } catch (error) {

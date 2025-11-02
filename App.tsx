@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams, BlurRegion } from './types';
-import { getAutoCorrection } from './services/geminiService';
+import { getAutoCorrection, detectFaces } from './services/geminiService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
 import LandingPage from './components/LandingPage';
@@ -462,6 +462,46 @@ const App: React.FC = () => {
   const handleSelectBlurRegion = (id: string) => {
     setActiveBlurRegionId(id);
   };
+  
+  const handleDetectFaces = async () => {
+    if (!image || !originalFile) return;
+    setIsLoading(true);
+    setError(null);
+    setMode('blur');
+
+    try {
+      const base64Data = await fileToBase64(originalFile);
+      const faces = await detectFaces(base64Data, originalFile.type);
+
+      if (faces.length === 0) {
+        alert(t('alert.noFaces'));
+      } else {
+        const newRegions: BlurRegion[] = faces.map(face => {
+          const id = `${Date.now()}-${Math.random()}`;
+          const selectionInPixels: CropParams = {
+            x: Math.round((face.x / 100) * image.naturalWidth),
+            y: Math.round((face.y / 100) * image.naturalHeight),
+            width: Math.round((face.width / 100) * image.naturalWidth),
+            height: Math.round((face.height / 100) * image.naturalHeight),
+          };
+          return {
+            id,
+            selection: selectionInPixels,
+            blurAmount: DEFAULT_BLUR_AMOUNT,
+          };
+        });
+
+        setBlurRegions(prev => [...prev, ...newRegions]);
+        if (newRegions.length > 0) {
+          setActiveBlurRegionId(newRegions[newRegions.length - 1].id);
+        }
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'error.unknown');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleModeChange = (newMode: AppMode) => {
     // If switching to blur mode for the first time (no blur regions exist)
@@ -553,6 +593,7 @@ const App: React.FC = () => {
                     onUpdateBlurRegion={handleUpdateBlurRegion}
                     onRemoveBlurRegion={handleRemoveBlurRegion}
                     onSelectBlurRegion={handleSelectBlurRegion}
+                    onDetectFaces={handleDetectFaces}
                   />
                 </div>
               </div>

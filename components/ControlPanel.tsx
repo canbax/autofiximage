@@ -1,7 +1,7 @@
 import React from 'react';
 import { CropParams, BlurRegion } from '../types';
 import { Button } from './Button';
-import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon } from './icons';
+import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon, FaceIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
 import { Checkbox } from './Checkbox';
 import { Select } from './Select';
@@ -38,6 +38,7 @@ interface ControlPanelProps {
   onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
   onRemoveBlurRegion: (id: string) => void;
   onSelectBlurRegion: (id: string) => void;
+  onDetectFaces: () => void;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -94,6 +95,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onUpdateBlurRegion,
   onRemoveBlurRegion,
   onSelectBlurRegion,
+  onDetectFaces,
 }) => {
   const { t } = useTranslation();
   const activeBlurRegion = activeBlurRegionId ? blurRegions.find(r => r.id === activeBlurRegionId) : null;
@@ -313,6 +315,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('controls.blurEffect')}</h2>
             <div className="flex flex-col gap-4">
+               <Button onClick={onDetectFaces} isLoading={isLoading} variant="primary">
+                  <FaceIcon />
+                  {t('controls.detectFaces')}
+                </Button>
               <Button onClick={onAddBlurRegion} variant="secondary">{t('controls.addBlurArea')}</Button>
               
               {blurRegions.length > 0 && (
