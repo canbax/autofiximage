@@ -36,7 +36,6 @@ interface ControlPanelProps {
   activeBlurRegionId: string | null;
   onAddBlurRegion: () => void;
   onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
-  onRemoveBlurRegion: (id: string) => void;
   onSelectBlurRegion: (id: string) => void;
   onDetectFaces: () => void;
 }
@@ -93,7 +92,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   activeBlurRegionId,
   onAddBlurRegion,
   onUpdateBlurRegion,
-  onRemoveBlurRegion,
   onSelectBlurRegion,
   onDetectFaces,
 }) => {
@@ -320,37 +318,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                   {t('controls.detectFaces')}
                 </Button>
               <Button onClick={onAddBlurRegion} variant="secondary">{t('controls.addBlurArea')}</Button>
-              
-              {blurRegions.length > 0 && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">{t('controls.blurRegions')}</label>
-                  {blurRegions.map((region, index) => (
-                    <div
-                      key={region.id}
-                      onClick={() => onSelectBlurRegion(region.id)}
-                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
-                        activeBlurRegionId === region.id ? 'bg-indigo-100 dark:bg-indigo-900/50 ring-2 ring-indigo-400' : 'bg-gray-200/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      <span className="text-sm font-semibold">{t('controls.blurArea')} {index + 1}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onRemoveBlurRegion(region.id);
-                        }}
-                        className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50"
-                        aria-label={`Remove blur area ${index + 1}`}
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {activeBlurRegion && (
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <InputGroup label={`${t('controls.blurAmount')} (${t('controls.blurArea')} ${blurRegions.findIndex(r => r.id === activeBlurRegionId) + 1})`} icon={<BlurIcon />}>
+                  <InputGroup label={t('controls.blurAmount')} icon={<BlurIcon />}>
                       <NumberInput
                         value={activeBlurRegion.blurAmount}
                         onChange={(e) => onUpdateBlurRegion(activeBlurRegionId!, { blurAmount: parseFloat(e.target.value) || 0 })}

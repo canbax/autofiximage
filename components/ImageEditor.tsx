@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { CropParams, BlurRegion } from '../types';
+import { TrashIcon } from './icons';
 
 type Handle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
@@ -29,6 +30,7 @@ interface ImageEditorProps {
   activeBlurRegionId: string | null;
   onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
   onSelectBlurRegion: (id: string) => void;
+  onRemoveBlurRegion: (id: string) => void;
 }
 
 export const ImageEditor: React.FC<ImageEditorProps> = ({ 
@@ -40,7 +42,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   mode, 
   resizeWidth, resizeHeight, 
   lockAspectRatio, resizeContain, resizeBgColor,
-  blurRegions, activeBlurRegionId, onUpdateBlurRegion, onSelectBlurRegion
+  blurRegions, activeBlurRegionId, onUpdateBlurRegion, onSelectBlurRegion, onRemoveBlurRegion
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<Interaction | null>(null);
@@ -241,6 +243,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
     blurAmount = 0,
     isActive = false,
     onMouseDown,
+    onRemove,
   }: {
     boxKey: string | number;
     currentSelection: CropParams;
@@ -249,6 +252,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
     blurAmount?: number;
     isActive?: boolean;
     onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+    onRemove?: () => void;
   }) => (
     <div
       key={boxKey}
@@ -291,6 +295,18 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
           className={`handle-${handle} absolute w-3 h-3 bg-white rounded-full border-2 ${isActive ? 'border-indigo-500' : 'border-gray-900'}`}
         />
       ))}
+       {isActive && isBlur && onRemove && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="absolute -top-3 -right-3 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition-colors z-20"
+          aria-label="Remove blur area"
+        >
+          <TrashIcon className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 
@@ -330,7 +346,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 isBlur: true,
                 blurAmount: region.blurAmount,
                 isActive: region.id === activeBlurRegionId,
-                onMouseDown: (e) => handleMouseDown(e, region.id, region.selection)
+                onMouseDown: (e) => handleMouseDown(e, region.id, region.selection),
+                onRemove: () => onRemoveBlurRegion(region.id),
               }))}
             </>
         ) : ( // resize mode

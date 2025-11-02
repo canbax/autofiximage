@@ -558,6 +558,7 @@ const App: React.FC = () => {
                     activeBlurRegionId={activeBlurRegionId}
                     onUpdateBlurRegion={handleUpdateBlurRegion}
                     onSelectBlurRegion={handleSelectBlurRegion}
+                    onRemoveBlurRegion={handleRemoveBlurRegion}
                   />
                 </div>
                 <div className="lg:col-span-1 h-full">
@@ -591,7 +592,6 @@ const App: React.FC = () => {
                     activeBlurRegionId={activeBlurRegionId}
                     onAddBlurRegion={handleAddBlurRegion}
                     onUpdateBlurRegion={handleUpdateBlurRegion}
-                    onRemoveBlurRegion={handleRemoveBlurRegion}
                     onSelectBlurRegion={handleSelectBlurRegion}
                     onDetectFaces={handleDetectFaces}
                   />
