@@ -100,10 +100,10 @@ const faceDetectionSchema = {
   items: {
     type: Type.OBJECT,
     properties: {
-      x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box as a percentage (0-100)." },
-      y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box as a percentage (0-100)." },
-      width: { type: Type.NUMBER, description: "Width of the face bounding box as a percentage (0-100)." },
-      height: { type: Type.NUMBER, description: "Height of the face bounding box as a percentage (0-100)." }
+      x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box in pixels." },
+      y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box in pixels." },
+      width: { type: Type.NUMBER, description: "Width of the face bounding box in pixels." },
+      height: { type: Type.NUMBER, description: "Height of the face bounding box in pixels." }
     },
     required: ["x", "y", "width", "height"]
   }
@@ -111,9 +111,11 @@ const faceDetectionSchema = {
 
 export async function detectFaces(
   base64ImageData: string,
-  mimeType: string
+  mimeType: string,
+  imageWidth: number,
+  imageHeight: number
 ): Promise<CropParams[]> {
-  const prompt = `Analyze this image and identify all human faces. For each face, provide a bounding box with its top-left corner coordinates (x, y) and its dimensions (width, height). Express all values as percentages (0-100) of the total image dimensions. If no faces are found, return an empty array. Return the result as a JSON array of objects.`;
+  const prompt = `Analyze this image, which has dimensions of ${imageWidth}px width and ${imageHeight}px height. Identify all human faces. For each face, provide a bounding box with its top-left corner coordinates (x, y) and its dimensions (width, height), all in exact pixel values. If no faces are found, return an empty array. Return the result as a JSON array of objects.`;
 
   try {
     const ai = getAiInstance();
@@ -142,10 +144,10 @@ export async function detectFaces(
     // Validate the result
     if (Array.isArray(result)) {
       return result.map(face => ({
-        x: Math.max(0, Math.min(100, face.x)),
-        y: Math.max(0, Math.min(100, face.y)),
-        width: Math.max(1, Math.min(100, face.width)),
-        height: Math.max(1, Math.min(100, face.height)),
+        x: Math.round(Math.max(0, face.x)),
+        y: Math.round(Math.max(0, face.y)),
+        width: Math.round(Math.max(1, face.width)),
+        height: Math.round(Math.max(1, face.height)),
       }));
     } else {
       throw new Error("Invalid format received from AI for face detection");

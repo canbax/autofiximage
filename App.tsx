@@ -471,21 +471,16 @@ const App: React.FC = () => {
 
     try {
       const base64Data = await fileToBase64(originalFile);
-      const facesInPercentages = await detectFaces(base64Data, originalFile.type);
+      const faces = await detectFaces(base64Data, originalFile.type, image.naturalWidth, image.naturalHeight);
 
-      if (facesInPercentages.length === 0) {
+      if (faces.length === 0) {
         alert(t('alert.noFaces'));
       } else {
-        const newRegions: BlurRegion[] = facesInPercentages.map(face => {
+        const newRegions: BlurRegion[] = faces.map(face => {
           const id = `${Date.now()}-${Math.random()}`;
           return {
             id,
-            selection: {
-                x: Math.round((face.x / 100) * image.naturalWidth),
-                y: Math.round((face.y / 100) * image.naturalHeight),
-                width: Math.round((face.width / 100) * image.naturalWidth),
-                height: Math.round((face.height / 100) * image.naturalHeight),
-            },
+            selection: face,
             blurAmount: DEFAULT_BLUR_AMOUNT,
           };
         });
