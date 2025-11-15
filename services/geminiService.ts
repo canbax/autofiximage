@@ -100,10 +100,10 @@ const faceDetectionSchema = {
   items: {
     type: Type.OBJECT,
     properties: {
-      x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box in pixels." },
-      y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box in pixels." },
-      width: { type: Type.NUMBER, description: "Width of the face bounding box in pixels." },
-      height: { type: Type.NUMBER, description: "Height of the face bounding box in pixels." }
+      x: { type: Type.INTEGER, description: "Top-left x-coordinate of the face bounding box in pixels." },
+      y: { type: Type.INTEGER, description: "Top-left y-coordinate of the face bounding box in pixels." },
+      width: { type: Type.INTEGER, description: "Width of the face bounding box in pixels." },
+      height: { type: Type.INTEGER, description: "Height of the face bounding box in pixels." }
     },
     required: ["x", "y", "width", "height"]
   }
@@ -115,7 +115,19 @@ export async function detectFaces(
   imageWidth: number,
   imageHeight: number
 ): Promise<CropParams[]> {
-  const prompt = `Analyze this image, which has dimensions of ${imageWidth}px width and ${imageHeight}px height. Identify all human faces. For each face, provide a bounding box with its top-left corner coordinates (x, y) and its dimensions (width, height), all in exact pixel values. If no faces are found, return an empty array. Return the result as a JSON array of objects.`;
+  const prompt = `You are a strict face bounding box extractor.
+Image size: width=${imageWidth} px, height=${imageHeight} px.
+Return an array (possibly empty). Each element: { "x": INT, "y": INT, "width": INT, "height": INT }.
+Constraints:
+- x,y are top-left corner, origin (0,0) at top-left.
+- 0 <= x <= ${imageWidth - 1}
+- 0 <= y <= ${imageHeight - 1}
+- width >= 1, height >= 1
+- x + width <= ${imageWidth}
+- y + height <= ${imageHeight}
+- Integers only. No decimals. No extra fields.
+If no faces: [].
+Output JSON only.`;
 
   try {
     const ai = getAiInstance();
@@ -125,34 +137,35 @@ export async function detectFaces(
         parts: [
           {
             inlineData: {
-              data: base64ImageData,
-              mimeType: mimeType,
-            },
+              data: base64ImageData.replace(/^data:[^;]+;base64,/, ""), // sanitize
+              mimeType
+            }
           },
-          { text: prompt },
-        ],
+          { text: prompt }
+        ]
       },
       config: {
         responseMimeType: "application/json",
-        responseSchema: faceDetectionSchema,
-      },
+        responseSchema: faceDetectionSchema
+      }
     });
 
     const jsonString = response.text;
     const result = JSON.parse(jsonString);
-    
-    // Validate the result
-    if (Array.isArray(result)) {
-      return result.map(face => ({
-        x: Math.round(Math.max(0, face.x)),
-        y: Math.round(Math.max(0, face.y)),
-        width: Math.round(Math.max(1, face.width)),
-        height: Math.round(Math.max(1, face.height)),
-      }));
-    } else {
-      throw new Error("Invalid format received from AI for face detection");
-    }
 
+    if (!Array.isArray(result)) throw new Error("Invalid format received from AI for face detection");
+
+    return result
+      .filter(f => Number.isFinite(f.x) && Number.isFinite(f.y) && Number.isFinite(f.width) && Number.isFinite(f.height))
+      .map(f => {
+        let x = Math.max(0, Math.round(f.x));
+        let y = Math.max(0, Math.round(f.y));
+        let w = Math.max(1, Math.round(f.width));
+        let h = Math.max(1, Math.round(f.height));
+        if (x + w > imageWidth) w = imageWidth - x;
+        if (y + h > imageHeight) h = imageHeight - y;
+        return { x, y, width: w, height: h };
+      });
   } catch (error) {
     console.error("Gemini service error (face detection):", error);
     throw new Error("error.ai");
