@@ -94,3 +94,65 @@ export async function getAutoCorrection(
     throw new Error("error.ai");
   }
 }
+
+const faceDetectionSchema = {
+  type: Type.ARRAY,
+  items: {
+    type: Type.OBJECT,
+    properties: {
+      x: { type: Type.NUMBER, description: "Top-left x-coordinate of the face bounding box as a percentage (0-100)." },
+      y: { type: Type.NUMBER, description: "Top-left y-coordinate of the face bounding box as a percentage (0-100)." },
+      width: { type: Type.NUMBER, description: "Width of the face bounding box as a percentage (0-100)." },
+      height: { type: Type.NUMBER, description: "Height of the face bounding box as a percentage (0-100)." }
+    },
+    required: ["x", "y", "width", "height"]
+  }
+};
+
+export async function detectFaces(
+  base64ImageData: string,
+  mimeType: string
+): Promise<CropParams[]> {
+  const prompt = `Analyze this image and identify all human faces. For each face, provide a bounding box with its top-left corner coordinates (x, y) and its dimensions (width, height). Express all values as percentages (0-100) of the total image dimensions. If no faces are found, return an empty array. Return the result as a JSON array of objects.`;
+
+  try {
+    const ai = getAiInstance();
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: {
+        parts: [
+          {
+            inlineData: {
+              data: base64ImageData,
+              mimeType: mimeType,
+            },
+          },
+          { text: prompt },
+        ],
+      },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: faceDetectionSchema,
+      },
+    });
+
+    const jsonString = response.text;
+    const result = JSON.parse(jsonString);
+    
+    // Validate the result
+    if (Array.isArray(result)) {
+      return result.map(face => ({
+        x: Math.max(0, Math.min(100, face.x)),
+        y: Math.max(0, Math.min(100, face.y)),
+        width: Math.max(1, Math.min(100, face.width)),
+        height: Math.max(1, Math.min(100, face.height)),
+      }));
+    } else {
+      throw new Error("Invalid format received from AI for face detection");
+    }
+
+  } catch (error) {
+    console.error("Gemini service error (face detection):", error);
+    throw new Error("error.ai");
+  }
+}
