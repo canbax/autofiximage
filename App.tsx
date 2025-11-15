@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams, BlurRegion } from './types';
-import { getAutoCorrection, detectFaces } from './services/geminiService';
+import { getAutoCorrection } from './services/geminiService';
+import { detectFaces } from './services/mediaPipeService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
 import LandingPage from './components/LandingPage';
@@ -470,14 +471,13 @@ const App: React.FC = () => {
   };
   
   const handleDetectFaces = async () => {
-    if (!image || !originalFile) return;
+    if (!image) return;
     setIsLoading(true);
     setError(null);
     setMode('blur');
 
     try {
-      const base64Data = await fileToBase64(originalFile);
-      const faces = await detectFaces(base64Data, originalFile.type, image.naturalWidth, image.naturalHeight);
+      const faces = await detectFaces(image);
 
       if (faces.length === 0) {
         alert(t('alert.noFaces'));
