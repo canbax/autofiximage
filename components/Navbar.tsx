@@ -62,6 +62,14 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
 
   const modeKey = mode.replace(/-(\w)/g, (_, c) => c.toUpperCase());
 
+  const getMenuItemClasses = (itemMode: 'crop-rotate' | 'resize' | 'blur') => {
+    const baseClasses = 'block px-4 py-2 text-sm';
+    if (mode === itemMode) {
+      return `${baseClasses} bg-indigo-600 text-white`;
+    }
+    return `${baseClasses} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700`;
+  };
+
   return (
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-10 border-b border-gray-200/50 dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,9 +112,9 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                   <div className="py-1" role="menu" aria-orientation="vertical">
                     {image && (
                         <>
-                          <a href="#" onClick={handleCropRotateClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.cropRotate')}</a>
-                          <a href="#" onClick={handleResizeClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.resize')}</a>
-                          <a href="#" onClick={handleBlurClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.blur')}</a>
+                          <a href="#" onClick={handleCropRotateClick} className={getMenuItemClasses('crop-rotate')} role="menuitem">{t('navbar.cropRotate')}</a>
+                          <a href="#" onClick={handleResizeClick} className={getMenuItemClasses('resize')} role="menuitem">{t('navbar.resize')}</a>
+                          <a href="#" onClick={handleBlurClick} className={getMenuItemClasses('blur')} role="menuitem">{t('navbar.blur')}</a>
                           <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                         </>
                     )}
