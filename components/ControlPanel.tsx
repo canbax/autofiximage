@@ -194,27 +194,37 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     <WandIcon />
                     {t('controls.autoCorrect')}
                 </Button>
-
-                <InputGroup label={t('controls.rotation')} icon={<RotateIcon />}>
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="range"
-                            min="-180"
-                            max="180"
-                            step="0.1"
-                            value={rotation}
-                            onChange={(e) => setRotation(parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                        />
-                        <NumberInput
-                            value={Number(rotation.toFixed(1))}
-                            onChange={(e) => setRotation(parseFloat(e.target.value))}
-                            step="0.1"
-                            min="-180"
-                            max="180"
-                        />
+                
+                <div>
+                    <InputGroup label={t('controls.rotation')} icon={<RotateIcon />}>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="range"
+                                min="-180"
+                                max="180"
+                                step="0.1"
+                                value={rotation}
+                                onChange={(e) => setRotation(parseFloat(e.target.value))}
+                                className="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <NumberInput
+                                value={Number(rotation.toFixed(1))}
+                                onChange={(e) => setRotation(parseFloat(e.target.value))}
+                                step="0.1"
+                                min="-180"
+                                max="180"
+                            />
+                        </div>
+                    </InputGroup>
+                    <div className="mt-3">
+                      <Checkbox
+                        id="keep-cropper-vertical"
+                        checked={keepCropperVertical}
+                        onChange={(e) => setKeepCropperVertical(e.target.checked)}
+                        label={t('controls.keepVertical')}
+                      />
                     </div>
-                </InputGroup>
+                </div>
 
                 <InputGroup label={t('controls.crop')} icon={<CropIcon />}>
                     <div className="grid grid-cols-2 gap-4">
@@ -261,15 +271,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                         searchPlaceholder={t('controls.searchPlaceholder')}
                     />
                 </InputGroup>
-
-                <div>
-                  <Checkbox
-                    id="keep-cropper-vertical"
-                    checked={keepCropperVertical}
-                    onChange={(e) => setKeepCropperVertical(e.target.checked)}
-                    label={t('controls.keepVertical')}
-                  />
-                </div>
               </div>
           </>
       )}
