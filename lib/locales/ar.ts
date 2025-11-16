@@ -47,7 +47,7 @@ export const ar = {
   'controls.keepVertical': 'حافظ على منطقة الاقتصاص عمودية',
   'controls.download': 'تحميل الصورة',
   'controls.reset': 'إعادة تعيين التغييرات',
-  'controls.clear': 'مسح الصورة',
+  'controls.changeImage': 'تغيير الصورة',
   'controls.searchPlaceholder': 'بحث...',
   'controls.blurEffect': 'تأثير التمويه',
   'controls.blurAmount': 'مقدار التمويه',

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { CropParams, BlurRegion } from '../types';
 import { Button } from './Button';
-import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, TrashIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon, FaceIcon } from './icons';
+import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon, FaceIcon, UploadIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
 import { Checkbox } from './Checkbox';
 import { Select } from './Select';
@@ -15,7 +15,7 @@ interface ControlPanelProps {
   onAutoCorrect: () => void;
   onReset: () => void;
   onDownload: () => void;
-  onClearImage: () => void;
+  onNewImageUpload: (file: File) => void;
   isLoading: boolean;
   keepCropperVertical: boolean;
   setKeepCropperVertical: (value: boolean) => void;
@@ -71,7 +71,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onAutoCorrect,
   onReset,
   onDownload,
-  onClearImage,
+  onNewImageUpload,
   isLoading,
   keepCropperVertical,
   setKeepCropperVertical,
@@ -96,6 +96,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onDetectFaces,
 }) => {
   const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const activeBlurRegion = activeBlurRegionId ? blurRegions.find(r => r.id === activeBlurRegionId) : null;
 
   const aspectRatioOptions = [
@@ -157,6 +158,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     }
     setResizeWidth(newWidth);
     setResizeHeight(newHeight);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      onNewImageUpload(e.target.files[0]);
+    }
+    if (e.target) {
+        e.target.value = '';
+    }
   };
 
   return (
@@ -351,10 +361,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               <ResetIcon />
               {t('controls.reset')}
           </Button>
-          <Button onClick={onClearImage} variant="secondary">
-              <TrashIcon />
-              {t('controls.clear')}
+          <Button onClick={() => fileInputRef.current?.click()} variant="secondary">
+              <UploadIcon />
+              {t('controls.changeImage')}
           </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="sr-only"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
       </div>
     </div>
   );

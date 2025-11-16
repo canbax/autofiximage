@@ -47,7 +47,7 @@ export const tr = {
   'controls.keepVertical': 'Kırpma alanını dikey tut',
   'controls.download': 'Resmi İndir',
   'controls.reset': 'Değişiklikleri Sıfırla',
-  'controls.clear': 'Resmi Temizle',
+  'controls.changeImage': 'Resmi Değiştir',
   'controls.searchPlaceholder': 'Ara...',
   'controls.blurEffect': 'Bulanıklaştırma Efekti',
   'controls.blurAmount': 'Bulanıklık Miktarı',

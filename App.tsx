@@ -126,7 +126,8 @@ const App: React.FC = () => {
         setResizeWidth(img.naturalWidth);
         setResizeHeight(img.naturalHeight);
         setAspectRatioKey('free');
-        setMode('crop-rotate');
+        setBlurRegions([]);
+        setActiveBlurRegionId(null);
 
         // Smartly pick a default background color from the top-right corner
         try {
@@ -273,13 +274,6 @@ const App: React.FC = () => {
     setOriginalFile(file);
     setImage(null);
     setError(null);
-  };
-  
-  const handleClearImage = () => {
-    setOriginalFile(null);
-    setImage(null);
-    setError(null);
-    handleReset();
   };
 
   const handleAutoCorrect = async () => {
@@ -571,7 +565,7 @@ const App: React.FC = () => {
                     onAutoCorrect={handleAutoCorrect}
                     onReset={handleReset}
                     onDownload={handleDownload}
-                    onClearImage={handleClearImage}
+                    onNewImageUpload={handleImageUpload}
                     isLoading={isLoading}
                     keepCropperVertical={keepCropperVertical}
                     setKeepCropperVertical={setKeepCropperVertical}

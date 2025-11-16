@@ -47,7 +47,7 @@ export const es = {
   'controls.keepVertical': 'Mantener el área de recorte vertical',
   'controls.download': 'Descargar Imagen',
   'controls.reset': 'Restablecer Cambios',
-  'controls.clear': 'Quitar Imagen',
+  'controls.changeImage': 'Cambiar Imagen',
   'controls.searchPlaceholder': 'Buscar...',
   'controls.blurEffect': 'Efecto de Desenfoque',
   'controls.blurAmount': 'Cantidad de Desenfoque',

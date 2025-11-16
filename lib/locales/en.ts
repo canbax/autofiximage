@@ -47,7 +47,7 @@ export const en = {
   'controls.keepVertical': 'Keep cropper area vertical',
   'controls.download': 'Download Image',
   'controls.reset': 'Reset Changes',
-  'controls.clear': 'Clear Image',
+  'controls.changeImage': 'Change Image',
   'controls.searchPlaceholder': 'Search...',
   'controls.blurEffect': 'Blur Effect',
   'controls.blurAmount': 'Blur Amount',
