@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { CropParams, BlurRegion } from '../types';
 import { Button } from './Button';
 import { WandIcon, ResetIcon, DownloadIcon, RotateIcon, CropIcon, AspectRatioIcon, WidthIcon, HeightIcon, BlurIcon, FaceIcon, UploadIcon } from './icons';
@@ -38,6 +38,7 @@ interface ControlPanelProps {
   onUpdateBlurRegion: (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => void;
   onSelectBlurRegion: (id: string) => void;
   onDetectFaces: () => void;
+  imageMimeType: string | null;
 }
 
 const InputGroup: React.FC<{ label: string; children: React.ReactNode; icon: React.ReactNode }> = ({ label, children, icon }) => (
@@ -94,10 +95,24 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onUpdateBlurRegion,
   onSelectBlurRegion,
   onDetectFaces,
+  imageMimeType,
 }) => {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeBlurRegion = activeBlurRegionId ? blurRegions.find(r => r.id === activeBlurRegionId) : null;
+  
+  const supportsTransparency = useMemo(() => {
+    if (!imageMimeType) return false;
+    const supportedTypes = [
+      'image/png',
+      'image/webp',
+      'image/avif',
+      'image/tiff',
+      'image/tga',
+      'image/x-tga',
+    ];
+    return supportedTypes.includes(imageMimeType.toLowerCase());
+  }, [imageMimeType]);
 
   const aspectRatioOptions = [
     { value: 'free', label: t('controls.aspectRatios.free') },
@@ -307,9 +322,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                                           onChange={e => setResizeBgColor(e.target.value)}
                                           className="w-full h-8 p-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer"
                                       />
-                                      <Button variant="secondary" onClick={() => setResizeBgColor('transparent')} className="text-xs px-2 py-1">
-                                          {t('controls.resizeTransparent')}
-                                      </Button>
+                                      {supportsTransparency && (
+                                        <Button variant="secondary" onClick={() => setResizeBgColor('transparent')} className="text-xs px-2 py-1">
+                                            {t('controls.resizeTransparent')}
+                                        </Button>
+                                      )}
                                   </div>
                               </InputGroup>
                           )}

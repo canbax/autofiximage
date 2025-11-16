@@ -270,10 +270,22 @@ const App: React.FC = () => {
   }, [image, mode, activeBlurRegionId, setSelection, setBlurRegions]);
   
   const handleImageUpload = (file: File) => {
+    const previousMode = mode;
     setIsProcessingImage(true);
     setOriginalFile(file);
     setImage(null);
     setError(null);
+    
+    // Logic to persist mode
+    if (image) { // if an image was already loaded
+      setMode(previousMode);
+      if (previousMode === 'blur') {
+        setBlurRegions([]); // Clear old blur regions
+        setActiveBlurRegionId(null);
+      }
+    } else {
+      setMode('crop-rotate'); // Default for first upload
+    }
   };
 
   const handleAutoCorrect = async () => {
@@ -588,6 +600,7 @@ const App: React.FC = () => {
                     onUpdateBlurRegion={handleUpdateBlurRegion}
                     onSelectBlurRegion={handleSelectBlurRegion}
                     onDetectFaces={handleDetectFaces}
+                    imageMimeType={originalFile?.type || null}
                   />
                 </div>
               </div>
