@@ -66,27 +66,27 @@ export async function getAutoCorrection(
 
     const jsonString = response.text;
     const result = JSON.parse(jsonString);
-    
+
     // Basic validation
     if (
-        typeof result.rotation === 'number' &&
-        result.crop &&
-        typeof result.crop.x === 'number' &&
-        typeof result.crop.y === 'number' &&
-        typeof result.crop.width === 'number' &&
-        typeof result.crop.height === 'number'
+      typeof result.rotation === 'number' &&
+      result.crop &&
+      typeof result.crop.x === 'number' &&
+      typeof result.crop.y === 'number' &&
+      typeof result.crop.width === 'number' &&
+      typeof result.crop.height === 'number'
     ) {
-        return {
-            rotation: result.rotation,
-            crop: {
-                x: Math.max(0, Math.min(100, result.crop.x)),
-                y: Math.max(0, Math.min(100, result.crop.y)),
-                width: Math.max(1, Math.min(100, result.crop.width)),
-                height: Math.max(1, Math.min(100, result.crop.height)),
-            }
-        };
+      return {
+        rotation: result.rotation,
+        crop: {
+          x: Math.max(0, Math.min(100, result.crop.x)),
+          y: Math.max(0, Math.min(100, result.crop.y)),
+          width: Math.max(1, Math.min(100, result.crop.width)),
+          height: Math.max(1, Math.min(100, result.crop.height)),
+        }
+      };
     } else {
-        throw new Error("Invalid format received from AI");
+      throw new Error("Invalid format received from AI");
     }
 
   } catch (error) {
