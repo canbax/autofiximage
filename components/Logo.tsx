@@ -5,7 +5,7 @@ export const Logo: React.FC<{ className?: string }> = ({ className = "h-8 w-8" }
     className={className}
     viewBox="0 0 32 32"
     xmlns="http://www.w3.org/2000/svg"
-    aria-label="PixelPerfect AI Logo"
+    aria-label="AutoFix Image Logo"
     role="img"
   >
     <defs>

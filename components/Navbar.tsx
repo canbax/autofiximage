@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
         <div className="flex items-center justify-between h-16">
           <a href="#" className="flex items-center gap-3">
             <Logo className="h-8 w-8" />
-            <span className="font-bold text-xl text-gray-900 dark:text-white">PixelPerfect AI</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white">AutoFix Image</span>
             {image && (
               <span className="hidden sm:block text-lg text-gray-500 dark:text-gray-400">/ {t(`app.mode.${modeKey}`)}</span>
             )}

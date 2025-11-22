@@ -90,7 +90,7 @@ export const ApiDocsDialog: React.FC = () => {
     };
 
     const codeSnippet = `curl -X POST \\
-  'https://api.pixelperfect.ai/v1/autocorrect' \\
+  'https://api.autofiximage.ai/v1/autocorrect' \\
   -H 'Authorization: Bearer ${user.apiKey}' \\
   -F 'image=@/path/to/your/image.jpg'`;
 
