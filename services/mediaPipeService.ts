@@ -1,23 +1,11 @@
 // Note: This service now uses face-api.js, not MediaPipe.
 import { CropParams } from "../types";
 
-// face-api.js is loaded from a script tag in index.html, so it's available globally.
-// We declare it here to make TypeScript happy.
-declare const faceapi: any;
+import * as faceapi from 'face-api.js';
 
-/**
- * Interface for the raw face detection data returned by face-api.js.
- */
-interface FaceDetection {
-  box: {
-    _x: number;
-    _y: number;
-    _width: number;
-    _height: number;
-  };
-}
 
-const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+
+const MODEL_URL = '/assets';
 let modelsLoaded = false;
 
 /**
@@ -28,8 +16,7 @@ let modelsLoaded = false;
 async function loadModels() {
   if (modelsLoaded) return;
   try {
-    // Using SsdMobilenetv1, which is more accurate than TinyFaceDetector, to improve reliability.
-    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+    await faceapi.loadSsdMobilenetv1Model(MODEL_URL);
     modelsLoaded = true;
   } catch (error) {
     console.error("Failed to load face-api.js models:", error);
@@ -48,12 +35,12 @@ export async function detectFaces(image: HTMLImageElement): Promise<CropParams[]
   await loadModels();
 
   // Using SsdMobilenetv1Options. A lower minConfidence can detect more faces if needed.
-  const detections: FaceDetection[] = await faceapi.detectAllFaces(image, new faceapi.SsdMobilenetv1Options());
+  const detections = await faceapi.detectAllFaces(image, new faceapi.SsdMobilenetv1Options());
 
   // Convert detections to our app's CropParams format and add some padding
   // for a more natural blur effect.
-  return detections.map((detection: FaceDetection) => {
-      const { _x, _y, _width, _height } = detection.box;
+  return detections.map((detection) => {
+      const { x: _x, y: _y, width: _width, height: _height } = detection.box;
       
       const paddingW = _width * 0.1;
       const paddingH = _height * 0.2;
