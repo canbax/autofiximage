@@ -41,7 +41,7 @@ export async function getAutoCorrection(
   base64ImageData: string,
   mimeType: string
 ): Promise<{ rotation: number; crop: CropParams }> {
-  const prompt = `Analyze this image to find the main subject. Suggest a slight rotation correction (in degrees, between -15 and 15) to straighten the image if it's skewed. Also, suggest a crop (bounding box with x, y, width, height as percentages from 0 to 100) that centers the main subject and improves composition. The goal is a subtle, professional-looking adjustment. Provide your answer as a JSON object with 'rotation' and 'crop' keys only.`;
+  const prompt = `Analyze this image to find the main subject(s). If there are multiple subjects, ensure the crop includes all of them. Suggest a slight rotation correction (in degrees, between -15 and 15) to straighten the image if it's skewed. Suggest a crop (bounding box with x, y, width, height as percentages from 0 to 100) that centers the subject(s) and improves composition. CRITICAL: The crop MUST be strictly within the original image boundaries. If a rotation is applied, the crop MUST be smaller than the original image to avoid any black empty corners or edges. Do not include any areas outside the valid image data. Provide your answer as a JSON object with 'rotation' and 'crop' keys only.`;
 
   try {
     const ai = getAiInstance();
