@@ -6,23 +6,28 @@ import * as faceapi from 'face-api.js';
 
 
 const MODEL_URL = '/models';
-let modelsLoaded = false;
+let loadModelsPromise: Promise<void> | null = null;
 
 /**
  * Loads the required face detection models from the CDN.
  * This function is called automatically by detectFaces and ensures models
  * are only loaded once.
  */
-async function loadModels() {
-  if (modelsLoaded) return;
-  try {
-    await faceapi.loadSsdMobilenetv1Model(MODEL_URL);
-    modelsLoaded = true;
-  } catch (error) {
-    console.error("Failed to load face-api.js models:", error);
-    // Re-use existing translation key for the error message.
-    throw new Error("error.faceDetectorInit");
-  }
+export async function loadModels() {
+  if (loadModelsPromise) return loadModelsPromise;
+
+  loadModelsPromise = (async () => {
+    try {
+      await faceapi.loadSsdMobilenetv1Model(MODEL_URL);
+    } catch (error) {
+      console.error("Failed to load face-api.js models:", error);
+      loadModelsPromise = null; // Reset promise on failure so we can try again
+      // Re-use existing translation key for the error message.
+      throw new Error("error.faceDetectorInit");
+    }
+  })();
+
+  return loadModelsPromise;
 }
 
 /**

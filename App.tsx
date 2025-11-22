@@ -3,7 +3,7 @@ import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams, BlurRegion } from './types';
 import { getAutoCorrection } from './services/geminiService';
-import { detectFaces } from './services/mediaPipeService';
+import { detectFaces, loadModels } from './services/mediaPipeService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
 import LandingPage from './components/LandingPage';
@@ -530,6 +530,9 @@ const App: React.FC = () => {
         };
         setBlurRegions([newRegion]);
         setActiveBlurRegionId(id);
+    }
+    if (newMode === 'blur') {
+      loadModels().catch(console.error);
     }
     setMode(newMode);
   };
