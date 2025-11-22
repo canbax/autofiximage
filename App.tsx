@@ -12,7 +12,7 @@ import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
 import { ApiDocsDialog } from './components/ApiDocsDialog';
 import { fileToBase64 } from './lib/utils';
-import { applyCorrection } from './lib/imageUtils';
+import { applyCorrection, compressImageForAI } from './lib/imageUtils';
 import TermsPage from './components/TermsPage';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
@@ -295,8 +295,11 @@ const App: React.FC = () => {
     setAspectRatioKey('free'); // AI correction should be free form
     setMode('crop-rotate');
     try {
-      const base64Data = await fileToBase64(originalFile);
-      const result = await getAutoCorrection(base64Data, originalFile.type);
+      // Compress and resize the image to optimize AI processing speed
+      const base64Data = await compressImageForAI(originalFile);
+      // Send to Gemini as JPEG, since compression converts it
+      const result = await getAutoCorrection(base64Data, 'image/jpeg');
+      
       const newCropInPixels = {
         x: Math.round((result.crop.x / 100) * image.naturalWidth),
         y: Math.round((result.crop.y / 100) * image.naturalHeight),

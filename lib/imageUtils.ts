@@ -2,6 +2,64 @@ import React from 'react';
 import { CropParams } from '../types';
 
 /**
+ * Compresses and resizes an image file for AI analysis.
+ * Resizes to a maximum dimension (default 1024px) and converts to JPEG.
+ * This significantly reduces upload size and processing time without affecting analysis quality.
+ * 
+ * @param file The source file.
+ * @param maxWidth The maximum width or height in pixels.
+ * @param quality The JPEG quality (0 to 1).
+ * @returns A Promise resolving to the base64 string (without data URI prefix).
+ */
+export function compressImageForAI(file: File, maxWidth = 1024, quality = 0.8): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.naturalWidth;
+        let height = img.naturalHeight;
+
+        if (width > maxWidth || height > maxWidth) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxWidth) / height);
+            height = maxWidth;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not create canvas context'));
+          return;
+        }
+        
+        // Draw white background in case of transparent PNGs being converted to JPEG
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to JPEG for optimal compression/quality ratio for Vision tasks
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        
+        // Return only the base64 part
+        resolve(dataUrl.split(',')[1]);
+      };
+      img.onerror = (error) => reject(error);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+/**
  * Applies rotation and crop parameters to an image element and returns the result as a Blob.
  * This function uses the more accurate method where the cropper remains vertical while the image rotates beneath it.
  * @param image The source HTMLImageElement.
