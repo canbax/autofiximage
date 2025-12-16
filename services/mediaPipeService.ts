@@ -32,7 +32,6 @@ export async function loadModels() {
   return detectorPromise;
 }
 
-await loadModels();
 /**
  * Detects faces in an image using TensorFlow.js face-detection.
  * @param image The HTMLImageElement to detect faces in.
