@@ -18,8 +18,6 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, '.'),
       }
     },
-    optimizeDeps: {
-      exclude: ['face-api.js']
-    }
+
   };
 });
