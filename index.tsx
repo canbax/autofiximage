@@ -4,7 +4,6 @@ import App from './App';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { PricingProvider } from './context/PricingContext';
-import { ApiDocsProvider } from './context/ApiDocsContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 const rootElement = document.getElementById('root');
@@ -19,9 +18,7 @@ root.render(
       <AuthProvider>
         <LanguageProvider>
           <PricingProvider>
-            <ApiDocsProvider>
-              <App />
-            </ApiDocsProvider>
+            <App />
           </PricingProvider>
         </LanguageProvider>
       </AuthProvider>

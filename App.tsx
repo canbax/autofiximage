@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ImageEditor } from './components/ImageEditor';
 import { ControlPanel } from './components/ControlPanel';
 import { CropParams, BlurRegion } from './types';
-import { getAutoCorrection } from './services/geminiService';
 import { detectFaces, loadModels } from './services/mediaPipeService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
@@ -10,10 +9,9 @@ import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
-import { ApiDocsDialog } from './components/ApiDocsDialog';
-import { fileToBase64 } from './lib/utils';
 import { applyCorrection, compressImageForAI } from './lib/imageUtils';
 import TermsPage from './components/TermsPage';
+import { useSmartCrop } from './hooks/useSmartCrop';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 
@@ -41,7 +39,8 @@ const App: React.FC = () => {
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
   const [route, setRoute] = useState(window.location.hash);
   const [mode, setMode] = useState<AppMode>('crop-rotate');
-  
+  const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop();
+
   // Resize State
   const [resizeWidth, setResizeWidth] = useState(0);
   const [resizeHeight, setResizeHeight] = useState(0);
@@ -76,17 +75,17 @@ const App: React.FC = () => {
       setSelection(fullImageCrop);
       setResizeWidth(image.naturalWidth);
       setResizeHeight(image.naturalHeight);
-      
+
       try {
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            ctx.drawImage(image, image.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
-            const pixelData = ctx.getImageData(0, 0, 1, 1).data;
-            const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
-            setResizeBgColor(hex);
+          ctx.drawImage(image, image.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
+          const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+          const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+          setResizeBgColor(hex);
         }
       } catch (e) {
         setResizeBgColor('transparent');
@@ -131,30 +130,30 @@ const App: React.FC = () => {
 
         // Smartly pick a default background color from the top-right corner
         try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1;
-            canvas.height = 1;
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            if (ctx) {
-                ctx.drawImage(img, img.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
-                const pixelData = ctx.getImageData(0, 0, 1, 1).data;
-                const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
-                setResizeBgColor(hex);
-            }
+          const canvas = document.createElement('canvas');
+          canvas.width = 1;
+          canvas.height = 1;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (ctx) {
+            ctx.drawImage(img, img.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
+            const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+            const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+            setResizeBgColor(hex);
+          }
         } catch (e) {
-            setResizeBgColor('transparent');
+          setResizeBgColor('transparent');
         }
         setIsProcessingImage(false);
       };
       img.onerror = () => {
-          setError('error.imageLoad');
-          setIsProcessingImage(false);
+        setError('error.imageLoad');
+        setIsProcessingImage(false);
       };
       img.src = e.target?.result as string;
     };
     reader.onerror = () => {
-        setError('error.fileRead');
-        setIsProcessingImage(false);
+      setError('error.fileRead');
+      setIsProcessingImage(false);
     };
     reader.readAsDataURL(originalFile);
   }, [originalFile]);
@@ -183,7 +182,7 @@ const App: React.FC = () => {
       const currentCenter = { x: c.x + c.width / 2, y: c.y + c.height / 2 };
       let newWidth = c.width;
       let newHeight = Math.round(newWidth / numericAspectRatio);
-      
+
       if (currentCenter.y + newHeight / 2 > image.naturalHeight || currentCenter.y - newHeight / 2 < 0) {
         newHeight = Math.min(image.naturalHeight, Math.round(currentCenter.y * 2), Math.round((image.naturalHeight - currentCenter.y) * 2));
         newWidth = Math.round(newHeight * numericAspectRatio);
@@ -195,7 +194,7 @@ const App: React.FC = () => {
 
       let newX = Math.round(currentCenter.x - newWidth / 2);
       let newY = Math.round(currentCenter.y - newHeight / 2);
-      
+
       // Clamp position
       if (newX < 0) newX = 0;
       if (newY < 0) newY = 0;
@@ -210,7 +209,7 @@ const App: React.FC = () => {
   // Keyboard controls for cropper
   useEffect(() => {
     if (!image) return;
-  
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeEl = document.activeElement;
       if (activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName)) {
@@ -221,41 +220,41 @@ const App: React.FC = () => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         const step = e.shiftKey ? 10 : 1;
-  
+
         if (mode === 'crop-rotate') {
           setSelection(currentSelection => {
             let newX = currentSelection.x;
             let newY = currentSelection.y;
-      
+
             switch (e.key) {
               case 'ArrowUp': newY -= step; break;
               case 'ArrowDown': newY += step; break;
               case 'ArrowLeft': newX -= step; break;
               case 'ArrowRight': newX += step; break;
             }
-      
+
             const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentSelection.width));
             const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - currentSelection.height));
-            
+
             return { ...currentSelection, x: clampedX, y: clampedY };
           });
         } else if (mode === 'blur' && activeBlurRegionId) {
-          setBlurRegions(currentRegions => 
+          setBlurRegions(currentRegions =>
             currentRegions.map(region => {
               if (region.id === activeBlurRegionId) {
                 let newX = region.selection.x;
                 let newY = region.selection.y;
-          
+
                 switch (e.key) {
                   case 'ArrowUp': newY -= step; break;
                   case 'ArrowDown': newY += step; break;
                   case 'ArrowLeft': newX -= step; break;
                   case 'ArrowRight': newX += step; break;
                 }
-          
+
                 const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - region.selection.width));
                 const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - region.selection.height));
-                
+
                 return { ...region, selection: { ...region.selection, x: clampedX, y: clampedY } };
               }
               return region;
@@ -264,18 +263,18 @@ const App: React.FC = () => {
         }
       }
     };
-  
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [image, mode, activeBlurRegionId, setSelection, setBlurRegions]);
-  
+
   const handleImageUpload = (file: File) => {
     const previousMode = mode;
     setIsProcessingImage(true);
     setOriginalFile(file);
     setImage(null);
     setError(null);
-    
+
     // Logic to persist mode
     if (image) { // if an image was already loaded
       setMode(previousMode);
@@ -290,31 +289,30 @@ const App: React.FC = () => {
 
   const handleAutoCorrect = async () => {
     if (!image || !originalFile) return;
+
+    if (!isSmartCropReady) {
+      alert("AI Model is still loading. Please wait a moment.");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setAspectRatioKey('free'); // AI correction should be free form
     setMode('crop-rotate');
     try {
-      // Compress and resize the image to optimize AI processing speed
-      const base64Data = await compressImageForAI(originalFile);
-      // Send to Gemini as JPEG, since compression converts it
-      const result = await getAutoCorrection(base64Data, 'image/jpeg');
-      
-      const newCropInPixels = {
-        x: Math.round((result.crop.x / 100) * image.naturalWidth),
-        y: Math.round((result.crop.y / 100) * image.naturalHeight),
-        width: Math.round((result.crop.width / 100) * image.naturalWidth),
-        height: Math.round((result.crop.height / 100) * image.naturalHeight),
-      };
-      setRotation(result.rotation);
-      setSelection(newCropInPixels);
+      const targetRatio = numericAspectRatio || (16 / 9);
+      const crop = await getSmartCrop(image, targetRatio);
+
+      setSelection(crop);
+      // Reset rotation as this model doesn't handle it
+      setRotation(0);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'error.unknown');
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const handleDownload = async () => {
     if (!image || !originalFile) {
       alert(t('alert.noImage'));
@@ -322,125 +320,125 @@ const App: React.FC = () => {
     }
 
     try {
-        let finalImageBlob: Blob;
-        let fileName = originalFile.name || 'image.png';
+      let finalImageBlob: Blob;
+      let fileName = originalFile.name || 'image.png';
 
-        if (mode === 'resize') {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (!ctx) throw new Error(t('alert.noContext'));
-            
-            canvas.width = resizeWidth;
-            canvas.height = resizeHeight;
+      if (mode === 'resize') {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error(t('alert.noContext'));
 
-            if (!lockAspectRatio && resizeContain) {
-                ctx.fillStyle = resizeBgColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
-                const newWidth = image.naturalWidth * ratio;
-                const newHeight = image.naturalHeight * ratio;
-                const x = (canvas.width - newWidth) / 2;
-                const y = (canvas.height - newHeight) / 2;
-                ctx.drawImage(image, x, y, newWidth, newHeight);
-            } else {
-                ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
-            }
-            
-            finalImageBlob = await new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
-            });
-            fileName = `resized-${fileName}`;
-        } else if (mode === 'blur') {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (!ctx) throw new Error(t('alert.noContext'));
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
-            
-            // Draw the original image first.
-            ctx.drawImage(image, 0, 0);
+        canvas.width = resizeWidth;
+        canvas.height = resizeHeight;
 
-            if (blurRegions.length > 0) {
-                const tempCanvas = document.createElement('canvas');
-                const tempCtx = tempCanvas.getContext('2d');
-                if (!tempCtx) throw new Error(t('alert.noContext'));
-
-                tempCanvas.width = image.naturalWidth;
-                tempCanvas.height = image.naturalHeight;
-
-                for (const region of blurRegions) {
-                    if (region.blurAmount > 0 && region.selection.width > 0 && region.selection.height > 0) {
-                        // For each region, create a blurred version on the temp canvas,
-                        // then clip the main canvas and draw the blurred part in.
-                        tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                        tempCtx.filter = `blur(${region.blurAmount}px)`;
-                        tempCtx.drawImage(image, 0, 0);
-
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.rect(region.selection.x, region.selection.y, region.selection.width, region.selection.height);
-                        ctx.clip();
-                        ctx.drawImage(tempCanvas, 0, 0);
-                        ctx.restore();
-                    }
-                }
-            }
-
-            finalImageBlob = await new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
-            });
-            fileName = `blurred-${fileName}`;
-        } else { // crop-rotate mode
-            if (keepCropperVertical) {
-                const cropInPercentage: CropParams = {
-                    x: (selection.x / image.naturalWidth) * 100,
-                    y: (selection.y / image.naturalHeight) * 100,
-                    width: (selection.width / image.naturalWidth) * 100,
-                    height: (selection.height / image.naturalHeight) * 100,
-                };
-                 finalImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
-            } else {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                if (!ctx) throw new Error(t('alert.noContext'));
-
-                canvas.width = selection.width;
-                canvas.height = selection.height;
-
-                ctx.translate(canvas.width / 2, canvas.height / 2);
-                ctx.rotate((rotation * Math.PI) / 180);
-                ctx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
-                
-                ctx.drawImage(image, 0, 0);
-
-                const finalCanvas = document.createElement('canvas');
-                const finalCtx = finalCanvas.getContext('2d');
-                if (!finalCtx) throw new Error(t('alert.noContext'));
-                
-                finalCanvas.width = selection.width;
-                finalCanvas.height = selection.height;
-
-                finalCtx.drawImage(
-                    canvas,
-                    selection.x, selection.y, selection.width, selection.height,
-                    0, 0, selection.width, selection.height
-                );
-
-                finalImageBlob = await new Promise((resolve, reject) => {
-                    finalCanvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
-                });
-            }
-            fileName = `edited-${fileName}`;
+        if (!lockAspectRatio && resizeContain) {
+          ctx.fillStyle = resizeBgColor;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const ratio = Math.min(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+          const newWidth = image.naturalWidth * ratio;
+          const newHeight = image.naturalHeight * ratio;
+          const x = (canvas.width - newWidth) / 2;
+          const y = (canvas.height - newHeight) / 2;
+          ctx.drawImage(image, x, y, newWidth, newHeight);
+        } else {
+          ctx.drawImage(image, 0, 0, resizeWidth, resizeHeight);
         }
-        
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = URL.createObjectURL(finalImageBlob);
-        link.click();
-        URL.revokeObjectURL(link.href);
+
+        finalImageBlob = await new Promise((resolve, reject) => {
+          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+        });
+        fileName = `resized-${fileName}`;
+      } else if (mode === 'blur') {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error(t('alert.noContext'));
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+
+        // Draw the original image first.
+        ctx.drawImage(image, 0, 0);
+
+        if (blurRegions.length > 0) {
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          if (!tempCtx) throw new Error(t('alert.noContext'));
+
+          tempCanvas.width = image.naturalWidth;
+          tempCanvas.height = image.naturalHeight;
+
+          for (const region of blurRegions) {
+            if (region.blurAmount > 0 && region.selection.width > 0 && region.selection.height > 0) {
+              // For each region, create a blurred version on the temp canvas,
+              // then clip the main canvas and draw the blurred part in.
+              tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+              tempCtx.filter = `blur(${region.blurAmount}px)`;
+              tempCtx.drawImage(image, 0, 0);
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.rect(region.selection.x, region.selection.y, region.selection.width, region.selection.height);
+              ctx.clip();
+              ctx.drawImage(tempCanvas, 0, 0);
+              ctx.restore();
+            }
+          }
+        }
+
+        finalImageBlob = await new Promise((resolve, reject) => {
+          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+        });
+        fileName = `blurred-${fileName}`;
+      } else { // crop-rotate mode
+        if (keepCropperVertical) {
+          const cropInPercentage: CropParams = {
+            x: (selection.x / image.naturalWidth) * 100,
+            y: (selection.y / image.naturalHeight) * 100,
+            width: (selection.width / image.naturalWidth) * 100,
+            height: (selection.height / image.naturalHeight) * 100,
+          };
+          finalImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
+        } else {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) throw new Error(t('alert.noContext'));
+
+          canvas.width = selection.width;
+          canvas.height = selection.height;
+
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate((rotation * Math.PI) / 180);
+          ctx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
+
+          ctx.drawImage(image, 0, 0);
+
+          const finalCanvas = document.createElement('canvas');
+          const finalCtx = finalCanvas.getContext('2d');
+          if (!finalCtx) throw new Error(t('alert.noContext'));
+
+          finalCanvas.width = selection.width;
+          finalCanvas.height = selection.height;
+
+          finalCtx.drawImage(
+            canvas,
+            selection.x, selection.y, selection.width, selection.height,
+            0, 0, selection.width, selection.height
+          );
+
+          finalImageBlob = await new Promise((resolve, reject) => {
+            finalCanvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+          });
+        }
+        fileName = `edited-${fileName}`;
+      }
+
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = URL.createObjectURL(finalImageBlob);
+      link.click();
+      URL.revokeObjectURL(link.href);
 
     } catch (error) {
-        alert(error instanceof Error ? error.message : t('alert.noContext'));
+      alert(error instanceof Error ? error.message : t('alert.noContext'));
     }
   };
 
@@ -478,7 +476,7 @@ const App: React.FC = () => {
   const handleSelectBlurRegion = (id: string) => {
     setActiveBlurRegionId(id);
   };
-  
+
   const handleDetectFaces = async () => {
     if (!image) return;
     setIsLoading(true);
@@ -517,19 +515,19 @@ const App: React.FC = () => {
     // and a crop has been made (selection is smaller than the full image),
     // use the current crop selection as the initial blur region.
     if (
-        newMode === 'blur' &&
-        blurRegions.length === 0 &&
-        image &&
-        (selection.width < image.naturalWidth || selection.height < image.naturalHeight)
+      newMode === 'blur' &&
+      blurRegions.length === 0 &&
+      image &&
+      (selection.width < image.naturalWidth || selection.height < image.naturalHeight)
     ) {
-        const id = Date.now().toString();
-        const newRegion: BlurRegion = {
-            id,
-            selection: { ...selection }, // Use the crop selection
-            blurAmount: DEFAULT_BLUR_AMOUNT,
-        };
-        setBlurRegions([newRegion]);
-        setActiveBlurRegionId(id);
+      const id = Date.now().toString();
+      const newRegion: BlurRegion = {
+        id,
+        selection: { ...selection }, // Use the crop selection
+        blurAmount: DEFAULT_BLUR_AMOUNT,
+      };
+      setBlurRegions([newRegion]);
+      setActiveBlurRegionId(id);
     }
     if (newMode === 'blur') {
       loadModels().catch(console.error);
@@ -553,9 +551,9 @@ const App: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
                 <div className="lg:col-span-2 h-full">
-                  <ImageEditor 
-                    image={image} 
-                    rotation={rotation} 
+                  <ImageEditor
+                    image={image}
+                    rotation={rotation}
                     selection={selection}
                     setSelection={setSelection}
                     aspectRatio={numericAspectRatio}
@@ -612,9 +610,9 @@ const App: React.FC = () => {
               </div>
             )}
             {error && (
-                <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
-                    <strong>{t('error.title')}</strong> {t(error)}
-                </div>
+              <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
+                <strong>{t('error.title')}</strong> {t(error)}
+              </div>
             )}
           </>
         );
@@ -627,10 +625,9 @@ const App: React.FC = () => {
       <Navbar image={image} mode={mode} setMode={handleModeChange} />
       <LoginDialog />
       <PricingDialog />
-      <ApiDocsDialog />
       <div className="min-h-screen text-gray-800 dark:text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
-          
+
           <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 mr-6 items-center justify-center">
             <AdBanner
               className="w-full h-full"
@@ -642,25 +639,25 @@ const App: React.FC = () => {
           </aside>
 
           <div className="flex-grow w-full max-w-7xl relative">
-             <div 
-                className="absolute inset-0 -z-10 dark:hidden"
-                style={{
-                  backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
-                  backgroundSize: '2rem 2rem',
-                }}
-              />
-              <div 
-                className="absolute inset-0 -z-10 hidden dark:block"
-                style={{
-                  backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
-                  backgroundSize: '2rem 2rem',
-                }}
-              />
+            <div
+              className="absolute inset-0 -z-10 dark:hidden"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+                backgroundSize: '2rem 2rem',
+              }}
+            />
+            <div
+              className="absolute inset-0 -z-10 hidden dark:block"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
+                backgroundSize: '2rem 2rem',
+              }}
+            />
             <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">
               {renderContent()}
             </main>
           </div>
-          
+
           <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 ml-6 items-center justify-center">
             <AdBanner
               className="w-full h-full"
@@ -671,18 +668,18 @@ const App: React.FC = () => {
             />
           </aside>
         </div>
-        
+
         <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm z-20 flex items-center justify-center border-t border-gray-200 dark:border-gray-700">
-           <AdBanner
-              className="w-full"
-              data-ad-client={AD_CLIENT}
-              data-ad-slot={AD_SLOT_BOTTOM}
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
+          <AdBanner
+            className="w-full"
+            data-ad-client={AD_CLIENT}
+            data-ad-slot={AD_SLOT_BOTTOM}
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
         </div>
 
-        <div className="lg:hidden h-16"></div> 
+        <div className="lg:hidden h-16"></div>
       </div>
     </>
   );

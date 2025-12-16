@@ -5,7 +5,6 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../context/AuthContext';
 import { usePricing } from '../context/PricingContext';
-import { useApiDocs } from '../context/ApiDocsContext';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { MenuIcon } from './icons';
 
@@ -20,7 +19,6 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
   const { t } = useTranslation();
   const { user, openLoginDialog, logout } = useAuth();
   const { openPricingDialog } = usePricing();
-  const { openApiDocsDialog } = useApiDocs();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
     openPricingDialog();
     setIsMenuOpen(false);
   };
-  
+
   const handleCropRotateClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setMode('crop-rotate');
@@ -53,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
     setMode('resize');
     setIsMenuOpen(false);
   };
-  
+
   const handleBlurClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setMode('blur');
@@ -82,16 +80,13 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
             )}
           </a>
           <div className="flex items-center space-x-2">
-            {user && (
-              <Button onClick={openApiDocsDialog} variant="secondary" className="bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 hidden sm:inline-flex">{t('navbar.api')}</Button>
-            )}
             {user ? (
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-500 dark:text-gray-300 hidden sm:block">{t('navbar.welcome')}{user.email}</span>
                 <Button onClick={logout} variant="secondary">{t('navbar.logout')}</Button>
               </div>
             ) : (
-               <Button onClick={openLoginDialog} variant="primary">{t('navbar.login')}</Button>
+              <Button onClick={openLoginDialog} variant="primary">{t('navbar.login')}</Button>
             )}
             <LanguageSwitcher />
             <ThemeSwitcher />
@@ -106,17 +101,17 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
               >
                 <MenuIcon className="h-5 w-5" />
               </button>
-              
+
               {isMenuOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-20">
                   <div className="py-1" role="menu" aria-orientation="vertical">
                     {image && (
-                        <>
-                          <a href="#" onClick={handleCropRotateClick} className={getMenuItemClasses('crop-rotate')} role="menuitem">{t('navbar.cropRotate')}</a>
-                          <a href="#" onClick={handleResizeClick} className={getMenuItemClasses('resize')} role="menuitem">{t('navbar.resize')}</a>
-                          <a href="#" onClick={handleBlurClick} className={getMenuItemClasses('blur')} role="menuitem">{t('navbar.blur')}</a>
-                          <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
-                        </>
+                      <>
+                        <a href="#" onClick={handleCropRotateClick} className={getMenuItemClasses('crop-rotate')} role="menuitem">{t('navbar.cropRotate')}</a>
+                        <a href="#" onClick={handleResizeClick} className={getMenuItemClasses('resize')} role="menuitem">{t('navbar.resize')}</a>
+                        <a href="#" onClick={handleBlurClick} className={getMenuItemClasses('blur')} role="menuitem">{t('navbar.blur')}</a>
+                        <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
+                      </>
                     )}
                     <a href="#" onClick={handlePricingClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.pricing')}</a>
                     <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
