@@ -14,6 +14,7 @@ import TermsPage from './components/TermsPage';
 import { useSmartCrop } from './hooks/useSmartCrop';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
+import { calculateSkewAngle } from './lib/autoStraighten';
 
 const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
 const DEFAULT_ROTATION = 0;
@@ -305,7 +306,9 @@ const App: React.FC = () => {
 
       setSelection(crop);
       // Reset rotation as this model doesn't handle it
-      setRotation(0);
+
+      const skewAngle = calculateSkewAngle(image);
+      setRotation(skewAngle);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'error.unknown');
     } finally {
