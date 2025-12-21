@@ -1,4 +1,6 @@
 
+import { downsampleImageToData } from './imageUtils';
+
 /**
  * Analyzes an image to find the dominant skew angle.
  *
@@ -18,27 +20,11 @@ export function calculateSkewAngle(
     downsampleSize = 512
 ): number {
     // --- 1. Setup Canvas & Downsample ---
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-        console.error("calculateSkewAngle: Could not get canvas context");
+    const downsampled = downsampleImageToData(img, downsampleSize);
+    if (!downsampled) {
         return 0;
     }
-
-    // Calculate scale to fit within downsampleSize
-    const scale = Math.min(downsampleSize / img.width, downsampleSize / img.height);
-    const w = Math.round(img.width * scale);
-    const h = Math.round(img.height * scale);
-
-    canvas.width = w;
-    canvas.height = h;
-
-    // Draw image resized
-    ctx.drawImage(img, 0, 0, w, h);
-
-    const imageData = ctx.getImageData(0, 0, w, h);
-    const data = imageData.data; // RGBA array
+    const { width: w, height: h, data } = downsampled;
 
     // --- 2. Convert to Grayscale ---
     // Pre-calculating luminance speeds up the loop and simplifies Sobel logic.

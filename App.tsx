@@ -9,7 +9,7 @@ import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
-import { applyCorrection, compressImageForAI } from './lib/imageUtils';
+import { applyCorrection } from './lib/imageUtils';
 import TermsPage from './components/TermsPage';
 import { useSmartCrop } from './hooks/useSmartCrop';
 import PrivacyPage from './components/PrivacyPage';
