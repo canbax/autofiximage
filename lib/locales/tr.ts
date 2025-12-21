@@ -124,7 +124,7 @@ export const tr = {
   'apiDocs.error.limitReached': 'API kredi limitine ulaşıldı. Lütfen planınızı yükseltin.',
   'apiDocs.error.unknown': 'Bilinmeyen bir hata oluştu.',
   'about.title': 'Hakkımızda',
-  'about.story': 'AutoFix Image basit bir hayal kırıklığından doğdu: mükemmel fotoğrafı çekmek, ancak hafifçe yamuk olduğunu fark etmek. Sadece kırpmayan, görüntüyü akıllıca anlayan bir araç istedik. Sevgiyle ve gelişmiş yapay zeka ile oluşturulan hedefimiz, anılarınızı saniyeler içinde mükemmelleştirmenize yardımcı olmaktır.',
+  'about.story': 'Çektiğiniz fotoğrafta hiç hafif bir yamukluk gözünüze çarptı mı? Çok ufak döndürmeyi parmaklarınız ile yapmaya çalıştınız mı? Keşke bunu otomatik olarak yapan bir uygulama olsun dediyseniz doğru yerdesiniz. Ya da çektiğiniz fotoğrafta kırpma işlemini otomatik olarak yapmak ister misiniz? autofiximage.com, fotoğraftaki bu minik sorunları çözmek için bilgisayarlı görü, makine öğrenmesi ve yapay zeka tabanlı analiz yöntemlerini birlikte kullanır 🤖. Görseller, tarayıcı içinde çalışan modeller ve algoritmalar aracılığıyla analiz edilir. Tüm görüntü işleme süreci tamamen sizin cihazınızda gerçekleştirilir. Fotoğraflar başka bir sunucuya yüklenmez, depolanmaz veya herhangi bir üçüncü tarafla paylaşılmaz. Bu yaklaşım hem gizliliği garanti altına alır hem de çok hızlı bir kullanıcı deneyimi sağlar 🔒⚡.',
   'contact.title': 'Bize Ulaşın',
   'contact.subtitle': 'Bir sorunuz veya geri bildiriminiz mi var? Aşağıdaki formu doldurun, size geri dönelim.',
   'contact.nameLabel': 'Ad Soyad',

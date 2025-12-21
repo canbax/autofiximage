@@ -124,7 +124,7 @@ export const es = {
   'apiDocs.error.limitReached': 'Límite de crédito de API alcanzado. Por favor, actualiza tu plan.',
   'apiDocs.error.unknown': 'Ocurrió un error desconocido.',
   'about.title': 'Sobre nosotros',
-  'about.story': 'AutoFix Image nació de una simple frustración: tomar la foto perfecta, solo para darse cuenta de que estaba ligeramente torcida. Queríamos una herramienta que no solo recortara, sino que entendiera inteligentemente la imagen. Construido con amor e IA avanzada, nuestro objetivo es ayudarte a perfeccionar tus recuerdos en segundos.',
+  'about.story': '¿Alguna vez has notado una ligera distorsión en una foto que tomaste? ¿Has intentado rotarla manualmente? Si te gustaría que existiera una app que lo hiciera automáticamente, estás en el lugar indicado. ¿O te gustaría recortar tus fotos automáticamente? autofiximage.com utiliza visión artificial, aprendizaje automático y métodos de análisis basados ​​en IA para corregir estos pequeños problemas en tus fotos 🤖. Las imágenes se analizan mediante modelos y algoritmos que se ejecutan en el navegador. Todo el proceso de procesamiento de imágenes se realiza íntegramente en tu dispositivo. Las fotos no se suben a otro servidor, no se almacenan ni se comparten con terceros. Este enfoque garantiza la privacidad y ofrece una experiencia de usuario muy rápida 🔒⚡.',
   'contact.title': 'Contáctenos',
   'contact.subtitle': '¿Tiene alguna pregunta o comentario? Rellene el siguiente formulario y nos pondremos en contacto con usted.',
   'contact.nameLabel': 'Nombre completo',

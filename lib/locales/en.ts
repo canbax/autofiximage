@@ -124,7 +124,7 @@ export const en = {
   'apiDocs.error.limitReached': 'API credit limit reached. Please upgrade your plan.',
   'apiDocs.error.unknown': 'An unknown error occurred.',
   'about.title': 'About Us',
-  'about.story': 'AutoFix Image was born from a simple frustration: taking the perfect photo, only to realize it was slightly crooked. We wanted a tool that did not just crop, but intelligently understood the image. Built with love and advanced AI, our goal is to help you perfect your memories in seconds.',
+  'about.story': 'Have you ever noticed a slight distortion in a photo you took? Have you ever tried to manually rotate a photo? If you wished there was an app that could do this automatically, you have come to the right place. Or would you like to automatically crop your photos? autofiximage.com uses computer vision, machine learning, and AI-based analysis methods to fix these minor issues in your photos 🤖. Images are analyzed through models and algorithms that run within the browser. The entire image processing process is performed entirely on your device. Photos are not uploaded to another server, stored, or shared with any third party. This approach guarantees privacy and provides a very fast user experience 🔒⚡.',
   'contact.title': 'Contact Us',
   'contact.subtitle': 'Have a question or feedback? Fill out the form below and we\'ll get back to you.',
   'contact.nameLabel': 'Full Name',
