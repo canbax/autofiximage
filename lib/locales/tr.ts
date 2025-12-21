@@ -56,7 +56,7 @@ export const tr = {
   'controls.blurRegions': 'Bulanık Alanlar',
   'controls.blurArea': 'Bulanık Alan',
   'controls.detectFaces': 'Yüzleri Algıla',
-  'controls.resizeImage': 'Resmi Yeniden Boyutlandır',
+  'controls.resizeImage': 'Yeniden Boyutlandır',
   'controls.width': 'Genişlik (px)',
   'controls.height': 'Yükseklik (px)',
   'controls.lockAspectRatio': 'En boy oranını kilitle',
