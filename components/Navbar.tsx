@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from './Button';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslation } from '../hooks/useTranslation';
-import { useAuth } from '../context/AuthContext';
 import { usePricing } from '../context/PricingContext';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { MenuIcon } from './icons';
@@ -14,10 +12,8 @@ interface NavbarProps {
   setMode: (mode: 'crop-rotate' | 'resize' | 'blur') => void;
 }
 
-
 const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
   const { t } = useTranslation();
-  const { user, openLoginDialog, logout } = useAuth();
   const { openPricingDialog } = usePricing();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -105,7 +101,6 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                       </>
                     )}
-                    <a href="#" onClick={handlePricingClick} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.pricing')}</a>
                     <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
                     <a href="#/privacy" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</a>
                     <a href="#/contact" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</a>
