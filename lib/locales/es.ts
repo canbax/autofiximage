@@ -24,7 +24,7 @@ export const es = {
   'uploader.processing.title': 'Procesando imagen...',
   'uploader.processing.subtitle': 'Por favor, espere un momento.',
   'controls.title': 'Controles del Editor',
-  'controls.autoCorrect': 'Autocorrección con IA',
+  'controls.autoCorrect': 'Autocorrección',
   'controls.rotation': 'Rotación (°)',
   'controls.crop': 'Recortar',
   'controls.cropX': 'X',

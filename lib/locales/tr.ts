@@ -24,7 +24,7 @@ export const tr = {
   'uploader.processing.title': 'Resim İşleniyor...',
   'uploader.processing.subtitle': 'Lütfen bir dakika bekleyin.',
   'controls.title': 'Editör Kontrolleri',
-  'controls.autoCorrect': 'Yapay Zeka ile Otomatik Düzelt',
+  'controls.autoCorrect': 'Otomatik Düzelt',
   'controls.rotation': 'Döndürme (°)',
   'controls.crop': 'Kırp',
   'controls.cropX': 'X',

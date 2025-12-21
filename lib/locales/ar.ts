@@ -24,7 +24,7 @@ export const ar = {
   'uploader.processing.title': '...جارٍ معالجة الصورة',
   'uploader.processing.subtitle': '.الرجاء الانتظar لحظة',
   'controls.title': 'عناصر تحكم المحرر',
-  'controls.autoCorrect': 'تصحيح تلقائي بالذكاء الاصطناعي',
+  'controls.autoCorrect': 'التصحيح التلقائي',
   'controls.rotation': 'الدوران (°)',
   'controls.crop': 'اقتصاص',
   'controls.cropX': 'س',
