@@ -1,5 +1,5 @@
 
-import { downsampleImageToData } from './imageUtils';
+import { downsampleImageToData, convertImageDataToGrayscale } from './imageUtils';
 
 /**
  * Analyzes an image to find the dominant skew angle.
@@ -27,13 +27,7 @@ export function calculateSkewAngle(
     const { width: w, height: h, data } = downsampled;
 
     // --- 2. Convert to Grayscale ---
-    // Pre-calculating luminance speeds up the loop and simplifies Sobel logic.
-    // Luminance = 0.299*R + 0.587*G + 0.114*B
-    const gray = new Float32Array(w * h);
-    for (let i = 0; i < w * h; i++) {
-        const offset = i * 4;
-        gray[i] = 0.299 * data[offset] + 0.587 * data[offset + 1] + 0.114 * data[offset + 2];
-    }
+    const gray = convertImageDataToGrayscale(data, w, h);
 
     // --- 3. Edge Detection & Histogram Voting ---
 

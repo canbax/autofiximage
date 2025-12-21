@@ -173,4 +173,27 @@ export function downsampleImageToData(
     console.error("downsampleImageToData: Error processing image", e);
     return null;
   }
+
+}
+
+/**
+ * Converts ImageData to a Float32Array of grayscale luminance values.
+ * Uses the formula: Luminance = 0.299*R + 0.587*G + 0.114*B
+ * 
+ * @param data The pixel data (RGBA)
+ * @param width Width of the image
+ * @param height Height of the image
+ * @returns Float32Array containing grayscale values
+ */
+export function convertImageDataToGrayscale(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number
+): Float32Array {
+  const gray = new Float32Array(width * height);
+  for (let i = 0; i < width * height; i++) {
+    const offset = i * 4;
+    gray[i] = 0.299 * data[offset] + 0.587 * data[offset + 1] + 0.114 * data[offset + 2];
+  }
+  return gray;
 }
