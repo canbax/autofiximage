@@ -80,14 +80,6 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
             )}
           </a>
           <div className="flex items-center space-x-2">
-            {user ? (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-500 dark:text-gray-300 hidden sm:block">{t('navbar.welcome')}{user.email}</span>
-                <Button onClick={logout} variant="secondary">{t('navbar.logout')}</Button>
-              </div>
-            ) : (
-              <Button onClick={openLoginDialog} variant="primary">{t('navbar.login')}</Button>
-            )}
             <LanguageSwitcher />
             <ThemeSwitcher />
 
