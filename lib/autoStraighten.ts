@@ -1,4 +1,4 @@
-import { downsampleImageToData, convertImageDataToGrayscale } from './imageUtils';
+import { downsampleImageToData, convertImageDataToGrayscale, applySobelEdgeDetection } from './imageUtils';
 
 /**
  * Analyzes an image to find the dominant skew angle using the Hough Transform.
@@ -35,38 +35,7 @@ export function calculateSkewAngle(
 
     // --- 3. Edge Detection (Sobel) ---
     // We need a binary edge map for Hough. We'll use a thresholded gradient magnitude.
-    const edges = new Uint8ClampedArray(w * h); // 1 = edge, 0 = background
-    const MAGNITUDE_THRESHOLD = 50;
-    let edgePointCount = 0;
-
-    // Iterate excluding border pixels
-    for (let y = 1; y < h - 1; y++) {
-        for (let x = 1; x < w - 1; x++) {
-            const idx = y * w + x;
-
-            // Simple Sobel kernel application
-            // TL T TR
-            // L  C  R
-            // BL B BR
-            const tl = gray[idx - w - 1];
-            const t = gray[idx - w];
-            const tr = gray[idx - w + 1];
-            const l = gray[idx - 1];
-            const r = gray[idx + 1];
-            const bl = gray[idx + w - 1];
-            const b = gray[idx + w];
-            const br = gray[idx + w + 1];
-
-            const gx = -tl + tr - 2 * l + 2 * r - bl + br;
-            const gy = -tl - 2 * t - tr + bl + 2 * b + br;
-            const mag = Math.sqrt(gx * gx + gy * gy);
-
-            if (mag > MAGNITUDE_THRESHOLD) {
-                edges[idx] = 1;
-                edgePointCount++;
-            }
-        }
-    }
+    const { edges, edgePointCount } = applySobelEdgeDetection(gray, w, h);
 
     // Optimization: If too few edges, return 0 (plain image)
     if (edgePointCount < 100) return 0;

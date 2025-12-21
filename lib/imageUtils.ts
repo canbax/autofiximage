@@ -197,3 +197,54 @@ export function convertImageDataToGrayscale(
   }
   return gray;
 }
+
+/**
+ * Applies Sobel edge detection to a grayscale image.
+ * Returns a binary edge map where 1 indicates an edge and 0 indicates background.
+ *
+ * @param gray Grayscale image data (Float32Array or similar)
+ * @param width Width of the image
+ * @param height Height of the image
+ * @param magnitudeThreshold Threshold for gradient magnitude to consider as an edge (default 50)
+ * @returns Object containing the edge map and the count of edge points.
+ */
+export function applySobelEdgeDetection(
+  gray: Float32Array,
+  width: number,
+  height: number,
+  magnitudeThreshold: number = 50
+): { edges: Uint8ClampedArray; edgePointCount: number } {
+  const edges = new Uint8ClampedArray(width * height); // 1 = edge, 0 = background
+  let edgePointCount = 0;
+
+  // Iterate excluding border pixels
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+
+      // Simple Sobel kernel application
+      // TL T TR
+      // L  C  R
+      // BL B BR
+      const tl = gray[idx - width - 1];
+      const t = gray[idx - width];
+      const tr = gray[idx - width + 1];
+      const l = gray[idx - 1];
+      const r = gray[idx + 1];
+      const bl = gray[idx + width - 1];
+      const b = gray[idx + width];
+      const br = gray[idx + width + 1];
+
+      const gx = -tl + tr - 2 * l + 2 * r - bl + br;
+      const gy = -tl - 2 * t - tr + bl + 2 * b + br;
+      const mag = Math.sqrt(gx * gx + gy * gy);
+
+      if (mag > magnitudeThreshold) {
+        edges[idx] = 1;
+        edgePointCount++;
+      }
+    }
+  }
+
+  return { edges, edgePointCount };
+}
