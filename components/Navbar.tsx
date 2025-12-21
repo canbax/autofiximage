@@ -101,6 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                       </>
                     )}
+                    <a href="#/about" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.about')}</a>
                     <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
                     <a href="#/privacy" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</a>
                     <a href="#/contact" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</a>

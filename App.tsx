@@ -14,6 +14,7 @@ import TermsPage from './components/TermsPage';
 import { useSmartCrop } from './hooks/useSmartCrop';
 import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
+import AboutPage from './components/AboutPage';
 import { calculateSkewAngle } from './lib/autoStraighten';
 
 const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
@@ -540,6 +541,8 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (route) {
+      case '#/about':
+        return <AboutPage />;
       case '#/terms':
         return <TermsPage />;
       case '#/privacy':
