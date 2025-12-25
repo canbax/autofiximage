@@ -86,13 +86,12 @@ const App: React.FC = () => {
         if (ctx) {
           ctx.drawImage(image, image.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
           const pixelData = ctx.getImageData(0, 0, 1, 1).data;
-          const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+          const hex = `#${('000000' + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
           setResizeBgColor(hex);
         }
       } catch (e) {
         setResizeBgColor('transparent');
       }
-
     } else {
       setSelection(DEFAULT_SELECTION);
       setResizeWidth(0);
@@ -106,7 +105,6 @@ const App: React.FC = () => {
     setBlurRegions([]);
     setActiveBlurRegionId(null);
   }, [image]);
-
 
   useEffect(() => {
     if (!originalFile) return;
@@ -139,7 +137,7 @@ const App: React.FC = () => {
           if (ctx) {
             ctx.drawImage(img, img.naturalWidth - 1, 0, 1, 1, 0, 0, 1, 1);
             const pixelData = ctx.getImageData(0, 0, 1, 1).data;
-            const hex = `#${("000000" + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
+            const hex = `#${('000000' + ((pixelData[0] << 16) | (pixelData[1] << 8) | pixelData[2]).toString(16)).slice(-6)}`;
             setResizeBgColor(hex);
           }
         } catch (e) {
@@ -180,7 +178,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (numericAspectRatio === null || !image) return;
 
-    setSelection(c => {
+    setSelection((c) => {
       const currentCenter = { x: c.x + c.width / 2, y: c.y + c.height / 2 };
       let newWidth = c.width;
       let newHeight = Math.round(newWidth / numericAspectRatio);
@@ -207,7 +205,6 @@ const App: React.FC = () => {
     });
   }, [numericAspectRatio, image]);
 
-
   // Keyboard controls for cropper
   useEffect(() => {
     if (!image) return;
@@ -224,15 +221,23 @@ const App: React.FC = () => {
         const step = e.shiftKey ? 10 : 1;
 
         if (mode === 'crop-rotate') {
-          setSelection(currentSelection => {
+          setSelection((currentSelection) => {
             let newX = currentSelection.x;
             let newY = currentSelection.y;
 
             switch (e.key) {
-              case 'ArrowUp': newY -= step; break;
-              case 'ArrowDown': newY += step; break;
-              case 'ArrowLeft': newX -= step; break;
-              case 'ArrowRight': newX += step; break;
+              case 'ArrowUp':
+                newY -= step;
+                break;
+              case 'ArrowDown':
+                newY += step;
+                break;
+              case 'ArrowLeft':
+                newX -= step;
+                break;
+              case 'ArrowRight':
+                newX += step;
+                break;
             }
 
             const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - currentSelection.width));
@@ -241,23 +246,34 @@ const App: React.FC = () => {
             return { ...currentSelection, x: clampedX, y: clampedY };
           });
         } else if (mode === 'blur' && activeBlurRegionId) {
-          setBlurRegions(currentRegions =>
-            currentRegions.map(region => {
+          setBlurRegions((currentRegions) =>
+            currentRegions.map((region) => {
               if (region.id === activeBlurRegionId) {
                 let newX = region.selection.x;
                 let newY = region.selection.y;
 
                 switch (e.key) {
-                  case 'ArrowUp': newY -= step; break;
-                  case 'ArrowDown': newY += step; break;
-                  case 'ArrowLeft': newX -= step; break;
-                  case 'ArrowRight': newX += step; break;
+                  case 'ArrowUp':
+                    newY -= step;
+                    break;
+                  case 'ArrowDown':
+                    newY += step;
+                    break;
+                  case 'ArrowLeft':
+                    newX -= step;
+                    break;
+                  case 'ArrowRight':
+                    newX += step;
+                    break;
                 }
 
                 const clampedX = Math.max(0, Math.min(newX, image.naturalWidth - region.selection.width));
                 const clampedY = Math.max(0, Math.min(newY, image.naturalHeight - region.selection.height));
 
-                return { ...region, selection: { ...region.selection, x: clampedX, y: clampedY } };
+                return {
+                  ...region,
+                  selection: { ...region.selection, x: clampedX, y: clampedY },
+                };
               }
               return region;
             })
@@ -278,7 +294,8 @@ const App: React.FC = () => {
     setError(null);
 
     // Logic to persist mode
-    if (image) { // if an image was already loaded
+    if (image) {
+      // if an image was already loaded
       setMode(previousMode);
       if (previousMode === 'blur') {
         setBlurRegions([]); // Clear old blur regions
@@ -293,7 +310,7 @@ const App: React.FC = () => {
     if (!image || !originalFile) return;
 
     if (!isSmartCropReady) {
-      alert("AI Model is still loading. Please wait a moment.");
+      alert('AI Model is still loading. Please wait a moment.');
       return;
     }
 
@@ -302,16 +319,14 @@ const App: React.FC = () => {
     setAspectRatioKey('free'); // AI correction should be free form
     setMode('crop-rotate');
     try {
-      const targetRatio = numericAspectRatio || (16 / 9);
+      const targetRatio = numericAspectRatio || 16 / 9;
       const crop = await getSmartCrop(image, targetRatio);
 
       // Apply rotation estimate and then shrink crop to avoid black corners
       const skewAngle = calculateSkewAngle(image);
       setRotation(skewAngle);
 
-      const finalCrop = keepCropperVertical
-        ? adjustCropForRotation(image, crop, skewAngle)
-        : crop;
+      const finalCrop = keepCropperVertical ? adjustCropForRotation(image, crop, skewAngle) : crop;
       setSelection(finalCrop);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'error.unknown');
@@ -352,7 +367,7 @@ const App: React.FC = () => {
         }
 
         finalImageBlob = await new Promise((resolve, reject) => {
-          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+          canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.'))), originalFile.type);
         });
         fileName = `resized-${fileName}`;
       } else if (mode === 'blur') {
@@ -392,49 +407,18 @@ const App: React.FC = () => {
         }
 
         finalImageBlob = await new Promise((resolve, reject) => {
-          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
+          canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.'))), originalFile.type);
         });
         fileName = `blurred-${fileName}`;
-      } else { // crop-rotate mode
-        if (keepCropperVertical) {
-          const cropInPercentage: CropParams = {
-            x: (selection.x / image.naturalWidth) * 100,
-            y: (selection.y / image.naturalHeight) * 100,
-            width: (selection.width / image.naturalWidth) * 100,
-            height: (selection.height / image.naturalHeight) * 100,
-          };
-          finalImageBlob = await applyCorrection(image, rotation, cropInPercentage, originalFile.type);
-        } else {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          if (!ctx) throw new Error(t('alert.noContext'));
-
-          canvas.width = selection.width;
-          canvas.height = selection.height;
-
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.rotate((rotation * Math.PI) / 180);
-          ctx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
-
-          ctx.drawImage(image, 0, 0);
-
-          const finalCanvas = document.createElement('canvas');
-          const finalCtx = finalCanvas.getContext('2d');
-          if (!finalCtx) throw new Error(t('alert.noContext'));
-
-          finalCanvas.width = selection.width;
-          finalCanvas.height = selection.height;
-
-          finalCtx.drawImage(
-            canvas,
-            selection.x, selection.y, selection.width, selection.height,
-            0, 0, selection.width, selection.height
-          );
-
-          finalImageBlob = await new Promise((resolve, reject) => {
-            finalCanvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas to Blob conversion failed.')), originalFile.type);
-          });
-        }
+      } else {
+        // crop-rotate mode
+        const cropInPercentage: CropParams = {
+          x: (selection.x / image.naturalWidth) * 100,
+          y: (selection.y / image.naturalHeight) * 100,
+          width: (selection.width / image.naturalWidth) * 100,
+          height: (selection.height / image.naturalHeight) * 100,
+        };
+        finalImageBlob = await applyCorrection(image, keepCropperVertical ? rotation : 0, cropInPercentage, originalFile.type);
         fileName = `edited-${fileName}`;
       }
 
@@ -443,7 +427,6 @@ const App: React.FC = () => {
       link.href = URL.createObjectURL(finalImageBlob);
       link.click();
       URL.revokeObjectURL(link.href);
-
     } catch (error) {
       alert(error instanceof Error ? error.message : t('alert.noContext'));
     }
@@ -462,17 +445,17 @@ const App: React.FC = () => {
       },
       blurAmount: DEFAULT_BLUR_AMOUNT,
     };
-    setBlurRegions(prev => [...prev, newRegion]);
+    setBlurRegions((prev) => [...prev, newRegion]);
     setActiveBlurRegionId(id);
   };
 
   const handleUpdateBlurRegion = (id: string, newProps: Partial<Omit<BlurRegion, 'id'>>) => {
-    setBlurRegions(prev => prev.map(r => (r.id === id ? { ...r, ...newProps } : r)));
+    setBlurRegions((prev) => prev.map((r) => (r.id === id ? { ...r, ...newProps } : r)));
   };
 
   const handleRemoveBlurRegion = (id: string) => {
-    setBlurRegions(prev => {
-      const newRegions = prev.filter(r => r.id !== id);
+    setBlurRegions((prev) => {
+      const newRegions = prev.filter((r) => r.id !== id);
       if (activeBlurRegionId === id) {
         setActiveBlurRegionId(newRegions.length > 0 ? newRegions[newRegions.length - 1].id : null);
       }
@@ -496,7 +479,7 @@ const App: React.FC = () => {
       if (faces.length === 0) {
         alert(t('alert.noFaces'));
       } else {
-        const newRegions: BlurRegion[] = faces.map(face => {
+        const newRegions: BlurRegion[] = faces.map((face) => {
           const id = `${Date.now()}-${Math.random()}`;
           return {
             id,
@@ -505,7 +488,7 @@ const App: React.FC = () => {
           };
         });
 
-        setBlurRegions(prev => [...prev, ...newRegions]);
+        setBlurRegions((prev) => [...prev, ...newRegions]);
         if (newRegions.length > 0) {
           setActiveBlurRegionId(newRegions[newRegions.length - 1].id);
         }
@@ -521,12 +504,7 @@ const App: React.FC = () => {
     // If switching to blur mode for the first time (no blur regions exist)
     // and a crop has been made (selection is smaller than the full image),
     // use the current crop selection as the initial blur region.
-    if (
-      newMode === 'blur' &&
-      blurRegions.length === 0 &&
-      image &&
-      (selection.width < image.naturalWidth || selection.height < image.naturalHeight)
-    ) {
+    if (newMode === 'blur' && blurRegions.length === 0 && image && (selection.width < image.naturalWidth || selection.height < image.naturalHeight)) {
       const id = Date.now().toString();
       const newRegion: BlurRegion = {
         id,
@@ -628,7 +606,6 @@ const App: React.FC = () => {
     }
   };
 
-
   return (
     <>
       <Navbar image={image} mode={mode} setMode={handleModeChange} />
@@ -636,7 +613,6 @@ const App: React.FC = () => {
       <PricingDialog />
       <div className="min-h-screen text-gray-800 dark:text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
-
           <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 mr-6 items-center justify-center">
             <AdBanner
               className="w-full h-full"
@@ -662,9 +638,7 @@ const App: React.FC = () => {
                 backgroundSize: '2rem 2rem',
               }}
             />
-            <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">
-              {renderContent()}
-            </main>
+            <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">{renderContent()}</main>
           </div>
 
           <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 ml-6 items-center justify-center">
