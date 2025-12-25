@@ -137,6 +137,95 @@ export function applyCorrection(
 }
 
 /**
+ * Computes the largest axis-aligned rectangle that stays fully inside the image
+ * after rotating the image by a given angle. The rectangle is centered in the
+ * image and guarantees no transparent/black corners when cropping after rotation.
+ *
+ * Note: This uses a well-known approximation formula which is accurate for
+ * small-to-moderate angles typically produced by auto-straighten. For extreme
+ * angles, the result falls back to clamping within image bounds.
+ */
+export function getSafeCenteredRectForRotation(
+  image: { naturalWidth: number; naturalHeight: number },
+  rotationDeg: number
+): { x: number; y: number; width: number; height: number } {
+  const w = image.naturalWidth;
+  const h = image.naturalHeight;
+
+  // Normalize angle to [0, 90] for symmetry
+  let angle = Math.abs(rotationDeg % 180);
+  if (angle > 90) angle = 180 - angle;
+  const a = (angle * Math.PI) / 180;
+
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  const denom = c * c - s * s; // = cos(2a)
+
+  let rx: number;
+  let ry: number;
+
+  if (Math.abs(denom) < 1e-8) {
+    // Near 45° the system becomes ill-conditioned. Use stable limits.
+    // For a square (w == h), the exact limit is width = height = w / (c + s).
+    // For non-square, fall back to intersecting constraints conservatively.
+    const sum = c + s;
+    if (Math.abs(w - h) < 1e-8) {
+      rx = (w / sum) / 2;
+      ry = (h / sum) / 2;
+    } else {
+      // Conservative fallback: ensure both constraints satisfied using min of per-constraint bounds.
+      const rx1 = (w / 2) / Math.max(c, 1e-8); // if ry=0
+      const rx2 = ((h / 2) - 0) / Math.max(s, 1e-8); // if ry=0 from second constraint
+      rx = Math.min(rx1, rx2);
+      const ry1 = (w / 2 - c * rx) / Math.max(s, 1e-8);
+      const ry2 = (h / 2 - s * rx) / Math.max(c, 1e-8);
+      ry = Math.max(0, Math.min(ry1, ry2));
+    }
+  } else {
+    rx = (c * (w / 2) - s * (h / 2)) / denom;
+    ry = (c * (h / 2) - s * (w / 2)) / denom;
+  }
+
+  // Convert half-sizes to full sizes and clamp within image bounds
+  let safeW = Math.max(0, Math.min(w, 2 * rx));
+  let safeH = Math.max(0, Math.min(h, 2 * ry));
+
+  const x = Math.round((w - safeW) / 2);
+  const y = Math.round((h - safeH) / 2);
+  return { x, y, width: Math.round(safeW), height: Math.round(safeH) };
+}
+
+/**
+ * Shrinks a given crop so that, after rotating the image by `rotationDeg`,
+ * the cropped area is guaranteed to be fully covered by the rotated image.
+ * This prevents black/transparent corners when `keepCropperVertical` is true.
+ */
+export function adjustCropForRotation(
+  image: { naturalWidth: number; naturalHeight: number },
+  crop: CropParams,
+  rotationDeg: number
+): CropParams {
+  const safeRect = getSafeCenteredRectForRotation(image, rotationDeg);
+
+  const nx = Math.max(crop.x, safeRect.x);
+  const ny = Math.max(crop.y, safeRect.y);
+  const nRight = Math.min(crop.x + crop.width, safeRect.x + safeRect.width);
+  const nBottom = Math.min(crop.y + crop.height, safeRect.y + safeRect.height);
+
+  if (nRight <= nx || nBottom <= ny) {
+    // Crop lies completely outside the safe area. Fall back to safe rect.
+    return { x: safeRect.x, y: safeRect.y, width: safeRect.width, height: safeRect.height };
+  }
+
+  return {
+    x: Math.round(nx),
+    y: Math.round(ny),
+    width: Math.round(nRight - nx),
+    height: Math.round(nBottom - ny),
+  };
+}
+
+/**
  * Downsamples an image/canvas and returns the pixel data.
  * Used for analysis tasks like skew detection where full resolution is not needed.
  * 

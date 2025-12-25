@@ -9,7 +9,7 @@ import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
-import { applyCorrection } from './lib/imageUtils';
+import { applyCorrection, adjustCropForRotation } from './lib/imageUtils';
 import TermsPage from './components/TermsPage';
 import { useSmartCrop } from './hooks/useSmartCrop';
 import PrivacyPage from './components/PrivacyPage';
@@ -305,11 +305,14 @@ const App: React.FC = () => {
       const targetRatio = numericAspectRatio || (16 / 9);
       const crop = await getSmartCrop(image, targetRatio);
 
-      setSelection(crop);
-      // Reset rotation as this model doesn't handle it
-
+      // Apply rotation estimate and then shrink crop to avoid black corners
       const skewAngle = calculateSkewAngle(image);
       setRotation(skewAngle);
+
+      const finalCrop = keepCropperVertical
+        ? adjustCropForRotation(image, crop, skewAngle)
+        : crop;
+      setSelection(finalCrop);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'error.unknown');
     } finally {
