@@ -16,8 +16,15 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
-      }
+      },
     },
-
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      include: ['**/*.test.ts', '**/*.test.tsx'],
+      typecheck: {
+        checker: 'vue-tsc',
+      },
+    },
   };
 });
