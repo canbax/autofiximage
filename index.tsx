@@ -6,6 +6,8 @@ import { AuthProvider } from './context/AuthContext';
 import { PricingProvider } from './context/PricingContext';
 import { ThemeProvider } from './context/ThemeContext';
 
+import { DialogProvider } from './context/DialogContext';
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
@@ -18,7 +20,9 @@ root.render(
       <AuthProvider>
         <LanguageProvider>
           <PricingProvider>
-            <App />
+            <DialogProvider>
+              <App />
+            </DialogProvider>
           </PricingProvider>
         </LanguageProvider>
       </AuthProvider>

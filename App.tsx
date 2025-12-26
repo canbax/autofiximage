@@ -16,6 +16,7 @@ import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 import AboutPage from './components/AboutPage';
 import { calculateSkewAngle } from './lib/autoStraighten';
+import { useDialog } from './context/DialogContext';
 
 const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
 const DEFAULT_ROTATION = 0;
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   const [route, setRoute] = useState(window.location.hash);
   const [mode, setMode] = useState<AppMode>('crop-rotate');
   const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop();
+  const { showAlert } = useDialog();
 
   // Resize State
   const [resizeWidth, setResizeWidth] = useState(0);
@@ -310,7 +312,7 @@ const App: React.FC = () => {
     if (!image || !originalFile) return;
 
     if (!isSmartCropReady) {
-      alert('AI Model is still loading. Please wait a moment.');
+      showAlert('AI Model is still loading. Please wait a moment.');
       return;
     }
 
@@ -337,7 +339,7 @@ const App: React.FC = () => {
 
   const handleDownload = async () => {
     if (!image || !originalFile) {
-      alert(t('alert.noImage'));
+      showAlert(t('alert.noImage'));
       return;
     }
 
@@ -419,7 +421,7 @@ const App: React.FC = () => {
           height: (selection.height / image.naturalHeight) * 100,
         };
         finalImageBlob = await applyCorrection(image, keepCropperVertical ? rotation : 0, cropInPercentage, originalFile.type);
-        fileName = `edited-${fileName}`;
+        fileName = `autofix-${fileName}`;
       }
 
       const link = document.createElement('a');
@@ -428,7 +430,7 @@ const App: React.FC = () => {
       link.click();
       URL.revokeObjectURL(link.href);
     } catch (error) {
-      alert(error instanceof Error ? error.message : t('alert.noContext'));
+      showAlert(error instanceof Error ? error.message : t('alert.noContext'));
     }
   };
 
@@ -477,7 +479,7 @@ const App: React.FC = () => {
       const faces = await detectFaces(image);
 
       if (faces.length === 0) {
-        alert(t('alert.noFaces'));
+        showAlert(t('alert.noFaces'));
       } else {
         const newRegions: BlurRegion[] = faces.map((face) => {
           const id = `${Date.now()}-${Math.random()}`;

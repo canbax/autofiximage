@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { UploadIcon } from './icons';
 import { useTranslation } from '../hooks/useTranslation';
 import Spinner from './Spinner';
+import { useDialog } from '../context/DialogContext';
 
 interface ImageUploaderProps {
   onImageUpload: (file: File) => void;
@@ -11,6 +12,7 @@ interface ImageUploaderProps {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, isProcessing = false }) => {
   const [isDragging, setIsDragging] = useState(false);
   const { t } = useTranslation();
+  const { showAlert } = useDialog();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isProcessing) return;
@@ -28,10 +30,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, isP
       if (e.dataTransfer.files[0].type.startsWith('image/')) {
         onImageUpload(e.dataTransfer.files[0]);
       } else {
-        alert('Please upload an image file.');
+        showAlert('Please upload an image file.');
       }
     }
-  }, [onImageUpload, isProcessing]);
+  }, [onImageUpload, isProcessing, showAlert]);
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -75,7 +77,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, isP
               <span className="px-4 py-2 rounded-md font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-500 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-gray-900 focus-within:ring-indigo-500 transition-colors">
                 {t('uploader.browse')}
               </span>
-              <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" disabled={isProcessing}/>
+              <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" disabled={isProcessing} />
             </label>
             <p className="mt-4 text-xs text-gray-500">{t('uploader.formats')}</p>
           </div>
