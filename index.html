@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZQ476QLTM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'G-0ZQ476QLTM');
-    </script>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO: Primary Meta Tags -->
-    <title>AutoFix Image - Intelligent Image Editor</title>
-    <meta name="description" content="Enhance your photos with AutoFix Image, an intelligent image editor. Automatically straighten, crop, and perfect your images with AI, or use powerful manual tools for rotation, resizing, and blurring. Free to use online." />
-    <meta name="keywords" content="image editor, photo editor, AI photo correction, crop image, rotate image, resize image, blur photo, automatic straightening, free online tool" />
-    
-    <!-- SEO: Canonical URL (Replace https://autofiximage.com/ with your actual domain) -->
-    <link rel="canonical" href="https://autofiximage.com//" />
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZQ476QLTM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-    <!-- SEO: Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://autofiximage.com//" />
-    <meta property="og:title" content="AutoFix Image - Intelligent Image Editor" />
-    <meta property="og:description" content="Automatically straighten, crop, and perfect your images with the power of AI. Features manual rotation, resizing, and blurring tools." />
-    <!-- TODO: Replace with an absolute URL to a branded preview image (1200x630px recommended) -->
-    <meta property="og:image" content="https://via.placeholder.com/1200x630.png/4f46e5/ffffff?text=AutoFix+Image" />
+    gtag('config', 'G-0ZQ476QLTM');
+  </script>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SEO: Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://autofiximage.com//" />
-    <meta property="twitter:title" content="AutoFix Image - Intelligent Image Editor" />
-    <meta property="twitter:description" content="Automatically straighten, crop, and perfect your images with the power of AI. Features manual rotation, resizing, and blurring tools." />
-    <!-- TODO: Replace with an absolute URL to a branded preview image (1200x630px recommended) -->
-    <meta property="twitter:image" content="https://via.placeholder.com/1200x630.png/4f46e5/ffffff?text=AutoFix+Image" />
+  <!-- SEO: Primary Meta Tags -->
+  <title>AutoFix Image - Intelligent Image Editor</title>
+  <meta name="description"
+    content="Enhance your photos with AutoFix Image, an intelligent image editor. Automatically straighten, crop, and perfect your images with AI, or use powerful manual tools for rotation, resizing, and blurring. Free to use online." />
+  <meta name="keywords"
+    content="image editor, photo editor, AI photo correction, crop image, rotate image, resize image, blur photo, automatic straightening, free online tool" />
 
-    <!-- SEO: Structured Data (Schema.org) -->
-    <script type="application/ld+json">
+  <!-- SEO: Canonical URL -->
+  <link rel="canonical" href="https://autofiximage.com//" />
+
+  <!-- SEO: Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://autofiximage.com//" />
+  <meta property="og:title" content="AutoFix Image - Intelligent Image Editor" />
+  <meta property="og:description"
+    content="Automatically straighten, crop, and perfect your images with the power of AI. Features manual rotation, resizing, and blurring tools." />
+  <!-- TODO: Replace with an absolute URL to a branded preview image (1200x630px recommended) -->
+  <meta property="og:image" content="https://via.placeholder.com/1200x630.png/4f46e5/ffffff?text=AutoFix+Image" />
+
+  <!-- SEO: Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://autofiximage.com//" />
+  <meta property="twitter:title" content="AutoFix Image - Intelligent Image Editor" />
+  <meta property="twitter:description"
+    content="Automatically straighten, crop, and perfect your images with the power of AI. Features manual rotation, resizing, and blurring tools." />
+  <!-- TODO: Replace with an absolute URL to a branded preview image (1200x630px recommended) -->
+  <meta property="twitter:image" content="https://via.placeholder.com/1200x630.png/4f46e5/ffffff?text=AutoFix+Image" />
+
+  <!-- SEO: Structured Data (Schema.org) -->
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
@@ -56,16 +61,16 @@
       "url": "https://autofiximage.com//"
     }
     </script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      // Enable class-based dark mode, which allows the theme toggle to work.
-      tailwind.config = {
-        darkMode: 'class',
-      }
-    </script>
 
-    <script type="importmap">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Enable class-based dark mode, which allows the theme toggle to work.
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+  <script type="importmap">
       {
         "imports": {
           "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
@@ -74,30 +79,41 @@
         }
       }
     </script>
-    <!-- TODO: Replace ca-pub-XXXXXXXXXXXXXXXX with your own Google AdSense Publisher ID -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9521603226003896"
-     crossorigin="anonymous"></script>
-    <style>
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+  <!-- TODO: Replace ca-pub-XXXXXXXXXXXXXXXX with your own Google AdSense Publisher ID -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9521603226003896"
+    crossorigin="anonymous"></script>
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
       }
-      .animate-fade-in {
-        animation: fadeIn 0.8s ease-out forwards;
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      .checkerboard {
-        background-image:
-          linear-gradient(45deg, #808080 25%, transparent 25%),
-          linear-gradient(-45deg, #808080 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #808080 75%),
-          linear-gradient(-45deg, transparent 75%, #808080 75%);
-        background-size: 16px 16px;
-        background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
-      }
-    </style>
-  </head>
-  <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .checkerboard {
+      background-image:
+        linear-gradient(45deg, #808080 25%, transparent 25%),
+        linear-gradient(-45deg, #808080 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #808080 75%),
+        linear-gradient(-45deg, transparent 75%, #808080 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
