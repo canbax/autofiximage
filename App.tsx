@@ -57,6 +57,10 @@ const App: React.FC = () => {
   const [activeBlurRegionId, setActiveBlurRegionId] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = t('app.pageTitle');
+  }, [t]);
+
+  useEffect(() => {
     const handleHashChange = () => {
       setRoute(window.location.hash);
     };

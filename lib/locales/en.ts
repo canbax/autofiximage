@@ -1,5 +1,6 @@
 export const en = {
   'landing.title': 'AutoFix Image',
+  'app.pageTitle': 'AutoFix Image - Intelligent Image Editor',
   'landing.subtitle': 'Intelligently Straighten, Crop, and Perfect Your Photos in Seconds.',
   'navbar.pricing': 'Pricing',
   'navbar.api': 'API',

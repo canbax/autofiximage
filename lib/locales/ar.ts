@@ -1,5 +1,6 @@
 export const ar = {
   'landing.title': 'AutoFix Image',
+  'app.pageTitle': 'AutoFix Image - محرر الصور الذكي',
   'landing.subtitle': 'قم بتصويب صورك واقتصاصها وإتقانها بذكاء في ثوانٍ.',
   'navbar.pricing': 'أسعار',
   'navbar.api': 'API',

@@ -1,5 +1,6 @@
 export const tr = {
   'landing.title': 'AutoFix Image',
+  'app.pageTitle': 'AutoFix Image - Akıllı Resim Düzenleyici',
   'landing.subtitle': 'Fotoğraflarınızı Saniyeler İçinde Akıllıca Düzeltin, Kırpın ve Mükemmelleştirin.',
   'navbar.pricing': 'Fiyatlandırma',
   'navbar.api': 'API',
