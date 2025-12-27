@@ -49,7 +49,7 @@ const App: React.FC = () => {
   useEffect(() => {
     fetch('/api/counter')
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: any) => {
         if (typeof data.count === 'number') {
           setDownloadCount(data.count);
         }
@@ -448,9 +448,9 @@ const App: React.FC = () => {
 
       // Increment partial download count
       fetch('/api/counter', { method: 'POST' })
-        .then((res) => res.json())
-        .then((data) => {
-          if (typeof data.count === 'number') {
+        .then((response) => response.json())
+        .then((data: any) => {
+          if (data && typeof data.count === 'number') {
             setDownloadCount(data.count);
           }
         })

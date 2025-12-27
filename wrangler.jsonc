@@ -1,7 +1,15 @@
 {
   "name": "autofix-image",
   "compatibility_date": "2025-12-27",
+  "main": "worker.ts",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "AUTOFIX_DATA",
+      "id": "e0b1d2c3-4f5a-6789-0123-456789abcdef",
+      "preview_id": "e0b1d2c3-4f5a-6789-0123-456789abcdef"
+    }
+  ]
 }

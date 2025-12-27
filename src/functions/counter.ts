@@ -1,22 +1,22 @@
 
-import type { Context, Config } from "@netlify/functions";
-import { getStore } from "@netlify/blobs";
+export interface Env {
+    AUTOFIX_DATA: KVNamespace;
+}
 
-export default async (req: Request, context: Context) => {
-    const store = getStore("analytics");
+export async function handleCounter(request: Request, env: Env): Promise<Response> {
     const key = "image_downloads";
 
     try {
-        if (req.method === "GET") {
-            const count = await store.get(key, { type: "text" });
+        if (request.method === "GET") {
+            const count = await env.AUTOFIX_DATA.get(key);
             return new Response(JSON.stringify({ count: parseInt(count || "0", 10) }), {
                 headers: { "Content-Type": "application/json" },
             });
-        } else if (req.method === "POST") {
-            const currentCountStr = await store.get(key, { type: "text" });
+        } else if (request.method === "POST") {
+            const currentCountStr = await env.AUTOFIX_DATA.get(key);
             let currentCount = parseInt(currentCountStr || "0", 10);
             currentCount++;
-            await store.set(key, currentCount.toString());
+            await env.AUTOFIX_DATA.put(key, currentCount.toString());
             return new Response(JSON.stringify({ count: currentCount }), {
                 headers: { "Content-Type": "application/json" },
             });
@@ -30,8 +30,4 @@ export default async (req: Request, context: Context) => {
             headers: { "Content-Type": "application/json" },
         });
     }
-};
-
-export const config: Config = {
-    path: "/api/counter",
-};
+}
