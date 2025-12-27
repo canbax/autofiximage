@@ -7,7 +7,7 @@
   },
   "kv_namespaces": [
     {
-      "binding": "KV",
+      "binding": "AUTOFIX_DATA",
       "id": "9d00f161da044f52855efdc7edfe2425",
       // Optional: preview_id used when running `wrangler dev` for local dev
       "preview_id": "9d00f161da044f52855efdc7edfe2425"
