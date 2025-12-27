@@ -44,6 +44,18 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<AppMode>('crop-rotate');
   const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop();
   const { showAlert } = useDialog();
+  const [downloadCount, setDownloadCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch('/api/counter')
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === 'number') {
+          setDownloadCount(data.count);
+        }
+      })
+      .catch((err) => console.error('Failed to fetch download count', err));
+  }, []);
 
   // Resize State
   const [resizeWidth, setResizeWidth] = useState(0);
@@ -433,6 +445,16 @@ const App: React.FC = () => {
       link.href = URL.createObjectURL(finalImageBlob);
       link.click();
       URL.revokeObjectURL(link.href);
+
+      // Increment partial download count
+      fetch('/api/counter', { method: 'POST' })
+        .then((res) => res.json())
+        .then((data) => {
+          if (typeof data.count === 'number') {
+            setDownloadCount(data.count);
+          }
+        })
+        .catch((err) => console.error('Failed to increment download count', err));
     } catch (error) {
       showAlert(error instanceof Error ? error.message : t('alert.noContext'));
     }
@@ -641,6 +663,11 @@ const App: React.FC = () => {
         </div>
         <footer className="w-full py-6 mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
           <p>© {new Date().getFullYear()} AutoFix Image</p>
+          {downloadCount !== null && (
+            <p className="mt-2 text-xs opacity-75">
+              {downloadCount.toLocaleString()} {t('footer.imagesDownloaded')}
+            </p>
+          )}
         </footer>
 
       </div>

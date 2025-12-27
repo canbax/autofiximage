@@ -170,4 +170,5 @@ export const es = {
   'privacy.usage.l7': 'Encontrar y prevenir el fraude',
   'privacy.logs.title': '3. Archivos de registro',
   'privacy.logs.p1': 'AutoFix Image sigue un procedimiento estándar de uso de archivos de registro. estos archivos registran a los visitantes cuando visitan sitios web. todas las empresas de alojamiento hacen esto y una parte de los análisis de los servicios de alojamiento. la información recopilada por los archivos de registro incluye direcciones de protocolo de internet (ip), tipo de navegador, proveedor de servicios de internet (isp), marca de fecha y hora, páginas de referencia/salida y posiblemente el número de clics. estos no están vinculados a ninguna información que sea de identificación personal. el propósito de la información es analizar tendencias, administrar el sitio, rastrear el movimiento de los usuarios en el sitio web y recopilar información demográfica.',
+  'footer.imagesDownloaded': 'imágenes se han descargado utilizando esta herramienta',
 };

@@ -170,4 +170,5 @@ export const tr = {
   'privacy.usage.l7': 'Dolandırıcılığı bulmak ve önlemek',
   'privacy.logs.title': '3. Günlük Dosyaları',
   'privacy.logs.p1': 'AutoFix Image, günlük dosyalarını kullanma konusunda standart bir prosedür izler. Bu dosyalar, ziyaretçiler web sitelerini ziyaret ettiğinde onları günlüğe kaydeder. Tüm barındırma şirketleri bunu yapar ve barındırma hizmetlerinin analizlerinin bir parçasıdır. Günlük dosyaları tarafından toplanan bilgiler arasında internet protokolü (IP) adresleri, tarayıcı türü, İnternet Servis Sağlayıcısı (ISP), tarih ve saat damgası, yönlendirme/çıkış sayfaları ve muhtemelen tıklama sayısı bulunur. Bunlar, kişisel olarak tanımlanabilir herhangi bir bilgiyle bağlantılı değildir. Bilgilerin amacı, eğilimleri analiz etmek, siteyi yönetmek, kullanıcıların web sitesindeki hareketlerini izlemek ve demografik bilgi toplamaktır.',
+  'footer.imagesDownloaded': 'adet resim bu araç kullanılarak indirildi',
 };
