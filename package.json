@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@netlify/blobs": "^10.5.0",
