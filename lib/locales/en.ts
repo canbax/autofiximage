@@ -134,6 +134,7 @@ export const en = {
   'contact.sendButton': 'Send Message',
   'contact.formSuccessTitle': 'Message Sent!',
   'contact.formSuccessBody': 'Thanks for reaching out! We\'ll review your message and get back to you as soon as possible.',
+  'contact.messageMinChars': 'Minimum 10 characters required.',
   'terms.intro.title': '1. Introduction',
   'terms.intro.p1': 'Welcome to AutoFix Image. These terms and conditions outline the rules and regulations for the use of AutoFix Image\'s Website, located at this application\'s URL.',
   'terms.intro.p2': 'By accessing this website we assume you accept these terms and conditions. Do not continue to use AutoFix Image if you do not agree to take all of the terms and conditions stated on this page.',
