@@ -134,6 +134,7 @@ export const es = {
   'contact.sendButton': 'Enviar mensaje',
   'contact.formSuccessTitle': '¡Mensaje enviado!',
   'contact.formSuccessBody': '¡Gracias por contactarnos! Revisaremos su mensaje y nos pondremos en contacto con usted lo antes posible.',
+  'contact.messageMinChars': 'Se requieren al menos 10 caracteres.',
   'terms.intro.title': '1. Introducción',
   'terms.intro.p1': 'Bienvenido a AutoFix Image. Estos términos y condiciones describen las reglas y regulaciones para el uso del sitio web de AutoFix Image, ubicado en la URL de esta aplicación.',
   'terms.intro.p2': 'Al acceder a este sitio web, asumimos que acepta estos términos y condiciones. No continúe utilizando AutoFix Image si no está de acuerdo con todos los términos y condiciones establecidos en esta página.',

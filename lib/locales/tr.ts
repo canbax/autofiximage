@@ -134,6 +134,7 @@ export const tr = {
   'contact.sendButton': 'Mesaj Gönder',
   'contact.formSuccessTitle': 'Mesaj Gönderildi!',
   'contact.formSuccessBody': 'Bize ulaştığınız için teşekkürler! Mesajınızı inceleyip en kısa sürede size geri döneceğiz.',
+  'contact.messageMinChars': 'En az 10 karakter gerekli.',
   'terms.intro.title': '1. Giriş',
   'terms.intro.p1': "AutoFix Image'a hoş geldiniz. Bu hüküm ve koşullar, bu uygulamanın URL'sinde bulunan AutoFix Image Web Sitesinin kullanımına ilişkin kural ve yönetmelikleri özetlemektedir.",
   'terms.intro.p2': 'Bu web sitesine erişerek bu hüküm ve koşulları kabul ettiğinizi varsayıyoruz. Bu sayfada belirtilen tüm hüküm ve koşulları kabul etmiyorsanız AutoFix Image kullanmaya devam etmeyin.',
