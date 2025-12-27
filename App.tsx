@@ -662,11 +662,11 @@ const App: React.FC = () => {
 
         </div>
         <footer className="w-full py-6 mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} AutoFix Image</p>
+          <span>© {new Date().getFullYear()} AutoFix Image - </span>
           {downloadCount !== null && (
-            <p className="mt-2 text-xs opacity-75">
+            <span className="mt-2 text-xs opacity-75">
               {downloadCount.toLocaleString()} {t('footer.imagesDownloaded')}
-            </p>
+            </span>
           )}
         </footer>
 
