@@ -617,8 +617,8 @@ const App: React.FC = () => {
       <Navbar image={image} mode={mode} setMode={handleModeChange} />
       <LoginDialog />
       <PricingDialog />
-      <div className="min-h-screen text-gray-800 dark:text-gray-100 pt-16">
-        <div className="flex justify-center w-full px-4">
+      <div className="flex flex-col min-h-screen text-gray-800 dark:text-gray-100 pt-16">
+        <div className="flex-grow flex justify-center w-full px-4">
 
           <div className="flex-grow w-full max-w-7xl relative">
             <div
@@ -635,10 +635,13 @@ const App: React.FC = () => {
                 backgroundSize: '2rem 2rem',
               }}
             />
-            <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">{renderContent()}</main>
+            <main className="w-full flex-grow flex flex-col justify-center py-8">{renderContent()}</main>
           </div>
 
         </div>
+        <footer className="w-full py-6 mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+          <p>© {new Date().getFullYear()} AutoFix Image</p>
+        </footer>
 
       </div>
     </>
