@@ -619,15 +619,6 @@ const App: React.FC = () => {
       <PricingDialog />
       <div className="min-h-screen text-gray-800 dark:text-gray-100 pt-16">
         <div className="flex justify-center w-full px-4">
-          <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 mr-6 items-center justify-center">
-            <AdBanner
-              className="w-full h-full"
-              data-ad-client={AD_CLIENT}
-              data-ad-slot={AD_SLOT_SIDE}
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </aside>
 
           <div className="flex-grow w-full max-w-7xl relative">
             <div
@@ -647,28 +638,8 @@ const App: React.FC = () => {
             <main className="w-full min-h-[calc(100vh-4rem)] flex-grow flex flex-col justify-center py-8">{renderContent()}</main>
           </div>
 
-          <aside className="hidden lg:flex w-40 sticky top-20 h-[calc(100vh-6rem)] flex-shrink-0 ml-6 items-center justify-center">
-            <AdBanner
-              className="w-full h-full"
-              data-ad-client={AD_CLIENT}
-              data-ad-slot={AD_SLOT_SIDE}
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </aside>
         </div>
 
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm z-20 flex items-center justify-center border-t border-gray-200 dark:border-gray-700">
-          <AdBanner
-            className="w-full"
-            data-ad-client={AD_CLIENT}
-            data-ad-slot={AD_SLOT_BOTTOM}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          />
-        </div>
-
-        <div className="lg:hidden h-16"></div>
       </div>
     </>
   );
