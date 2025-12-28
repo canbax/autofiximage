@@ -564,7 +564,7 @@ const App: React.FC = () => {
             {!image ? (
               <LandingPage onImageUpload={handleImageUpload} isProcessing={isProcessingImage} />
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh] w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-[75vh] w-full">
                 <div className="lg:col-span-2 h-full">
                   <ImageEditor
                     image={image}
