@@ -1,6 +1,7 @@
 
 export interface Env {
     AUTOFIX_DATA: KVNamespace;
+    ASSETS?: Fetcher;
 }
 
 export async function handleCounter(request: Request, env: Env): Promise<Response> {
