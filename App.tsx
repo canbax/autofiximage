@@ -657,7 +657,7 @@ const App: React.FC = () => {
                 backgroundSize: '2rem 2rem',
               }}
             />
-            <main className="w-full flex-grow flex flex-col justify-center py-8">{renderContent()}</main>
+            <main className="w-full flex-grow flex flex-col py-8">{renderContent()}</main>
           </div>
 
         </div>
