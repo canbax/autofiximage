@@ -17,6 +17,14 @@ export const LanguageSwitcher: React.FC = () => {
     es: 'Español',
     tr: 'Türkçe',
     ar: 'العربية',
+    fr: 'Français',
+    de: 'Deutsch',
+    pt: 'Português',
+    ru: 'Русский',
+    ja: '日本語',
+    zh: '中文',
+    it: 'Italiano',
+    cs: 'Čeština',
   };
 
   const languageFlags: { [key: string]: string } = {
@@ -24,6 +32,14 @@ export const LanguageSwitcher: React.FC = () => {
     es: '🇪🇸',
     tr: '🇹🇷',
     ar: '🇸🇦',
+    fr: '🇫🇷',
+    de: '🇩🇪',
+    pt: '🇵🇹',
+    ru: '🇷🇺',
+    ja: '🇯🇵',
+    zh: '🇨🇳',
+    it: '🇮🇹',
+    cs: '🇨🇿',
   };
 
   useEffect(() => {
