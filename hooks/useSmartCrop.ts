@@ -9,12 +9,14 @@ interface CropBox {
     height: number;
 }
 
-export const useSmartCrop = () => {
+export const useSmartCrop = (enabled: boolean = false) => {
     const [model, setModel] = useState<cocoSsd.ObjectDetection | null>(null);
     const [isReady, setIsReady] = useState(false);
 
-    // Load the model on mount (Single download, ~2MB)
+    // Load the model only when enabled (e.g. when image is uploaded)
     useEffect(() => {
+        if (!enabled || model) return; // Don't load if not enabled or already loaded
+
         const loadModel = async () => {
             try {
                 // 'lite_mobilenet_v2' is faster and smaller than default
@@ -26,7 +28,7 @@ export const useSmartCrop = () => {
             }
         };
         loadModel();
-    }, []);
+    }, [enabled, model]);
 
     const getSmartCrop = async (
         imgElement: HTMLImageElement,

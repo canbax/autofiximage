@@ -42,7 +42,7 @@ const App: React.FC = () => {
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
   const [route, setRoute] = useState(window.location.hash);
   const [mode, setMode] = useState<AppMode>('crop-rotate');
-  const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop();
+  const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop(!!image);
   const { showAlert } = useDialog();
   const [downloadCount, setDownloadCount] = useState<number | null>(null);
 
