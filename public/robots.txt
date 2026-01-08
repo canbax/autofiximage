@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://autofiximage.com/sitemap.xml
