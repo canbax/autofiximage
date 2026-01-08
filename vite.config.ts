@@ -39,5 +39,16 @@ export default defineConfig(({ mode }) => {
         checker: 'vue-tsc',
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'tensorflow': ['@tensorflow/tfjs', '@tensorflow-models/coco-ssd', '@tensorflow-models/face-detection'],
+            'react-vendor': ['react', 'react-dom'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000, // Optional: Increase the warning limit if chunks are still large but reasonable
+    },
   };
 });
