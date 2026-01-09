@@ -65,6 +65,12 @@ export const LanguageSwitcher: React.FC = () => {
     lang.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  function handleLanguageChange(e: any, lang: string) {
+    e?.preventDefault?.();
+    setLanguage(lang);
+    setIsOpen(false);
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -95,12 +101,8 @@ export const LanguageSwitcher: React.FC = () => {
               filteredLanguages.map((lang) => (
                 <a
                   key={lang}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setLanguage(lang);
-                    setIsOpen(false);
-                  }}
+                  href={"#" + lang}
+                  onClick={(e) => handleLanguageChange(e, lang)}
                   className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                   role="menuitem"
                 >
