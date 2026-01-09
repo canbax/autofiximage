@@ -9,13 +9,12 @@
   },
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
     "type-check": "tsc --noEmit",
-    "deploy": "wrangler deploy",
-    "generate-sitemap": "npx tsx scripts/generate-sitemap.ts",
-    "build": "npm run generate-sitemap && vite build"
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

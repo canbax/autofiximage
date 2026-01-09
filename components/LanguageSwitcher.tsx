@@ -95,13 +95,10 @@ export const LanguageSwitcher: React.FC = () => {
               filteredLanguages.map((lang) => (
                 <a
                   key={lang}
-                  href={lang === 'en' ? '/' : `/${lang}/`}
+                  href="#"
                   onClick={(e) => {
-                    // Allow default navigation for SEO/Refresh preference
-                    // Or prevent default and use history API if we want SPA feel.
-                    // Plan said: "Update language switcher to use links"
-                    // Standard SEO usually prefers real links.
-                    // Let's let it navigate.
+                    e.preventDefault();
+                    setLanguage(lang);
                     setIsOpen(false);
                   }}
                   className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
