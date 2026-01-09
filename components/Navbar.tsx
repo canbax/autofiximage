@@ -102,10 +102,10 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                       </>
                     )}
-                    <Link to={`/${t('lang')}/about`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.about')}</Link>
-                    <Link to={`/${t('lang')}/terms`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</Link>
-                    <Link to={`/${t('lang')}/privacy`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</Link>
-                    <Link to={`/${t('lang')}/contact`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</Link>
+                    <Link to={`/${language}/about`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.about')}</Link>
+                    <Link to={`/${language}/terms`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</Link>
+                    <Link to={`/${language}/privacy`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</Link>
+                    <Link to={`/${language}/contact`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</Link>
                   </div>
                 </div>
               )}
