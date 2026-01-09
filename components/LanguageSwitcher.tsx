@@ -1,12 +1,15 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from '../hooks/useTranslation';
 import { LANGUAGES } from '../lib/i18n';
 import { GlobeIcon } from './icons';
 
 export const LanguageSwitcher: React.FC = () => {
   const { language, setLanguage, t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -67,7 +70,18 @@ export const LanguageSwitcher: React.FC = () => {
 
   function handleLanguageChange(e: any, lang: string) {
     e?.preventDefault?.();
-    setLanguage(lang);
+    const currentPath = location.pathname;
+    const parts = currentPath.split('/');
+    // Check if the first part is a language code (or empty string if leading slash)
+    // parts[0] is ""
+    // parts[1] is the language code like 'en', 'tr'
+    if (parts.length >= 2) {
+      parts[1] = lang;
+      const newPath = parts.join('/');
+      navigate(newPath);
+    } else {
+      navigate(`/${lang}`);
+    }
     setIsOpen(false);
   }
 
@@ -99,18 +113,17 @@ export const LanguageSwitcher: React.FC = () => {
           <div className="py-1 max-h-60 overflow-y-auto" role="menu" aria-orientation="vertical">
             {filteredLanguages.length > 0 ? (
               filteredLanguages.map((lang) => (
-                <a
+                <button
                   key={lang}
-                  href={"#" + lang}
                   onClick={(e) => handleLanguageChange(e, lang)}
-                  className={`block px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                  className={`block w-full text-left px-4 py-2 text-sm ${language === lang ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                   role="menuitem"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-lg" aria-hidden="true">{languageFlags[lang]}</span>
                     <span>{languageNames[lang]}</span>
                   </div>
-                </a>
+                </button>
               ))
             ) : (
               <div className="px-4 py-2 text-sm text-gray-500 text-center">{t('languageSwitcher.noResults')}</div>

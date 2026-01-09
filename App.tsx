@@ -5,6 +5,7 @@ import { CropParams, BlurRegion } from './types';
 import { detectFaces, loadModels } from './services/mediaPipeService';
 import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
+import { LanguageContext } from './context/LanguageContext';
 import LandingPage from './components/LandingPage';
 import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
@@ -16,6 +17,8 @@ import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 import AboutPage from './components/AboutPage';
 import { calculateSkewAngle } from './lib/autoStraighten';
+import { Routes, Route, Navigate, useParams, useLocation, Outlet } from 'react-router-dom';
+import { LANGUAGES, DEFAULT_LANGUAGE, Language } from './lib/i18n';
 import { useDialog } from './context/DialogContext';
 
 const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
@@ -29,7 +32,7 @@ const AD_SLOT_BOTTOM = '1234567891';
 
 type AppMode = 'crop-rotate' | 'resize' | 'blur';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const { t } = useTranslation();
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
@@ -40,7 +43,8 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const [keepCropperVertical, setKeepCropperVertical] = useState<boolean>(true);
-  const [route, setRoute] = useState(window.location.hash);
+  const { language, setLanguage } = React.useContext(LanguageContext)!;
+  const { lang } = useParams<{ lang: string }>();
   const [mode, setMode] = useState<AppMode>('crop-rotate');
   const { getSmartCrop, isReady: isSmartCropReady } = useSmartCrop(!!image);
   const { showAlert } = useDialog();
@@ -73,15 +77,11 @@ const App: React.FC = () => {
   }, [t]);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setRoute(window.location.hash);
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
+    // Sync language from URL
+    if (lang && LANGUAGES.includes(lang as Language) && lang !== language) {
+      setLanguage(lang as Language);
+    }
+  }, [lang, language, setLanguage]);
 
   const handleReset = useCallback(() => {
     setRotation(DEFAULT_ROTATION);
@@ -548,92 +548,6 @@ const App: React.FC = () => {
     setMode(newMode);
   };
 
-  const renderContent = () => {
-    switch (route) {
-      case '#/about':
-        return <AboutPage />;
-      case '#/terms':
-        return <TermsPage />;
-      case '#/privacy':
-        return <PrivacyPage />;
-      case '#/contact':
-        return <ContactPage />;
-      default:
-        return (
-          <>
-            {!image ? (
-              <LandingPage onImageUpload={handleImageUpload} isProcessing={isProcessingImage} />
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-[75vh] w-full">
-                <div className="lg:col-span-2 h-full">
-                  <ImageEditor
-                    image={image}
-                    rotation={rotation}
-                    selection={selection}
-                    setSelection={setSelection}
-                    aspectRatio={numericAspectRatio}
-                    keepCropperVertical={keepCropperVertical}
-                    mode={mode}
-                    resizeWidth={resizeWidth}
-                    resizeHeight={resizeHeight}
-                    lockAspectRatio={lockAspectRatio}
-                    resizeContain={resizeContain}
-                    resizeBgColor={resizeBgColor}
-                    blurRegions={blurRegions}
-                    activeBlurRegionId={activeBlurRegionId}
-                    onUpdateBlurRegion={handleUpdateBlurRegion}
-                    onSelectBlurRegion={handleSelectBlurRegion}
-                    onRemoveBlurRegion={handleRemoveBlurRegion}
-                  />
-                </div>
-                <div className="lg:col-span-1 h-full">
-                  <ControlPanel
-                    image={image}
-                    rotation={rotation}
-                    setRotation={setRotation}
-                    selection={selection}
-                    setSelection={setSelection}
-                    onAutoCorrect={handleAutoCorrect}
-                    onReset={handleReset}
-                    onDownload={handleDownload}
-                    onNewImageUpload={handleImageUpload}
-                    isLoading={isLoading}
-                    keepCropperVertical={keepCropperVertical}
-                    setKeepCropperVertical={setKeepCropperVertical}
-                    aspectRatioKey={aspectRatioKey}
-                    setAspectRatioKey={setAspectRatioKey}
-                    mode={mode}
-                    resizeWidth={resizeWidth}
-                    setResizeWidth={setResizeWidth}
-                    resizeHeight={resizeHeight}
-                    setResizeHeight={setResizeHeight}
-                    lockAspectRatio={lockAspectRatio}
-                    setLockAspectRatio={setLockAspectRatio}
-                    resizeContain={resizeContain}
-                    setResizeContain={setResizeContain}
-                    resizeBgColor={resizeBgColor}
-                    setResizeBgColor={setResizeBgColor}
-                    blurRegions={blurRegions}
-                    activeBlurRegionId={activeBlurRegionId}
-                    onAddBlurRegion={handleAddBlurRegion}
-                    onUpdateBlurRegion={handleUpdateBlurRegion}
-                    onSelectBlurRegion={handleSelectBlurRegion}
-                    onDetectFaces={handleDetectFaces}
-                    imageMimeType={originalFile?.type || null}
-                  />
-                </div>
-              </div>
-            )}
-            {error && (
-              <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
-                <strong>{t('error.title')}</strong> {t(error)}
-              </div>
-            )}
-          </>
-        );
-    }
-  };
-
   return (
     <>
       <Navbar image={image} mode={mode} setMode={handleModeChange} />
@@ -657,7 +571,86 @@ const App: React.FC = () => {
                 backgroundSize: '2rem 2rem',
               }}
             />
-            <main className="w-full flex-grow flex flex-col py-8">{renderContent()}</main>
+            <main className="w-full flex-grow flex flex-col py-8">
+              <Routes>
+                <Route path="about" element={<AboutPage />} />
+                <Route path="terms" element={<TermsPage />} />
+                <Route path="privacy" element={<PrivacyPage />} />
+                <Route path="contact" element={<ContactPage />} />
+                <Route index element={
+                  <>
+                    {!image ? (
+                      <LandingPage onImageUpload={handleImageUpload} isProcessing={isProcessingImage} />
+                    ) : (
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-[75vh] w-full">
+                        <div className="lg:col-span-2 h-full">
+                          <ImageEditor
+                            image={image}
+                            rotation={rotation}
+                            selection={selection}
+                            setSelection={setSelection}
+                            aspectRatio={numericAspectRatio}
+                            keepCropperVertical={keepCropperVertical}
+                            mode={mode}
+                            resizeWidth={resizeWidth}
+                            resizeHeight={resizeHeight}
+                            lockAspectRatio={lockAspectRatio}
+                            resizeContain={resizeContain}
+                            resizeBgColor={resizeBgColor}
+                            blurRegions={blurRegions}
+                            activeBlurRegionId={activeBlurRegionId}
+                            onUpdateBlurRegion={handleUpdateBlurRegion}
+                            onSelectBlurRegion={handleSelectBlurRegion}
+                            onRemoveBlurRegion={handleRemoveBlurRegion}
+                          />
+                        </div>
+                        <div className="lg:col-span-1 h-full">
+                          <ControlPanel
+                            image={image}
+                            rotation={rotation}
+                            setRotation={setRotation}
+                            selection={selection}
+                            setSelection={setSelection}
+                            onAutoCorrect={handleAutoCorrect}
+                            onReset={handleReset}
+                            onDownload={handleDownload}
+                            onNewImageUpload={handleImageUpload}
+                            isLoading={isLoading}
+                            keepCropperVertical={keepCropperVertical}
+                            setKeepCropperVertical={setKeepCropperVertical}
+                            aspectRatioKey={aspectRatioKey}
+                            setAspectRatioKey={setAspectRatioKey}
+                            mode={mode}
+                            resizeWidth={resizeWidth}
+                            setResizeWidth={setResizeWidth}
+                            resizeHeight={resizeHeight}
+                            setResizeHeight={setResizeHeight}
+                            lockAspectRatio={lockAspectRatio}
+                            setLockAspectRatio={setLockAspectRatio}
+                            resizeContain={resizeContain}
+                            setResizeContain={setResizeContain}
+                            resizeBgColor={resizeBgColor}
+                            setResizeBgColor={setResizeBgColor}
+                            blurRegions={blurRegions}
+                            activeBlurRegionId={activeBlurRegionId}
+                            onAddBlurRegion={handleAddBlurRegion}
+                            onUpdateBlurRegion={handleUpdateBlurRegion}
+                            onSelectBlurRegion={handleSelectBlurRegion}
+                            onDetectFaces={handleDetectFaces}
+                            imageMimeType={originalFile?.type || null}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {error && (
+                      <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300 rounded-md text-center max-w-xl mx-auto">
+                        <strong>{t('error.title')}</strong> {t(error)}
+                      </div>
+                    )}
+                  </>
+                } />
+              </Routes>
+            </main>
           </div>
 
         </div>
@@ -672,6 +665,16 @@ const App: React.FC = () => {
 
       </div>
     </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
+      <Route path="/:lang/*" element={<AppContent />} />
+      <Route path="*" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
+    </Routes>
   );
 };
 

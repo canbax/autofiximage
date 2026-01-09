@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './style.css';
 import { LanguageProvider } from './context/LanguageContext';
@@ -19,13 +20,15 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <LanguageProvider>
-          <PricingProvider>
-            <DialogProvider>
-              <App />
-            </DialogProvider>
-          </PricingProvider>
-        </LanguageProvider>
+        <BrowserRouter>
+          <LanguageProvider>
+            <PricingProvider>
+              <DialogProvider>
+                <App />
+              </DialogProvider>
+            </PricingProvider>
+          </LanguageProvider>
+        </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>

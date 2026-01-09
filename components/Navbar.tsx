@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslation } from '../hooks/useTranslation';
@@ -13,7 +14,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { openPricingDialog } = usePricing();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,13 +69,13 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
     <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-30 border-b border-gray-200/50 dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <a href="#" className="flex items-center gap-3">
+          <Link to={`/${language}`} className="flex items-center gap-3">
             <Logo className="h-8 w-8" />
             <span className="font-bold text-xl text-gray-900 dark:text-white">AutoFix Image</span>
             {image && (
               <span className="hidden sm:block text-lg text-gray-500 dark:text-gray-400">/ {t(`app.mode.${modeKey}`)}</span>
             )}
-          </a>
+          </Link>
           <div className="flex items-center space-x-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
@@ -101,10 +102,10 @@ const Navbar: React.FC<NavbarProps> = ({ image, mode, setMode }) => {
                         <div role="separator" className="border-t border-gray-200 dark:border-gray-700 my-1" />
                       </>
                     )}
-                    <a href="#/about" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.about')}</a>
-                    <a href="#/terms" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</a>
-                    <a href="#/privacy" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</a>
-                    <a href="#/contact" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</a>
+                    <Link to={`/${t('lang')}/about`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.about')}</Link>
+                    <Link to={`/${t('lang')}/terms`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.terms')}</Link>
+                    <Link to={`/${t('lang')}/privacy`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.privacy')}</Link>
+                    <Link to={`/${t('lang')}/contact`} onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">{t('navbar.contact')}</Link>
                   </div>
                 </div>
               )}
