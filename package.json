@@ -14,7 +14,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "type-check": "tsc --noEmit",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "dev-server": "wrangler dev"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
