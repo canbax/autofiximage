@@ -7,7 +7,6 @@ import Navbar from './components/Navbar';
 import { useTranslation } from './hooks/useTranslation';
 import { LanguageContext } from './context/LanguageContext';
 import LandingPage from './components/LandingPage';
-import AdBanner from './components/AdBanner';
 import { LoginDialog } from './components/LoginDialog';
 import { PricingDialog } from './components/PricingDialog';
 import { applyCorrection, adjustCropForRotation } from './lib/imageUtils';
@@ -17,8 +16,8 @@ import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 import AboutPage from './components/AboutPage';
 import { calculateSkewAngle } from './lib/autoStraighten';
-import { Routes, Route, Navigate, useParams, useLocation, Outlet } from 'react-router-dom';
-import { LANGUAGES, DEFAULT_LANGUAGE, Language } from './lib/i18n';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { LANGUAGES, getCurrentLanguage, Language } from './lib/i18n';
 import { useDialog } from './context/DialogContext';
 
 const DEFAULT_SELECTION: CropParams = { x: 0, y: 0, width: 0, height: 0 };
@@ -669,11 +668,12 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const language = getCurrentLanguage();
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
+      <Route path="/" element={<Navigate to={`/${language}`} replace />} />
       <Route path="/:lang/*" element={<AppContent />} />
-      <Route path="*" element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />} />
+      <Route path="*" element={<Navigate to={`/${language}`} replace />} />
     </Routes>
   );
 };

@@ -29,3 +29,14 @@ export const translations = {
 export type Language = keyof typeof translations;
 export const LANGUAGES: Language[] = ['en', 'tr', 'es', 'ar', 'fr', 'de', 'pt', 'ru', 'ja', 'zh', 'it', 'cs'];
 export const DEFAULT_LANGUAGE: Language = 'en';
+
+export const getCurrentLanguage = (): Language => {
+  if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
+
+  const savedLanguage = localStorage.getItem('language') as Language;
+  if (savedLanguage && LANGUAGES.includes(savedLanguage)) {
+    return savedLanguage;
+  }
+  const browserLanguage = navigator.language.split(/[-_]/)[0] as Language;
+  return LANGUAGES.includes(browserLanguage) ? browserLanguage : DEFAULT_LANGUAGE;
+};
