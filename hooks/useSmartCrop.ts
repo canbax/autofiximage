@@ -9,26 +9,37 @@ interface CropBox {
     height: number;
 }
 
+// Global cache to avoid reloading model
+let globalModelPromise: Promise<cocoSsd.ObjectDetection> | null = null;
+let globalModel: cocoSsd.ObjectDetection | null = null;
+
 export const useSmartCrop = (enabled: boolean = false) => {
-    const [model, setModel] = useState<cocoSsd.ObjectDetection | null>(null);
-    const [isReady, setIsReady] = useState(false);
+    const [model, setModel] = useState<cocoSsd.ObjectDetection | null>(globalModel);
+    const [isReady, setIsReady] = useState(!!globalModel);
 
-    // Load the model only when enabled (e.g. when image is uploaded)
+    // Load the model immediately on mountx"
     useEffect(() => {
-        if (!enabled || model) return; // Don't load if not enabled or already loaded
+        if (model) return;
 
-        const loadModel = async () => {
-            try {
-                // 'lite_mobilenet_v2' is faster and smaller than default
-                const loadedModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
-                setModel(loadedModel);
-                setIsReady(true);
-            } catch (err) {
-                console.error("Failed to load AI model", err);
-            }
-        };
-        loadModel();
-    }, [enabled, model]);
+        if (!globalModelPromise) {
+            // 'lite_mobilenet_v2' is faster and smaller than default
+            globalModelPromise = cocoSsd.load({ base: 'lite_mobilenet_v2' })
+                .then((loaded) => {
+                    globalModel = loaded;
+                    return loaded;
+                })
+                .catch((err) => {
+                    console.error("Failed to load AI model", err);
+                    globalModelPromise = null;
+                    throw err;
+                });
+        }
+
+        globalModelPromise.then((loaded) => {
+            setModel(loaded);
+            setIsReady(true);
+        });
+    }, [model]);
 
     const getSmartCrop = async (
         imgElement: HTMLImageElement,
