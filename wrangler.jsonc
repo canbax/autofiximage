@@ -1,5 +1,5 @@
 {
-  "name": "autofix-image",
+  "name": "autofiximage",
   "compatibility_date": "2025-12-27",
   "main": "worker.ts",
   "assets": {
